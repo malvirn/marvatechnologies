@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Sora, JetBrains_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-inter", display: "swap" });
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], weight: ["500", "700"], variable: "--font-space", display: "swap" });
+const sora = Sora({ subsets: ["latin"], weight: ["700", "800"], variable: "--font-sora", display: "swap" });
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
   title: "Marva Technologies — Technology. Innovation. Impact.",
@@ -14,12 +15,9 @@ export const metadata: Metadata = {
   openGraph: { title: "Marva Technologies", description: "Technology. Innovation. Impact.", images: ["/branding/marva-logo.svg"] }
 };
 
-const themeScript = `(function(){try{var saved=localStorage.getItem("marva-theme");var system=window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches;document.documentElement.dataset.theme=saved==="light"||saved==="dark"?saved:(system?"light":"dark");}catch(e){document.documentElement.dataset.theme="dark";}})();`;
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en" suppressHydrationWarning>
-    <head><script dangerouslySetInnerHTML={{ __html: themeScript }} /></head>
-    <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
+  return <html lang="en" className={`${inter.variable} ${sora.variable} ${jetbrainsMono.variable}`}>
+    <body>
       <Header />
       {children}
     </body>
