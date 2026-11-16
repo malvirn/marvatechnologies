@@ -619,3 +619,85 @@ button{font:inherit}
     justify-self:end!important;align-self:center!important;
   }
 }
+
+
+/* Screenshot follow-up: keep every mobile overlay anchored to the photo itself */
+@media(max-width:899px){
+  .intro-hero.hero-single-image{
+    padding-top:16px!important;
+    min-height:0!important;
+    height:auto!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:auto auto!important;
+    align-content:start!important;
+  }
+  .intro-hero.hero-single-image > .hero-single-photo-wrap{
+    position:relative!important;
+    display:block!important;
+    grid-column:1!important;
+    grid-row:1!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    align-self:start!important;
+    overflow:visible!important;
+  }
+  .intro-hero.hero-single-image .hero-single-photo-wrap > img.hero-single-photo{
+    position:relative!important;
+    inset:auto!important;
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    aspect-ratio:auto!important;
+    max-width:100%!important;
+    object-fit:unset!important;
+    object-position:initial!important;
+    transform:none!important;
+    filter:none!important;
+    -webkit-mask-image:linear-gradient(to bottom,#000 62%,transparent 100%)!important;
+    mask-image:linear-gradient(to bottom,#000 62%,transparent 100%)!important;
+  }
+  .intro-hero.hero-single-image .hero-brand-mobile{
+    position:absolute!important;
+    top:12px!important;
+    right:auto!important;
+    bottom:auto!important;
+    left:12px!important;
+    z-index:8!important;
+  }
+  .intro-hero.hero-single-image .hero-image-overlays{
+    position:absolute!important;
+    top:auto!important;
+    right:10px!important;
+    bottom:9%!important;
+    left:10px!important;
+    z-index:8!important;
+    display:flex!important;
+    align-items:flex-end!important;
+    justify-content:space-between!important;
+    transform:none!important;
+    pointer-events:none!important;
+  }
+  .intro-hero.hero-single-image .founder-glass{
+    position:relative!important;
+    top:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    left:auto!important;
+    transform:none!important;
+  }
+  .intro-hero.hero-single-image > .hero-single-content{
+    position:relative!important;
+    grid-column:1!important;
+    grid-row:2!important;
+    width:100%!important;
+    margin:-3vw 0 0!important;
+    padding:0!important;
+    z-index:2!important;
+  }
+}
+@media(max-width:599px){
+  .intro-hero.hero-single-image{padding-inline:18px!important}
+  .intro-hero.hero-single-image .hero-image-overlays{right:8px!important;left:8px!important;bottom:9%!important}
+  .intro-hero.hero-single-image > .hero-single-content{margin-top:-3vw!important}
+}
