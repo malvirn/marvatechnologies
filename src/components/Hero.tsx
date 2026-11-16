@@ -9,7 +9,7 @@ export default function Hero() {
 
   return <section className="intro-hero" id="home">
     <div className="hero-content-wrap">
-      <p className="hero-kicker">INDEPENDENT TECHNOLOGY STUDIO</p>
+      <p className="hero-kicker">INDEPENDENT TECHNOLOGY STUDIO <span className="hero-kicker-divider">/</span> ZIMBABWE</p>
       <p className="hero-pretitle">Marva builds <span className="rotating-words"><span>{typed.text}</span><i className="typing-cursor" aria-hidden="true" /></span></p>
       <h1 className="intro-title">We build digital solutions that matter.</h1>
       <p className="intro-copy">Marva Technologies is a growing software brand founded by Malvirn Gomo. We turn practical ideas into useful digital products.</p>
