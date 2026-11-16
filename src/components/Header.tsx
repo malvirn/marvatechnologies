@@ -26,8 +26,6 @@ export default function Header() {
   const [hovered, setHovered] = useState<string | null>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const [origin, setOrigin] = useState("calc(100% - 34px) 28px");
-  const brand = useTypewriter(["MARVA", "TECHNOLOGIES"], { speed: 90 });
-  const [brandLine, setBrandLine] = useState(0);
   const [firstLine, setFirstLine] = useState("");
   const [secondLine, setSecondLine] = useState("");
   const first = useTypewriter("MARVA", { speed: 90 });
