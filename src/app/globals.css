@@ -48,7 +48,7 @@ button{font:inherit}
 .header-actions{position:relative;z-index:112;display:flex;align-items:center;gap:8px}
 .header-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:0 19px;border-radius:999px;background:linear-gradient(110deg,#800020,#B3263E);color:#fff;font-size:12px;font-weight:600;white-space:nowrap;transition:transform .2s,filter .2s}
 .header-cta:hover{transform:translateY(-2px);filter:brightness(1.08)}
-.menu-button{width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(179,38,62,.55);border-radius:50%;background:rgba(128,0,32,.18);color:var(--text);cursor:pointer}
+.menu-button{display:none;width:44px;height:44px;place-items:center;border:1px solid rgba(179,38,62,.55);border-radius:50%;background:rgba(128,0,32,.18);color:var(--text);cursor:pointer}
 .menu-button span{position:absolute;width:17px;height:1.5px;background:currentColor;transition:transform .25s,top .25s}
 .menu-button span:first-child{top:18px}
 .menu-button span:last-child{top:24px}
