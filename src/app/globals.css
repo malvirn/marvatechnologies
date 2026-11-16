@@ -216,3 +216,55 @@ button{font:inherit}
   .hero-single-content .intro-button{width:auto;min-width:0;min-height:42px;padding-inline:12px;font-size:.74rem;gap:6px}
   .hero-single-content .button-arrow{width:15px;height:15px}
 }
+
+
+/* Final hero framing: preserve the full photo on phones and anchor copy low-left */
+@media(min-width:900px){
+  .intro-hero.hero-single-image{
+    min-height:min(820px,100svh);
+    padding:150px max(28px,calc((100vw - 1200px)/2)) 54px;
+    align-items:flex-end;
+    justify-content:flex-start;
+  }
+  .hero-single-photo{object-fit:cover;object-position:center 34%}
+  .hero-single-content{
+    width:min(62%,680px);
+    max-width:680px;
+    margin:0 0 0 0;
+    align-self:flex-end;
+  }
+  .hero-single-content .intro-title{max-width:680px}
+  .hero-single-content .intro-actions{margin-top:26px}
+}
+@media(max-width:899px){
+  .intro-hero.hero-single-image{
+    min-height:100svh;
+    padding:128px 22px 34px;
+    justify-content:flex-end;
+  }
+  .hero-single-photo{
+    object-fit:contain;
+    object-position:center 42%;
+    background:#08090b;
+  }
+  .hero-single-shade{
+    background:linear-gradient(0deg,rgba(5,7,10,.98) 0%,rgba(5,7,10,.88) 27%,rgba(5,7,10,.25) 68%,rgba(5,7,10,.12) 100%);
+  }
+  .hero-single-content{
+    width:100%;
+    max-width:680px;
+    margin:0;
+  }
+  .hero-single-content .intro-title{font-size:clamp(2.6rem,10vw,4.5rem)}
+  .hero-single-content .intro-copy{max-width:42ch}
+  .hero-single-content .intro-actions{margin-top:20px}
+}
+@media(max-width:599px){
+  .intro-hero.hero-single-image{padding:116px 18px 30px;min-height:100svh}
+  .hero-brand-stamp{top:91px;right:16px;font-size:.5rem;letter-spacing:.055em}
+  .hero-single-photo{object-position:center 38%}
+  .hero-single-content .intro-title{font-size:clamp(2.35rem,9.5vw,3.6rem)}
+  .hero-single-content .intro-actions{display:flex;flex-direction:row;flex-wrap:nowrap;gap:8px}
+  .hero-single-content .intro-button{min-height:42px;padding-inline:12px;font-size:.72rem}
+  .hero-single-content .hero-bottomline{margin-top:20px}
+}
