@@ -14,8 +14,8 @@ export default function Hero() {
           className="hero-photo"
           src="/hero.webp"
           alt="Malvirn Gomo, founder of Marva Technologies"
-          width="1024"
-          height="1536"
+          width="512"
+          height="768"
           fetchPriority="high"
         />
       </div>
@@ -25,8 +25,8 @@ export default function Hero() {
         <h1 className="intro-title">We build digital solutions that matter.</h1>
         <p className="intro-copy">Marva Technologies is a growing software brand founded by Malvirn Gomo. We turn practical ideas into useful digital products.</p>
         <div className="intro-actions">
-          <Link href="/projects" className="intro-button button-accent">Explore our work <ArrowRight className="button-arrow" size={16}/></Link>
-          <Link href="/contact" className="intro-button button-outline">Start a conversation</Link>
+          <Link href="/projects" className="intro-button button-accent">Explore our work <ArrowRight className="button-arrow" size={18}/></Link>
+          <Link href="/contact" className="intro-button button-outline">Start a conversation <ArrowRight className="button-arrow" size={18}/></Link>
         </div>
       </div>
       <div className="hero-bottomline"><span>TECHNOLOGY. INNOVATION. IMPACT.</span><span>FOUNDED BY MALVIRN GOMO</span></div>
