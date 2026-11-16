@@ -15,7 +15,7 @@ export default function Hero() {
       <div className="hero-photo-wrap hero-single-photo-wrap">
         <img
           className="hero-photo hero-single-photo"
-          src="/file_00000000d4988211af3fcf7edbe68a3e%20(1).webp"
+          src="/hero.webp"
           alt="Marva Technologies founder in a modern technology workspace"
           width="1600"
           height="900"
