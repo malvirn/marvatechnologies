@@ -20,7 +20,7 @@ export default function Hero() {
         <div className="hero-bottomline"><span>TECHNOLOGY. INNOVATION. IMPACT.</span><span>FOUNDED BY MALVIRN GOMO</span></div>
       </div>
       <div className="hero-photo-wrap">
-        <img className="hero-photo" src="/hero.webp" alt="Malvirn Gomo, founder of Marva Technologies" width="1600" height="2400" fetchPriority="high" />
+        <img className="hero-photo" src="/hero.webp?v=bb39222" alt="Malvirn Gomo, founder of Marva Technologies" width="512" height="768" fetchPriority="high" />
         <div className="hero-image-overlays">
           <div className="founder-glass"><span className="founder-name">Malvirn Gomo</span><span className="founder-role">Founder, Marva Technologies</span></div>
           <div className="hero-service-chips" aria-label="Marva services"><span>Web Apps</span><span>Automation</span><span>Software</span></div>
