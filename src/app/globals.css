@@ -118,47 +118,6 @@ button{font:inherit}
 .page-hero h1{font:700 clamp(48px,7vw,82px)/1.05 "Sora",Arial,sans-serif;letter-spacing:-.02em;max-width:850px}
 .muted{color:var(--muted)}
 
-@media(max-width:899px){
-  .desktop-nav,.header-cta{display:none}
-  .menu-button{display:grid}
-  .header-inner{padding-left:16px}
-}
-@media(max-width:767px){
-  .shell{width:min(100% - 36px,1200px)}
-  .site-header{top:10px}
-  .brand-lockup{min-width:0;gap:8px}
-  .brand-emblem{width:40px;height:40px}
-  .intro-hero{display:flex;flex-direction:column;align-items:stretch;gap:0;min-height:0;padding:90px 20px 88px}
-  .hero-photo-wrap{order:0;width:100%;height:auto;display:block;margin:0}
-  .hero-photo{width:100%;height:auto;max-height:none;object-fit:contain;mask-image:linear-gradient(to bottom,#000 60%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 60%,transparent 100%);-webkit-mask-composite:source-over;mask-composite:add}
-  .hero-content-wrap{order:1;max-width:100%;margin-top:-18vw;position:relative;z-index:1}
-  .hero-kicker{font-size:.7rem;margin-bottom:18px}
-  .hero-pretitle{font-size:17px}
-  .intro-title{font-size:clamp(1.9rem,7.5vw,3.2rem)}
-  .intro-copy{font-size:.95rem;line-height:1.75;margin-top:16px}
-  .intro-actions{gap:10px;margin-top:22px}
-  .intro-button{min-height:44px;padding:0 20px;font-size:.9rem;width:auto}
-  .hero-bottomline{left:20px;right:20px;bottom:20px;font-size:.7rem}
-  .cards{grid-template-columns:1fr}
-  .project{grid-template-columns:1fr;padding:20px}
-  .section{padding:76px 0}
-  .contact-band{align-items:flex-start;flex-direction:column;padding:26px}
-  .footer{flex-direction:column}
-}
-@media(max-width:479px){
-  .intro-copy{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
-}
-@media(max-width:359px){
-  .intro-actions{flex-direction:column;align-items:flex-start}
-}
-@media(prefers-reduced-motion:reduce){
-  .logo-ring{animation:none!important}
-  .hero-content-wrap,.hero-kicker,.hero-pretitle,.intro-title,.intro-copy,.intro-actions,.hero-bottomline{animation:none!important;opacity:1;transform:none}
-  .typing-cursor{animation:none}
-  .intro-button:hover,.header-cta:hover{transform:none}
-  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}
-}
-
 @media(min-width:900px){
  .site-header{left:50%;right:auto;width:calc(100% - 40px);transform:translateX(-50%)}
  .header-inner{min-height:66px;padding-inline:18px 14px;gap:16px}
