@@ -21,8 +21,11 @@ export default function Hero() {
         fetchPriority="high"
       />
       <div className="hero-single-shade" aria-hidden="true" />
+      <p className="hero-kicker hero-brand-stamp">
+        <span className="hero-kicker-dot" aria-hidden="true" />
+        MARVA TECHNOLOGIES <span className="hero-kicker-divider">/</span> ZIMBABWE
+      </p>
       <div className="hero-content-wrap hero-single-content">
-        <p className="hero-kicker"><span className="hero-kicker-dot" aria-hidden="true" /> MARVA TECHNOLOGIES <span className="hero-kicker-divider">/</span> ZIMBABWE</p>
         <p className="hero-pretitle">A little about us</p>
         <h1 className="intro-title">Ideas into <span className="headline-emphasis">impact.</span></h1>
         <p className="intro-copy hero-type-copy" aria-live="polite">
