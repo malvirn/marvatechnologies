@@ -191,3 +191,28 @@ button{font:inherit}
  .hero-single-content .hero-bottomline{font-size:.52rem;gap:5px 12px}
 }
 @media(prefers-reduced-motion:reduce){.hero-single-content{animation:none;opacity:1;transform:none}}
+
+
+/* Hero composition: brand stamp top-right, introduction in the lower image area */
+.intro-hero.hero-single-image{align-items:flex-end}
+.hero-brand-stamp{
+  position:absolute;z-index:2;top:clamp(92px,11vh,132px);right:max(22px,calc((100vw - 1200px)/2));
+  display:flex;align-items:center;gap:7px;margin:0;color:rgba(255,255,255,.92);
+  font:500 .7rem/1.3 "JetBrains Mono",monospace;letter-spacing:.13em;text-transform:uppercase;
+  white-space:nowrap;text-shadow:0 2px 14px rgba(0,0,0,.55);
+}
+.hero-brand-stamp .hero-kicker-dot{flex:none;margin:0 3px 0 0}
+.hero-single-content{position:relative;z-index:1;width:min(100%,650px);margin:0 0 2.5vh;max-width:650px}
+.hero-single-content .hero-kicker{display:none}
+.hero-single-content .intro-actions{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:12px}
+.hero-single-content .intro-button{width:auto;flex:0 0 auto;white-space:nowrap}
+@media(max-width:899px){
+  .hero-brand-stamp{top:100px;right:22px;font-size:.62rem;letter-spacing:.1em}
+  .hero-single-content{margin-bottom:1vh}
+}
+@media(max-width:599px){
+  .hero-brand-stamp{top:94px;right:18px;font-size:.53rem;letter-spacing:.075em;gap:5px}
+  .hero-single-content .intro-actions{flex-direction:row;align-items:center;flex-wrap:nowrap;gap:8px}
+  .hero-single-content .intro-button{width:auto;min-width:0;min-height:42px;padding-inline:12px;font-size:.74rem;gap:6px}
+  .hero-single-content .button-arrow{width:15px;height:15px}
+}
