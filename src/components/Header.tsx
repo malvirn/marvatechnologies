@@ -61,7 +61,7 @@ export default function Header() {
     <header className={`site-header ${scrolled ? "scrolled" : ""}`}>
       <div className="header-inner">
         <Link href="/" className="brand-lockup" aria-label="Marva Technologies home">
-          <span className="wordmark"><span className="wordmark-main">MARVA</span><span className="wordmark-sub">TECHNOLOGIES</span></span>
+          <span className="brand-emblem" aria-hidden="true"><img src="/marva-emblem.svg" alt="" /></span><span className="wordmark"><span className="wordmark-main">MARVA</span><span className="wordmark-sub">TECHNOLOGIES</span></span>
         </Link>
         <nav className="desktop-nav" aria-label="Main" onMouseLeave={() => setHovered(null)}>
           {links.map(link => <Link key={link.href} href={link.href} aria-current={active === link.href ? "page" : undefined} onMouseEnter={() => setHovered(link.href)} onFocus={() => setHovered(link.href)} onBlur={() => setHovered(null)} className="nav-link">
