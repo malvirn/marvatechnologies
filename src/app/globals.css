@@ -250,3 +250,23 @@ button{font:inherit}
 @media(prefers-reduced-motion:reduce){
   .hero-no-photo .hero-single-content{animation:none!important;opacity:1;transform:none}
 }
+
+
+/* Final hero cleanup: remove the three floating labels/chips */
+.hero-no-photo .hero-brand-desktop,
+.hero-no-photo .hero-image-overlays,
+.hero-no-photo .hero-service-chips,
+.hero-no-photo .founder-glass {
+  display: none !important;
+}
+
+/* Lift the headline slightly higher in the hero composition */
+.hero-no-photo .hero-pretitle { margin-bottom: 6px; }
+.hero-no-photo .intro-title { margin-top: -10px; }
+
+@media (max-width: 899px) {
+  .intro-hero.hero-single-image.hero-no-photo {
+    padding-top: calc(var(--header-height, 112px) + 12px);
+  }
+  .hero-no-photo .intro-title { margin-top: -14px; }
+}
