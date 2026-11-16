@@ -11,32 +11,7 @@ export default function Hero() {
   );
 
   return (
-    <section className="intro-hero hero-single-image" id="home" aria-label="About Marva Technologies">
-      <div className="hero-photo-wrap hero-single-photo-wrap">
-        <img
-          className="hero-photo hero-single-photo"
-          src="/hero.webp"
-          alt="Marva Technologies founder in a modern technology workspace"
-          width="1600"
-          height="900"
-          fetchPriority="high"
-        />
-        <p className="hero-kicker hero-brand-stamp hero-brand-mobile">
-          <span className="hero-kicker-dot" aria-hidden="true" />
-          MARVA TECHNOLOGIES <span className="hero-kicker-divider">/</span> ZIMBABWE
-        </p>
-        <div className="hero-image-overlays">
-          <div className="founder-glass">
-            <span className="founder-name">Malvirn Gomo</span>
-            <span className="founder-role">Founder, Marva Technologies</span>
-          </div>
-          <div className="hero-service-chips">
-            <span>Web Apps</span>
-            <span>Automation</span>
-          </div>
-        </div>
-      </div>
-
+    <section className="intro-hero hero-single-image hero-no-photo" id="home" aria-label="About Marva Technologies">
       <div className="hero-content-wrap hero-single-content">
         <p className="hero-kicker hero-brand-desktop">
           <span className="hero-kicker-dot" aria-hidden="true" />
