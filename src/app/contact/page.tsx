@@ -15,7 +15,7 @@ function XIcon({ size = 20 }: { size?: number }) {
   );
 }
 
-const WHATSAPP = "2637114785880";
+const WHATSAPP = "263711478580";
 const PHONE = "+263787874724";
 const EMAIL = "malvirngomo8@gmail.com";
 
@@ -23,7 +23,7 @@ const channels = [
   {
     key: "whatsapp",
     label: "WhatsApp",
-    value: "+263 711 478 5880",
+    value: "+263 71 147 8580",
     note: "Fastest way to reach us",
     href: `https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hello Marva Technologies, I’d like to talk about a project.")}`,
     icon: <MessageCircle size={20} />,
