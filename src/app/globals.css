@@ -614,3 +614,39 @@ button{font:inherit}
   .bm-m{animation:none!important;stroke-dashoffset:0}
   .bm-node{animation:none!important;opacity:1}
 }
+
+
+/* =====================================================================
+   SELECTED WORK — interchanging dark / light screenshots
+   ===================================================================== */
+.project{grid-template-columns:1.35fr 1fr;gap:clamp(24px,4vw,48px)}
+.work-show{
+  position:relative;aspect-ratio:1672 / 941;overflow:hidden;
+  border:1px solid var(--border);border-radius:14px;background:#0c0d10;
+  box-shadow:0 18px 44px rgba(0,0,0,.45);
+}
+.work-img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transform:scale(1.015);
+  transition:opacity .9s ease,transform 5s ease-out;
+}
+.work-img.is-active{opacity:1;transform:scale(1)}
+.work-bar{
+  position:absolute;left:0;right:0;bottom:0;z-index:2;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;
+  background:linear-gradient(0deg,rgba(6,8,12,.7),rgba(6,8,12,0));
+}
+.work-label{
+  padding:6px 11px;border:1px solid rgba(255,255,255,.2);border-radius:999px;
+  background:rgba(10,10,10,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  color:#F5F5F5;font:500 .62rem/1 "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;
+}
+.work-dots{display:flex;gap:8px}
+.work-dot{
+  width:26px;height:6px;padding:0;border:0;border-radius:999px;cursor:pointer;
+  background:rgba(255,255,255,.35);transition:background .3s,width .3s;
+}
+.work-dot.is-active{width:40px;background:#D97757}
+.work-dot:focus-visible{outline:2px solid #fff;outline-offset:3px}
+@media(max-width:899px){.project{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.work-img{transition:none;transform:none}}
