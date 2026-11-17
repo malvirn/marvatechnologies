@@ -1159,3 +1159,50 @@ button{font:inherit}
 .jn-slide.is-phone figcaption{left:50%;bottom:10px;transform:translateX(-50%);white-space:nowrap}
 @media(max-width:899px){.jn-slide.is-phone{width:min(68%,300px)}}
 @media(max-width:599px){.jn-slide.is-phone{width:min(70%,270px)}}
+
+
+/* Services: animated showcase images (each one has its own motion) */
+.sv-section{padding:76px 0 40px}
+.sv-feature{margin:34px 0 0}
+.sv-grid{display:grid;grid-template-columns:1fr;gap:22px;margin-top:34px}
+.sv-card{position:relative;margin:0;border:1px solid var(--border);border-radius:18px;background:var(--surface);overflow:hidden;transition:transform .35s,border-color .35s,box-shadow .35s}
+.sv-card:hover{transform:translateY(-4px);border-color:rgba(80,170,255,.55);box-shadow:0 22px 60px rgba(20,90,255,.22)}
+.sv-tag{position:absolute;z-index:3;top:12px;left:14px;padding:6px 11px;border-radius:999px;background:rgba(5,10,25,.72);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font:400 .66rem "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:#E8E2D9}
+.sv-frame{position:relative;overflow:hidden;aspect-ratio:16/9;background:#030816}
+.sv-img{display:block;width:100%;height:100%;object-fit:cover;will-change:transform}
+.sv-frame::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2}
+
+/* Custom software: slow cinematic zoom + light sweep */
+.sv-feature .sv-img{animation:sv-zoom 16s ease-in-out infinite alternate}
+.sv-feature .sv-frame::after{background:linear-gradient(115deg,transparent 38%,rgba(150,210,255,.22) 50%,transparent 62%);transform:translateX(-130%);animation:sv-sweep 7s ease-in-out infinite}
+@keyframes sv-zoom{from{transform:scale(1)}to{transform:scale(1.05)}}
+@keyframes sv-sweep{0%,55%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+
+/* Version control: side-to-side drift like flowing commits + pulsing glow */
+.sv-vc .sv-img{transform:scale(1.05);animation:sv-pan 11s ease-in-out infinite alternate}
+.sv-vc .sv-frame::after{background:radial-gradient(60% 45% at 50% 55%,rgba(255,120,40,.2),transparent 70%);animation:sv-pulse 3.6s ease-in-out infinite}
+@keyframes sv-pan{from{transform:scale(1.05) translateX(-1.6%)}to{transform:scale(1.05) translateX(1.6%)}}
+@keyframes sv-pulse{0%,100%{opacity:.15}50%{opacity:1}}
+
+/* Frontend: floating up and down like a hovering interface */
+.sv-fe .sv-img{transform:scale(1.04);animation:sv-float 5s ease-in-out infinite}
+.sv-fe .sv-frame::after{background:radial-gradient(50% 40% at 50% 95%,rgba(60,140,255,.3),transparent 70%);animation:sv-pulse 5s ease-in-out infinite}
+@keyframes sv-float{0%,100%{transform:scale(1.04) translateY(1.4%)}50%{transform:scale(1.04) translateY(-1.4%)}}
+
+/* Backend: server scan line sweeping top to bottom */
+.sv-be .sv-frame::after{top:-30%;bottom:auto;height:30%;background:linear-gradient(to bottom,transparent,rgba(0,230,255,.28),transparent);animation:sv-scan 4.2s linear infinite}
+.sv-be .sv-img{animation:sv-flicker 6s steps(1,end) infinite}
+@keyframes sv-scan{from{transform:translateY(0)}to{transform:translateY(430%)}}
+@keyframes sv-flicker{0%,100%{filter:brightness(1)}46%{filter:brightness(1)}48%{filter:brightness(1.18)}50%{filter:brightness(.96)}52%{filter:brightness(1)}}
+
+/* Database: breathing scale + green/blue glow ring */
+.sv-db .sv-img{animation:sv-breathe 6.5s ease-in-out infinite}
+.sv-db .sv-frame::after{box-shadow:inset 0 0 70px rgba(40,230,140,.0);animation:sv-glow 6.5s ease-in-out infinite}
+@keyframes sv-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes sv-glow{0%,100%{box-shadow:inset 0 0 40px rgba(40,230,140,0)}50%{box-shadow:inset 0 0 90px rgba(40,200,255,.38)}}
+
+/* When a fifth stack image is added, it spans the full row */
+.sv-grid>.sv-card:last-child:nth-child(odd){grid-column:1/-1}
+
+@media(min-width:800px){.sv-grid{grid-template-columns:1fr 1fr;gap:26px}.sv-tag{top:16px;left:18px}}
+@media(prefers-reduced-motion:reduce){.sv-img,.sv-frame::after{animation:none!important}.sv-card{transition:none}}
