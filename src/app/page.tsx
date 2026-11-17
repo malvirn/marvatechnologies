@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Code2, Database, Layers3, Sparkles } from "lucide-react";
+import { ArrowUpRight, Code2, Database, Layers3, Sparkles } from "lucide-react";
 import Hero from "@/components/Hero";
+import Founder from "@/components/Founder";
 
 const services = [
  {icon:Code2,number:"01",title:"Web applications",text:"Modern, responsive web experiences designed around real people and practical business needs."},
@@ -10,6 +11,7 @@ const services = [
 
 export default function Home(){return <main>
 <Hero />
+<Founder />
 <section className="section"><div className="shell"><div className="section-head"><div className="eyebrow">What we focus on</div><h2>Technology with a <span className="gradient">purpose.</span></h2><p className="section-copy">Good software should do more than look impressive. It should make a task easier, a service more accessible or an idea possible.</p></div>
 <div className="cards">{services.map(({icon:Icon,number,title,text})=><article className="card" key={number}><small>{number} / EXPERTISE</small><h3><span className="card-icon"><Icon size={18}/></span>{title}</h3><p>{text}</p></article>)}</div></div></section>
 <section className="section"><div className="shell"><div className="section-head"><div className="eyebrow">Selected work</div><h2>Ideas becoming <span className="gradient">real products.</span></h2><p className="section-copy">A look at practical software projects and experiments from the Marva Technologies journey.</p></div>
