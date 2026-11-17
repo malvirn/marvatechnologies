@@ -305,3 +305,73 @@ button{font:inherit}
     line-height: 1.65;
   }
 }
+
+/* Uploaded portrait as the single full-screen homepage hero background */
+.intro-hero.hero-single-image.hero-has-bg {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: none;
+  min-height: 100svh;
+  margin: 0;
+  padding: 150px max(24px, calc((100vw - 1200px) / 2)) 72px;
+  overflow: hidden;
+  background-color: #08090b;
+  background-image:
+    linear-gradient(90deg, rgba(5,7,10,.82) 0%, rgba(5,7,10,.54) 42%, rgba(5,7,10,.08) 100%),
+    linear-gradient(0deg, rgba(5,7,10,.88) 0%, rgba(5,7,10,.22) 62%, rgba(5,7,10,.16) 100%),
+    url("/hero-background.webp");
+  background-position: center, center, center 34%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.hero-has-bg .hero-single-content {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 650px);
+  max-width: 650px;
+  margin: 0;
+  text-align: left;
+}
+.hero-has-bg .hero-pretitle {
+  color: rgba(255,255,255,.9);
+  font: 500 .76rem/1.5 "JetBrains Mono", monospace;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.hero-has-bg .intro-title {
+  color: #fff;
+  font-size: clamp(3rem, 8vw, 6.4rem);
+  line-height: .98;
+}
+.hero-has-bg .headline-emphasis { color: #D97757; }
+.hero-has-bg .intro-copy {
+  max-width: 46ch;
+  min-height: 3.6em;
+  color: rgba(255,255,255,.94);
+  font-size: clamp(.98rem, 1.5vw, 1.1rem);
+  line-height: 1.75;
+  text-shadow: 0 1px 12px rgba(0,0,0,.4);
+}
+.hero-has-bg .intro-actions,
+.hero-has-bg .hero-bottomline { display: none !important; }
+@media (max-width: 899px) {
+  .intro-hero.hero-single-image.hero-has-bg {
+    min-height: 100svh;
+    padding: 120px 22px 48px;
+    background-image:
+      linear-gradient(0deg, rgba(5,7,10,.94) 0%, rgba(5,7,10,.76) 42%, rgba(5,7,10,.12) 100%),
+      linear-gradient(90deg, rgba(5,7,10,.28), transparent 80%),
+      url("/hero-background.webp");
+    background-position: center, center, 60% center;
+  }
+  .hero-has-bg .hero-single-content { max-width: 100%; }
+  .hero-has-bg .intro-title { font-size: clamp(2.8rem, 11vw, 4.8rem); }
+  .hero-has-bg .intro-copy { max-width: 38ch; font-size: .94rem; line-height: 1.65; }
+}
+@media (max-width: 599px) {
+  .intro-hero.hero-single-image.hero-has-bg { padding: 112px 18px 38px; }
+}
