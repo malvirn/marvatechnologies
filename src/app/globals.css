@@ -1527,3 +1527,10 @@ button.fm-btn{border:0;background:none;padding:0;cursor:pointer}
 .sv-tools{margin-top:26px}
 .ct-open{align-items:center;margin:20px 0 0}
 .ct-open span:first-child{border-color:transparent;padding-left:0;color:var(--text)}
+
+/* About carousel: size the phone by the stage height so it never overflows or hits the controls.
+   The image already contains the phone, so no extra frame or caption on top of it. */
+.jn-slide.is-phone{width:auto;height:calc(100% - 32px);max-width:none;border:0;border-radius:26px;background:#000;box-shadow:0 24px 70px rgba(var(--shade-rgb),.6)}
+.jn-slide.is-phone img{width:100%;height:100%;object-fit:contain;border-radius:0}
+.jn-slide.is-phone figcaption{display:none}
+@media(max-width:899px){.jn-stage{height:clamp(500px,130vw,620px)}}
