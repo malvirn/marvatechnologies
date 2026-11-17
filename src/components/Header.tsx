@@ -4,7 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { House, Layers, Lightbulb, Mail, UserRound, ArrowUpRight } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const links = [
   { label: "Home", href: "/" },
@@ -13,6 +15,14 @@ const links = [
   { label: "Projects", href: "/projects" },
   { label: "Insights", href: "/insights" },
   { label: "Contact", href: "/contact" },
+];
+
+const mobileLinks = [
+  { label: "Home", href: "/", Icon: House },
+  { label: "About", href: "/about", Icon: UserRound },
+  { label: "Services", href: "/services", Icon: Layers },
+  { label: "Insights", href: "/insights", Icon: Lightbulb },
+  { label: "Contact", href: "/contact", Icon: Mail },
 ];
 
 export default function Header() {
@@ -79,13 +89,15 @@ export default function Header() {
           })}
         </nav>
         <div className="header-actions">
+          <ThemeToggle variant="icon" />
           <Link className="header-cta" href="/contact">Start a conversation <span aria-hidden="true">↗</span></Link>
           <button className={`menu-button ${open ? "menu-open" : ""}`} type="button" onClick={() => setOpen(value => !value)} aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} aria-controls="mobile-navigation"><span/><span/></button>
         </div>
       </div>
       <div id="mobile-navigation" className={`mobile-navigation ${open ? "is-open" : ""}`} aria-hidden={!open}>
         <nav className="mobile-links" aria-label="Mobile navigation">
-          {links.map((link, i) => <Link key={link.href} href={link.href} style={{ ["--i" as string]: i }} onClick={() => setOpen(false)} aria-current={active === link.href ? "page" : undefined} className={active === link.href ? "mobile-active" : ""}>{link.label}</Link>)}
+          {mobileLinks.map(({ label, href, Icon }, i) => <Link key={href} href={href} style={{ ["--i" as string]: i }} onClick={() => setOpen(false)} aria-current={active === href ? "page" : undefined} className={active === href ? "mobile-active" : ""}><span className="ml-icon" aria-hidden="true"><Icon size={18} strokeWidth={2} /></span><span className="ml-label">{label}</span><ArrowUpRight className="ml-arrow" size={16} aria-hidden="true" /></Link>)}
+          <div className="mobile-theme" style={{ ["--i" as string]: mobileLinks.length }}><ThemeToggle variant="row" /></div>
         </nav>
         <Link className="mobile-menu-cta" href="/contact" onClick={() => setOpen(false)}>Start a conversation <span aria-hidden="true">↗</span></Link>
       </div>

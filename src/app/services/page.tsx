@@ -15,7 +15,7 @@ export default function Services(){return <main className="shell page-hero">
 <div className="eyebrow">Capabilities</div>
 <h1>Digital services for <span className="gradient">real-world needs.</span></h1>
 <p className="lead">Marva Technologies is developing a focused set of software capabilities. Project scope and delivery are discussed individually.</p>
-<div className="cards">{items.map(([t,d],i)=><article className="card" key={t}><small>0{i+1} / CAPABILITY</small><h3>{t}</h3><p>{d}</p></article>)}</div>
+<div className="cards cap-grid">{items.map(([t,d],i)=><article className={`card cap-card cap-${i+1}`} key={t}><small>0{i+1} / CAPABILITY</small><h3>{t}</h3><p>{d}</p></article>)}</div>
 
 <section className="section sv-section">
 <div className="eyebrow">What we build</div>
