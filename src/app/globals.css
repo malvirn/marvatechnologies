@@ -650,3 +650,135 @@ button{font:inherit}
 .work-dot:focus-visible{outline:2px solid #fff;outline-offset:3px}
 @media(max-width:899px){.project{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.work-img{transition:none;transform:none}}
+
+
+/* =====================================================================
+   CONTACT BAND — "Have an idea?" live animation
+   1) travelling border light + drifting glow + button shine/pulse
+   2) chat that says "let's talk"
+   3) idea -> connected network -> finished product (follows the cursor)
+   4) code that builds itself into the call-to-action
+   ===================================================================== */
+@property --cta-angle{syntax:"<angle>";inherits:false;initial-value:0deg}
+
+.contact-band.cta-live{
+  position:relative;isolation:isolate;overflow:hidden;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:center;
+  gap:clamp(24px,4vw,56px);padding:clamp(26px,4.2vw,56px);
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012)),#101114;
+}
+.cta-live h2{margin:12px 0;font:700 clamp(30px,4vw,48px)/1.08 "Sora",Arial,sans-serif;letter-spacing:-.025em}
+.cta-live .section-copy{max-width:40ch}
+.cta-copy{position:relative;z-index:2}
+.cta-copy .btn{margin-top:26px}
+
+/* 1) travelling border light */
+.cta-live::before{
+  content:"";position:absolute;inset:0;z-index:3;border-radius:inherit;padding:1.5px;pointer-events:none;
+  background:conic-gradient(from var(--cta-angle),transparent 0 62%,rgba(217,119,87,.0) 62%,rgba(217,119,87,.9) 88%,#ffe3d6 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  animation:cta-rotate 6s linear infinite;
+}
+@keyframes cta-rotate{to{--cta-angle:360deg}}
+/* drifting glow */
+.cta-orb{position:absolute;z-index:-1;border-radius:50%;filter:blur(60px);pointer-events:none}
+.cta-orb-a{width:340px;height:340px;right:-80px;top:-120px;background:rgba(217,119,87,.28);animation:orb-a 11s ease-in-out infinite alternate}
+.cta-orb-b{width:300px;height:300px;left:-90px;bottom:-140px;background:rgba(80,120,255,.22);animation:orb-b 13s ease-in-out infinite alternate}
+@keyframes orb-a{to{transform:translate(-90px,70px) scale(1.15)}}
+@keyframes orb-b{to{transform:translate(110px,-60px) scale(1.2)}}
+/* button shine + soft pulse */
+.cta-btn{position:relative;overflow:hidden;animation:cta-pulse 3.6s ease-out infinite}
+.cta-btn::after{
+  content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;transform:skewX(-20deg);
+  background:linear-gradient(90deg,transparent,rgba(217,119,87,.45),transparent);animation:cta-shine 4s ease-in-out infinite;
+}
+@keyframes cta-shine{0%,55%{left:-60%}100%{left:130%}}
+@keyframes cta-pulse{0%{box-shadow:0 0 0 0 rgba(217,119,87,.5)}70%,100%{box-shadow:0 0 0 16px rgba(217,119,87,0)}}
+
+/* stage */
+.cta-stage{
+  --mx:0;--my:0;position:relative;z-index:2;aspect-ratio:16 / 11;min-height:240px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.14);border-radius:16px;
+  background:radial-gradient(ellipse at 20% 0%,rgba(217,119,87,.14),transparent 60%),radial-gradient(ellipse at 100% 100%,rgba(96,140,255,.12),transparent 60%),rgba(8,9,11,.72);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+}
+.scene{position:absolute;inset:0;animation:scene-in .6s ease both}
+@keyframes scene-in{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:none}}
+.stage-dots{position:absolute;left:0;right:0;bottom:12px;z-index:4;display:flex;justify-content:center;gap:7px}
+.stage-dots button{width:18px;height:5px;padding:0;border:0;border-radius:999px;background:rgba(255,255,255,.25);cursor:pointer;transition:width .3s,background .3s}
+.stage-dots button.is-active{width:34px;background:#D97757}
+
+/* typing helper: final state is the default, animation reveals it */
+.typed{display:block;overflow:hidden;white-space:nowrap;width:calc(var(--n) * 1ch);font-family:"JetBrains Mono",monospace;animation:type-in calc(var(--n) * .045s) steps(var(--n)) var(--d,0s) backwards}
+@keyframes type-in{from{width:0}}
+
+/* 2) chat */
+.scene-chat{display:flex;flex-direction:column;justify-content:center;gap:14px;padding:22px clamp(16px,4%,32px) 34px}
+.bubble{position:relative;display:inline-grid;max-width:100%;padding:12px 16px;border-radius:18px;animation:bubble-in .4s var(--d0,0s) backwards}
+@keyframes bubble-in{from{opacity:0;transform:translateY(10px) scale(.96)}}
+.bubble>*{grid-area:1 / 1}
+.bubble-in{align-self:flex-start;border-bottom-left-radius:5px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);color:#F5F5F5}
+.bubble-out{align-self:flex-end;border-bottom-right-radius:5px;background:linear-gradient(135deg,#E58A67,#D97757);color:#1b0f0a;font-weight:500}
+.b-text{font-size:clamp(.72rem,1.55vw,.86rem)}
+.b-dots{display:flex;align-items:center;gap:5px;opacity:0;animation:dots-life 1.1s var(--d,0s) both}
+.b-dots i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7;animation:dot-bounce .6s ease-in-out infinite}
+.b-dots i:nth-child(2){animation-delay:.12s}.b-dots i:nth-child(3){animation-delay:.24s}
+@keyframes dots-life{0%{opacity:0}12%,88%{opacity:1}100%{opacity:0}}
+@keyframes dot-bounce{50%{transform:translateY(-4px)}}
+.chat-cta{
+  align-self:center;display:inline-flex;align-items:center;gap:7px;margin-top:4px;padding:10px 18px;border-radius:999px;
+  background:#F5F5F5;color:#0A0A0A;font:600 .78rem/1 "Inter",Arial,sans-serif;
+  animation:chat-cta-in .5s 5.2s backwards,cta-pulse 2.2s 5.7s ease-out infinite;
+}
+@keyframes chat-cta-in{from{opacity:0;transform:translateY(8px) scale(.9)}}
+
+/* 3) idea -> product */
+.net{position:absolute;inset:0;width:100%;height:100%;padding:8px}
+.net-parallax{transform:translate(calc(var(--mx) * -7px),calc(var(--my) * -5px));transition:transform .25s ease-out}
+.net .ln{stroke:rgba(255,255,255,.38);stroke-width:1.2;stroke-linecap:round;stroke-dasharray:1;animation:draw .7s ease var(--d) backwards}
+.net .ln-2{stroke:rgba(217,119,87,.7)}
+@keyframes draw{from{stroke-dashoffset:1}}
+.net .nd{fill:#9db4ff;transform-box:fill-box;transform-origin:center;animation:pop .45s cubic-bezier(.3,1.6,.5,1) var(--d) backwards}
+@keyframes pop{from{transform:scale(0);opacity:0}}
+.idea{transform:translate(calc(var(--mx) * 11px),calc(var(--my) * 9px));transition:transform .2s ease-out}
+.idea-dot{fill:#FFE3D4;filter:drop-shadow(0 0 7px rgba(255,160,120,.95));animation:pop .5s .1s cubic-bezier(.3,1.6,.5,1) backwards}
+.idea-ring{fill:none;stroke:rgba(217,119,87,.8);stroke-width:1.4;transform-box:fill-box;transform-origin:center;opacity:0;animation:ring 2.2s ease-out infinite}
+.idea-ring.r2{animation-delay:1.1s}
+@keyframes ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(3.8);opacity:0}}
+.dash{transform-box:fill-box;transform-origin:center;animation:pop .6s cubic-bezier(.3,1.4,.5,1) var(--d) backwards}
+.dash-card{fill:rgba(255,255,255,.06);stroke:rgba(255,255,255,.4);stroke-width:1.2}
+.bar{transform-box:fill-box;transform-origin:50% 100%;animation:grow .55s cubic-bezier(.3,1.3,.5,1) var(--d) backwards}
+@keyframes grow{from{transform:scaleY(0)}}
+.tick{fill:none;stroke-dasharray:1;animation:draw .5s ease var(--d) backwards}
+.net-tag,.net-tag-r{position:absolute;bottom:26px;left:8%;color:rgba(255,255,255,.6);font:500 .6rem/1 "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase}
+.net-tag-r{left:auto;right:9%;color:#7CE3A6}
+
+/* 4) code */
+.scene-code{display:grid;place-items:center;padding:20px clamp(14px,4%,28px) 32px}
+.code-win{width:100%;max-width:420px;border:1px solid rgba(255,255,255,.16);border-radius:12px;overflow:hidden;background:rgba(5,6,9,.85)}
+.code-bar{display:flex;align-items:center;gap:6px;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04)}
+.code-bar i{width:9px;height:9px;border-radius:50%;background:#ff5f57}.code-bar i:nth-child(2){background:#febc2e}.code-bar i:nth-child(3){background:#28c840}
+.code-bar span{margin-left:8px;color:var(--muted);font:400 .62rem/1 "JetBrains Mono",monospace}
+.code-body{position:relative;padding:16px 16px 18px;min-height:132px}
+.code-lines{opacity:.3;animation:code-dim .6s 4.1s backwards}
+@keyframes code-dim{from{opacity:1}}
+.code-lines p{margin:0 0 8px;color:#e8e2d9;font-size:clamp(.66rem,1.5vw,.8rem);line-height:1.5}
+.code-lines b{font-weight:400}.k{color:#7aa2ff}.s{color:#F2A88B}.f{color:#9de3b5}.c{color:#7d8590}
+.code-cta{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:7px;
+  padding:12px 22px;border-radius:999px;background:#F5F5F5;color:#0A0A0A;font:600 .82rem/1 "Inter",Arial,sans-serif;white-space:nowrap;
+  box-shadow:0 0 0 0 rgba(217,119,87,.5);animation:code-cta-in .55s 4.2s cubic-bezier(.3,1.4,.5,1) backwards,cta-pulse 2.2s 4.8s ease-out infinite;
+}
+@keyframes code-cta-in{from{opacity:0;transform:translate(-50%,-50%) scale(.6)}}
+
+@media(max-width:899px){
+  .contact-band.cta-live{grid-template-columns:1fr}
+  .cta-stage{min-height:230px}
+}
+@media(prefers-reduced-motion:reduce){
+  .cta-live::before,.cta-orb,.cta-btn,.cta-btn::after,.scene,.bubble,.b-dots i,.chat-cta,.idea-ring,.code-cta{animation:none!important}
+  .typed,.ln,.nd,.dash,.bar,.tick,.idea-dot,.code-lines{animation:none!important}
+  .b-dots{display:none}
+  .net-parallax,.idea{transition:none;transform:none}
+}
