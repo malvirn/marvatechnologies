@@ -1151,3 +1151,11 @@ button{font:inherit}
   .jn-slide.is-portrait{width:min(88%,360px)}
   .jn-slide.is-landscape{width:100%}
 }
+
+
+/* Centric Auto Mobile: dedicated portrait iPhone presentation */
+.jn-slide.is-phone{width:min(66%,340px);aspect-ratio:9/19;border-radius:30px;background:#050505;border:5px solid #252525;box-shadow:0 28px 80px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,255,255,.14)}
+.jn-slide.is-phone img{width:100%;height:100%;object-fit:cover;object-position:center;border-radius:23px}
+.jn-slide.is-phone figcaption{left:50%;bottom:10px;transform:translateX(-50%);white-space:nowrap}
+@media(max-width:899px){.jn-slide.is-phone{width:min(68%,300px)}}
+@media(max-width:599px){.jn-slide.is-phone{width:min(70%,270px)}}
