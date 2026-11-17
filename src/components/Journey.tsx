@@ -50,7 +50,7 @@ const PROJECTS: Project[] = [
     image: "/projects/maternityhelp-samsung.webp",
     ratio: 1122 / 1402,
     imageAlt: "MaternityHelp dashboard shown on a Samsung Galaxy S26 Ultra",
-    device: "Samsung S26 Ultra",
+    device: "MaternityHelp",
     accent: "#f472b6",
   },
   {
@@ -72,7 +72,7 @@ const PROJECTS: Project[] = [
     image: "/projects/centric-iphone6.webp",
     ratio: 1672 / 941,
     imageAlt: "Centric Auto Mobile cashbook shown on an iPhone 6",
-    device: "iPhone 6",
+    device: "Centric Auto Mobile",
     accent: "#D97757",
   },
 ];
@@ -364,7 +364,7 @@ export default function Journey() {
                       <img src={p.image} alt={p.imageAlt} draggable={false} loading={i === 0 ? "eager" : "lazy"} decoding="async" />
                       {isActive && (
                         <span className="jn-hint" aria-hidden>
-                          Tap to view details
+                          Tap to enlarge
                         </span>
                       )}
                       <figcaption>{p.device}</figcaption>
@@ -372,10 +372,6 @@ export default function Journey() {
                   );
                 })}
               </motion.div>
-
-              <button type="button" className="jn-expand" onClick={() => setView(true)} aria-label={`View ${current.title} screenshot full size`}>
-                Expand ⤢
-              </button>
 
               <div className="jn-controls">
                 <button type="button" onClick={() => go(active - 1)} disabled={active === 0} aria-label="Previous project">
