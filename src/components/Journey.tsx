@@ -70,7 +70,7 @@ const PROJECTS: Project[] = [
     stack: ["Workshop", "Inventory", "Accounting"],
     href: "",
     image: "/projects/centric-iphone6.webp",
-    ratio: 1672 / 941,
+    ratio: 9 / 19,
     imageAlt: "Centric Auto Mobile cashbook shown on an iPhone 6",
     device: "Centric Auto Mobile",
     accent: "#D97757",
@@ -347,7 +347,7 @@ export default function Journey() {
                   return (
                     <motion.figure
                       key={p.id}
-                      className={`jn-slide ${p.ratio > 1 ? "is-landscape" : "is-portrait"}`}
+                      className={`jn-slide ${p.id === "centric" ? "is-phone" : p.ratio > 1 ? "is-landscape" : "is-portrait"}`}
                       style={{ zIndex: 10 - Math.abs(o), aspectRatio: p.ratio }}
                       initial={false}
                       animate={{
