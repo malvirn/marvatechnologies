@@ -306,7 +306,7 @@ button{font:inherit}
   }
 }
 
-/* Uploaded portrait hero: show more of the original photo and keep copy clear of the face */
+/* Portrait hero: fit the image, keep copy in the left column, and protect the face */
 .intro-hero.hero-single-image.hero-has-bg {
   position: relative;
   isolation: isolate;
@@ -317,21 +317,21 @@ button{font:inherit}
   max-width: none;
   min-height: 100svh;
   margin: 0;
-  padding: 150px max(24px, calc((100vw - 1200px) / 2)) 64px;
+  padding: 150px max(24px, calc((100vw - 1200px) / 2)) 72px;
   overflow: hidden;
   background-color: #08090b;
   background-image:
-    linear-gradient(90deg, rgba(5,7,10,.46) 0%, rgba(5,7,10,.18) 48%, rgba(5,7,10,.02) 100%),
-    linear-gradient(0deg, rgba(5,7,10,.88) 0%, rgba(5,7,10,.48) 30%, rgba(5,7,10,0) 68%),
+    linear-gradient(90deg, rgba(5,7,10,.76) 0%, rgba(5,7,10,.48) 36%, rgba(5,7,10,.04) 72%),
+    linear-gradient(0deg, rgba(5,7,10,.88) 0%, rgba(5,7,10,.28) 38%, rgba(5,7,10,0) 72%),
     url("/hero-background.webp");
   background-position: center, center, center top;
-  background-size: cover, cover, auto 92%;
+  background-size: cover, cover, contain;
   background-repeat: no-repeat;
 }
 .hero-has-bg .hero-single-content {
   position: relative;
   z-index: 1;
-  width: min(100%, 560px);
+  width: min(48%, 560px);
   max-width: 560px;
   margin: 0;
   text-align: left;
@@ -341,7 +341,7 @@ button{font:inherit}
   font: 500 .72rem/1.5 "JetBrains Mono", monospace;
   letter-spacing: .13em;
   text-transform: uppercase;
-  text-shadow: 0 2px 10px rgba(0,0,0,.65);
+  text-shadow: 0 2px 10px rgba(0,0,0,.75);
 }
 .hero-has-bg .intro-title {
   max-width: 560px;
@@ -349,53 +349,63 @@ button{font:inherit}
   color: #fff;
   font-size: clamp(2.8rem, 6vw, 5.2rem);
   line-height: .98;
-  text-shadow: 0 2px 16px rgba(0,0,0,.45);
+  text-shadow: 0 2px 16px rgba(0,0,0,.55);
 }
 .hero-has-bg .headline-emphasis { color: #D97757; }
 .hero-has-bg .intro-copy {
   max-width: 42ch;
-  min-height: 3.2em;
-  margin-top: 12px;
+  min-height: 4.8em;
+  margin-top: 14px;
   color: rgba(255,255,255,.97);
   font-size: clamp(.92rem, 1.3vw, 1.04rem);
-  line-height: 1.6;
-  text-shadow: 0 2px 12px rgba(0,0,0,.8);
+  line-height: 1.65;
+  text-shadow: 0 2px 12px rgba(0,0,0,.85);
 }
 .hero-has-bg .intro-actions,
 .hero-has-bg .hero-bottomline { display: none !important; }
 
+/* The header is solid before scrolling; it gains the image/glass effect after scroll. */
+.site-header { background: rgba(8,9,11,.96); }
+.site-header.scrolled {
+  background: rgba(8,9,11,.56);
+  border-color: rgba(255,255,255,.22);
+  box-shadow: 0 8px 30px rgba(0,0,0,.3);
+}
+
 @media (max-width: 899px) {
   .intro-hero.hero-single-image.hero-has-bg {
     min-height: 100svh;
-    padding: 0 22px 42px;
+    padding: 0 20px 52px;
     align-items: flex-end;
     background-image:
-      linear-gradient(90deg, rgba(5,7,10,.18), rgba(5,7,10,0) 72%),
-      linear-gradient(0deg, rgba(5,7,10,.94) 0%, rgba(5,7,10,.70) 25%, rgba(5,7,10,.12) 55%, rgba(5,7,10,0) 78%),
+      linear-gradient(90deg, rgba(5,7,10,.54) 0%, rgba(5,7,10,.24) 48%, rgba(5,7,10,0) 85%),
+      linear-gradient(0deg, rgba(5,7,10,.96) 0%, rgba(5,7,10,.70) 27%, rgba(5,7,10,.08) 56%, rgba(5,7,10,0) 76%),
       url("/hero-background.webp");
     background-position: center, center, center top;
-    background-size: cover, cover, auto 88%;
+    background-size: cover, cover, 100% auto;
   }
   .hero-has-bg .hero-single-content {
-    width: min(100%, 440px);
-    max-width: 72%;
-    margin-bottom: 0;
+    width: 54%;
+    max-width: 390px;
+    margin: 0 auto 0 0;
+    text-align: left;
   }
   .hero-has-bg .intro-title {
-    font-size: clamp(2.35rem, 9vw, 3.5rem);
+    max-width: 100%;
+    font-size: clamp(2.15rem, 8vw, 3.35rem);
     line-height: .98;
   }
   .hero-has-bg .intro-copy {
     max-width: 34ch;
-    min-height: 3.2em;
-    font-size: .88rem;
+    min-height: 5.2em;
+    font-size: .86rem;
     line-height: 1.55;
   }
 }
 @media (max-width: 599px) {
-  .intro-hero.hero-single-image.hero-has-bg { padding: 0 18px 34px; }
-  .hero-has-bg .hero-single-content { max-width: 76%; }
-  .hero-has-bg .hero-pretitle { font-size: .65rem; }
-  .hero-has-bg .intro-title { font-size: clamp(2.15rem, 8.8vw, 3.05rem); }
-  .hero-has-bg .intro-copy { font-size: .84rem; }
+  .intro-hero.hero-single-image.hero-has-bg { padding: 0 18px 42px; }
+  .hero-has-bg .hero-single-content { width: 56%; max-width: 250px; }
+  .hero-has-bg .hero-pretitle { font-size: .61rem; letter-spacing: .1em; }
+  .hero-has-bg .intro-title { font-size: clamp(2rem, 8.2vw, 2.75rem); }
+  .hero-has-bg .intro-copy { font-size: .8rem; line-height: 1.5; }
 }
