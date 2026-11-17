@@ -805,12 +805,11 @@ button{font:inherit}
 
 /* stage: monochrome images + cursor lens */
 .tech-stage-wrap{perspective:1400px}
-.tech-stage{position:relative;aspect-ratio:1672/941;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.16);background:#050505;cursor:none;touch-action:pan-y;user-select:none;transform-style:preserve-3d;box-shadow:0 30px 80px rgba(0,0,0,.7);animation:tech-float 7s ease-in-out infinite}
-@media(hover:none){.tech-stage{cursor:pointer}}
+.tech-stage{position:relative;aspect-ratio:1672/941;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.16);background:#050505;touch-action:pan-y;user-select:none;transform-style:preserve-3d;box-shadow:0 30px 80px rgba(0,0,0,.7);animation:tech-float 7s ease-in-out infinite}
 @keyframes tech-float{50%{translate:0 -6px}}
 .tech-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;filter:grayscale(1)}
-.tech-img-base{filter:grayscale(1) brightness(.5) contrast(1.15)}
-.tech-img-top{filter:grayscale(1) contrast(1.12) brightness(1.05)}
+.tech-img{filter:grayscale(1) contrast(1.1)}
+.tech-img-in{will-change:clip-path,transform,opacity}
 .tech-lens{position:absolute;translate:-50% -50%;border-radius:50%;border:1px solid rgba(255,255,255,.55);pointer-events:none;box-shadow:0 0 0 1px rgba(0,0,0,.4),inset 0 0 40px rgba(255,255,255,.08);mix-blend-mode:screen}
 .tech-lens::before,.tech-lens::after{content:"";position:absolute;background:rgba(255,255,255,.55);left:50%;top:50%}
 .tech-lens::before{width:14px;height:1px;translate:-50% -50%}
@@ -926,3 +925,10 @@ button{font:inherit}
   .stage-progress span,.stage-wipe,.stage-ripple,.stage-hint,.dev-img,.dev-line,.dev-tag-b,.launch .star,.launch .orbit,.launch .rocket,.launch .flame,.live-badge,.live-badge i,.launch-cta{animation:none!important}
   .dev-img-top{clip-path:none}.launch .orbit{stroke-dashoffset:0}.launch .rocket{offset-distance:100%}.stage-wipe{display:none}
 }
+
+/* auto-transition progress */
+.tech-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.1);z-index:3}
+.tech-progress span{display:block;height:100%;width:100%;transform-origin:left;background:#fff;animation:tp-fill linear forwards}
+.tech-progress span.is-moving{background:rgba(255,255,255,.55)}
+@keyframes tp-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.tech-progress span{animation:none}}

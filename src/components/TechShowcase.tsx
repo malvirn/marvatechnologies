@@ -5,8 +5,6 @@ import {
   animate,
   motion,
   useInView,
-  useMotionTemplate,
-  useMotionValue,
   useScroll,
   useSpring,
   useTransform,
@@ -94,62 +92,60 @@ function StatCard({ s, i }: { s: Stat; i: number }) {
   );
 }
 
+const SRC = ["/tech-blueprint.webp", "/tech-render.webp"];
+const ALT = [
+  "Blueprint wireframe of a dashboard on a laptop and a phone",
+  "The finished dashboard shown on a laptop and a phone",
+];
+const NAMES = ["Blueprint", "Product"];
+const EASE = [0.65, 0, 0.35, 1] as const;
+const HOLD_MS = 2600;
+const MOVE_S = 1.3;
+
+// PowerPoint-style transitions: how the incoming picture arrives
+type Tr = { name: string; from: Record<string, string | number>; to: Record<string, string | number>; push?: boolean };
+const TRANSITIONS: Tr[] = [
+  { name: "Fade", from: { opacity: 0 }, to: { opacity: 1 } },
+  { name: "Wipe", from: { clipPath: "inset(0 100% 0 0)" }, to: { clipPath: "inset(0 0% 0 0)" } },
+  { name: "Split", from: { clipPath: "inset(0 50% 0 50%)" }, to: { clipPath: "inset(0 0% 0 0%)" } },
+  { name: "Push", from: { x: "100%" }, to: { x: "0%" }, push: true },
+  { name: "Iris", from: { clipPath: "circle(0% at 50% 50%)" }, to: { clipPath: "circle(75% at 50% 50%)" } },
+  { name: "Zoom", from: { opacity: 0, scale: 1.45 }, to: { opacity: 1, scale: 1 } },
+  { name: "Diamond", from: { clipPath: "polygon(50% 50%,50% 50%,50% 50%,50% 50%)" }, to: { clipPath: "polygon(50% -50%,150% 50%,50% 150%,-50% 50%)" } },
+  { name: "Cover", from: { y: "100%" }, to: { y: "0%" } },
+];
+
 export default function TechShowcase() {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const hovering = useRef(false);
-  const [expanded, setExpanded] = useState(false);
+  const [step, setStep] = useState(0);
+  const [moving, setMoving] = useState(false);
+  const [reduced, setReduced] = useState(false);
 
-  // flashlight lens: position (%) and radius (px), all spring-smoothed
-  const tx = useMotionValue(50);
-  const ty = useMotionValue(50);
-  const tr = useMotionValue(150);
-  const x = useSpring(tx, { stiffness: 70, damping: 16 });
-  const y = useSpring(ty, { stiffness: 70, damping: 16 });
-  const r = useSpring(tr, { stiffness: 80, damping: 16 });
-  const mask = useMotionTemplate`radial-gradient(circle ${r}px at ${x}% ${y}%, #000 0, #000 72%, transparent 100%)`;
-  const ringLeft = useMotionTemplate`${x}%`;
-  const ringTop = useMotionTemplate`${y}%`;
-  const ringSize = useTransform(r, v => Math.max(0, v * 1.44));
-
-  // wander on its own until the visitor takes over
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let raf = 0;
-    const t0 = performance.now();
-    const tick = (now: number) => {
-      if (!hovering.current && !expanded) {
-        const t = (now - t0) / 1000;
-        tx.set(50 + 30 * Math.sin(t * 0.55));
-        ty.set(50 + 24 * Math.sin(t * 0.9 + 1.2));
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [tx, ty, expanded]);
+  const base = step % 2;
+  const incoming = (step + 1) % 2;
+  const tr = TRANSITIONS[step % TRANSITIONS.length];
 
   useEffect(() => {
-    tr.set(expanded ? 2400 : hovering.current ? 230 : 150);
-  }, [expanded, tr]);
+    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+
+  // fully automatic: hold, play the next transition, hold...
+  useEffect(() => {
+    if (reduced || moving) return;
+    const t = setTimeout(() => setMoving(true), HOLD_MS);
+    return () => clearTimeout(t);
+  }, [moving, step, reduced]);
 
   // tilt
   const tiltX = useSpring(0, { stiffness: 120, damping: 16 });
   const tiltY = useSpring(0, { stiffness: 120, damping: 16 });
   const onMove = (e: React.PointerEvent) => {
     const el = stageRef.current;
-    if (!el) return;
+    if (!el || e.pointerType !== "mouse") return;
     const rect = el.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width;
-    const py = (e.clientY - rect.top) / rect.height;
-    if (!expanded) {
-      tx.set(px * 100);
-      ty.set(py * 100);
-    }
-    if (e.pointerType === "mouse") {
-      tiltY.set((px - 0.5) * 6);
-      tiltX.set(-(py - 0.5) * 6);
-    }
+    tiltY.set(((e.clientX - rect.left) / rect.width - 0.5) * 6);
+    tiltX.set(-((e.clientY - rect.top) / rect.height - 0.5) * 6);
   };
 
   // scroll
@@ -197,32 +193,59 @@ export default function TechShowcase() {
             ref={stageRef}
             className="tech-stage"
             style={{ rotateX: tiltX, rotateY: tiltY }}
-            onPointerEnter={() => {
-              hovering.current = true;
-              if (!expanded) tr.set(230);
-            }}
             onPointerMove={onMove}
             onPointerLeave={() => {
-              hovering.current = false;
               tiltX.set(0);
               tiltY.set(0);
-              if (!expanded) tr.set(150);
             }}
-            onClick={() => setExpanded(v => !v)}
           >
-            <img className="tech-img tech-img-base" src="/tech-blueprint.webp" width={1672} height={941} alt="Blueprint wireframe of a dashboard on a laptop and a phone" loading="lazy" decoding="async" draggable={false} />
-            <motion.img className="tech-img tech-img-top" style={{ maskImage: mask, WebkitMaskImage: mask }} src="/tech-render.webp" width={1672} height={941} alt="The finished dashboard shown on a laptop and a phone" loading="lazy" decoding="async" draggable={false} />
+            {/* picture on screen now (pushed out by the next one during a Push) */}
+            <motion.img
+              className="tech-img"
+              src={SRC[base]}
+              alt={ALT[base]}
+              width={1672}
+              height={941}
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              animate={{ x: moving && tr.push ? "-100%" : "0%" }}
+              transition={moving && tr.push ? { duration: MOVE_S, ease: EASE } : { duration: 0 }}
+            />
 
-            <motion.span className="tech-lens" style={{ left: ringLeft, top: ringTop, width: ringSize, height: ringSize }} aria-hidden />
+            {/* picture arriving with the current transition */}
+            {moving && (
+              <motion.img
+                key={step}
+                className="tech-img tech-img-in"
+                src={SRC[incoming]}
+                alt=""
+                aria-hidden="true"
+                width={1672}
+                height={941}
+                decoding="async"
+                draggable={false}
+                initial={tr.from}
+                animate={tr.to}
+                transition={{ duration: MOVE_S, ease: EASE }}
+                onAnimationComplete={() => {
+                  setStep(n => n + 1);
+                  setMoving(false);
+                }}
+              />
+            )}
 
             <i className="tech-corner tc-tl" aria-hidden />
             <i className="tech-corner tc-tr" aria-hidden />
             <i className="tech-corner tc-bl" aria-hidden />
             <i className="tech-corner tc-br" aria-hidden />
 
-            <span className="tech-tag tech-tag-l">Blueprint</span>
-            <span className="tech-tag tech-tag-r">{expanded ? "Product" : "Lens"}</span>
-            <span className="tech-hint">{expanded ? "Click to shrink" : "Move to explore · Click to expand"}</span>
+            <span className="tech-tag tech-tag-l">0{base + 1} · {NAMES[base]}</span>
+            <span className="tech-tag tech-tag-r">Transition · {tr.name}</span>
+
+            <div className="tech-progress" aria-hidden>
+              <span key={`${step}-${moving}`} className={moving ? "is-moving" : "is-holding"} style={{ animationDuration: moving ? `${MOVE_S}s` : `${HOLD_MS}ms` }} />
+            </div>
           </motion.div>
         </motion.div>
 
