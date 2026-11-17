@@ -9,7 +9,7 @@ export default function Hero() {
   );
 
   return (
-    <section className="intro-hero hero-single-image hero-no-photo" id="home" aria-label="About Marva Technologies">
+    <section className="intro-hero hero-single-image hero-has-bg" id="home" aria-label="About Marva Technologies">
       <div className="hero-content-wrap hero-single-content">
         <p className="hero-pretitle">A little about us</p>
         <h1 className="intro-title">Ideas into <span className="headline-emphasis">impact.</span></h1>
