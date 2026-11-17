@@ -14,11 +14,11 @@ const stacks=[
 export default function Services(){return <main className="shell page-hero">
 <div className="eyebrow">Capabilities</div>
 <h1>Digital services for <span className="gradient">real-world needs.</span></h1>
-<p className="lead">Marva Technologies is developing a focused set of software capabilities. Project scope and delivery are discussed individually.</p>
+<p className="lead">I’m developing a focused set of software capabilities. Project scope and delivery are discussed individually.</p>
 <div className="cards cap-grid">{items.map(([t,d],i)=><article className={`card cap-card cap-${i+1}`} key={t}><small>0{i+1} / CAPABILITY</small><h3>{t}</h3><p>{d}</p></article>)}</div>
 
 <section className="section sv-section">
-<div className="eyebrow">What we build</div>
+<div className="eyebrow">What I build</div>
 <h2>Software made to <span className="gradient">fit your business.</span></h2>
 <figure className="sv-card sv-feature">
 <div className="sv-frame"><Image className="sv-img" src="/services/custom-software.webp" alt="Custom Business Software: tailor-made tools that organise your workflows, records and daily operations" width={1400} height={788} sizes="(max-width:1200px) 100vw, 1200px" priority/></div>
@@ -26,12 +26,13 @@ export default function Services(){return <main className="shell page-hero">
 </section>
 
 <section className="section sv-section">
-<div className="eyebrow">Our stack</div>
+<div className="eyebrow">My stack</div>
 <h2>The tools behind <span className="gradient">every build.</span></h2>
 <div className="sv-grid">{stacks.map((s,i)=><figure className={`sv-card sv-${s.id}`} key={s.id}>
 <figcaption className="sv-tag">0{i+1} / {s.label}</figcaption>
 <div className="sv-frame"><Image className="sv-img" src={s.src} alt={s.alt} width={1400} height={788} sizes="(max-width:800px) 100vw, 590px" loading="lazy"/></div>
 </figure>)}</div>
+<div className="chips sv-tools" aria-label="Tools I work with">{["React","Next.js","Node.js","TypeScript","PostgreSQL","Supabase","Tailwind CSS"].map(t=><span key={t}>{t}</span>)}</div>
 </section>
 
 <section className="section"><h2>Have a challenge to solve?</h2><Link className="btn primary" href="/contact">Discuss your project ↗</Link></section>

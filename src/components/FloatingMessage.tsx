@@ -13,7 +13,7 @@ const TOPICS = ["Project idea", "Website", "Mobile app", "Just saying hi"];
 const PLACEHOLDER: Record<Step, string> = {
   topic: "Or type your own topic…",
   name: "Your name",
-  message: "Tell us what you need…",
+  message: "Tell me what you need…",
   done: "Ready to send"
 };
 
@@ -64,7 +64,7 @@ export default function FloatingMessage() {
     });
   }, []);
 
-  const greet = useCallback(() => say(["Hi 👋 Welcome to Marva Technologies.", "What can we help you with?"]), [say]);
+  const greet = useCallback(() => say(["Hi 👋 Welcome to Marva Technologies.", "What can I help you with?"]), [say]);
 
   // First open: start the conversation
   useEffect(() => {
@@ -108,11 +108,11 @@ export default function FloatingMessage() {
     } else if (step === "name") {
       setName(text);
       setStep("message");
-      say([`Nice to meet you, ${text}.`, "Tell us a little about what you need."]);
+      say([`Nice to meet you, ${text}.`, "Tell me a little about what you need."]);
     } else if (step === "message") {
       setDetails(text);
       setStep("done");
-      say(["All set. Tap the button below to send this on WhatsApp and we’ll reply there."]);
+      say(["All set. Tap the button below to send this on WhatsApp and I’ll reply there."]);
     }
   };
 
@@ -144,7 +144,7 @@ export default function FloatingMessage() {
           <button
             type="button"
             className="fm-btn"
-            aria-label="Chat with us"
+            aria-label="Chat with me"
             aria-haspopup="dialog"
             onClick={() => { setOpen(true); setSeen(true); }}
           >

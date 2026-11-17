@@ -13,11 +13,19 @@ export default function Contact() {
     <main className="shell page-hero ct">
       <div className="eyebrow">Contact Marva Technologies</div>
       <h1>
-        Get in touch <span className="gradient">with us.</span>
+        Get in touch <span className="gradient">with me.</span>
       </h1>
       <p className="lead ct-lead">
-        Have a project idea, a question or an opportunity? Pick whichever channel suits you. We reply fast.
+        Have a project idea, a question or an opportunity? Pick whichever channel suits you. I reply fast.
       </p>
+
+      <div className="chips ct-open" aria-label="Open to">
+        <span>Open to:</span>
+        <span>Software projects</span>
+        <span>Internships</span>
+        <span>Partnerships</span>
+        <span>Learning &amp; mentorship</span>
+      </div>
 
       <div className="ct-actions">
         <a className="intro-button button-accent" href={channels[0].href} target="_blank" rel="noopener noreferrer">
@@ -58,7 +66,7 @@ export default function Contact() {
               src="/contact/get-in-touch.webp"
               width={941}
               height={1672}
-              alt="Two smiling colleagues looking at a phone together beside the words Get in touch with us"
+              alt="Two smiling colleagues looking at a phone together"
               loading="lazy"
               decoding="async"
             />

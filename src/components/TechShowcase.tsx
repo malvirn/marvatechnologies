@@ -17,7 +17,7 @@ type Stat = { value: number; suffix: string; label: string; visual: "ring" | "cl
 const stats: Stat[] = [
   { value: 100, suffix: "%", label: "Responsive by design", visual: "ring" },
   { value: 24, suffix: "/7", label: "Always-on systems", visual: "clock" },
-  { value: 1, suffix: " idea", label: "Is all we need to start", visual: "pulse" },
+  { value: 1, suffix: " idea", label: "Is all I need to start", visual: "pulse" },
 ];
 
 function Counter({ to, suffix }: { to: number; suffix: string }) {
@@ -164,7 +164,7 @@ export default function TechShowcase() {
       <div className="shell">
         <div className="tech-head">
           <motion.div className="eyebrow" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            How we build
+            How I build
           </motion.div>
           <h2 className="tech-title" aria-label="From blueprint to product.">
             {headline.map((w, i) => (
@@ -182,7 +182,7 @@ export default function TechShowcase() {
             ))}
           </h2>
           <motion.p className="tech-copy" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.6 }}>
-            Every great product starts as a rough sketch. We turn ideas into clean, fast and
+            Every great product starts as a rough sketch. I turn ideas into clean, fast and
             dependable software, from the first wireframe to the finished interface on your
             laptop and in your pocket.
           </motion.p>

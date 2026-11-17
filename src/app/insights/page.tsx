@@ -4,10 +4,10 @@ import Reveal from "@/components/Reveal";
 import Principles from "@/components/Principles";
 
 const topics = [
-  { id: "code", tag: "01 / Engineering", title: "Building software", text: "Practical lessons from building web and business applications: what worked, what broke and what we would do differently." },
+  { id: "code", tag: "01 / Engineering", title: "Building software", text: "Practical lessons from building web and business applications: what worked, what broke and what I would do differently." },
   { id: "flow", tag: "02 / Product", title: "Product thinking", text: "How a rough idea becomes a prototype, and how a prototype becomes something people actually use." },
   { id: "bars", tag: "03 / Learning", title: "Learning in public", text: "Notes on skills, tools and habits picked up along the way, shared so others can move faster." },
-  { id: "orbit", tag: "04 / Community", title: "Building in Zimbabwe", text: "Perspectives on creating useful technology close to home, for the people and businesses around us." },
+  { id: "orbit", tag: "04 / Community", title: "Building in Zimbabwe", text: "Perspectives on creating useful technology close to home, for the people and businesses around me." },
 ];
 const steps = [["Idea", "A problem worth writing about", Lightbulb], ["Draft", "Shaped into a clear first version", PenLine], ["Review", "Checked for accuracy and usefulness", SearchCheck], ["Publish", "Shared here, ready to read", Rocket]] as const;
 const words = ["Software", "Product thinking", "Databases", "Design", "Learning", "Zimbabwe"];
@@ -53,7 +53,7 @@ export default function Insights() {
 
 
     <section className="shell in-section">
-      <Reveal><div className="eyebrow">What’s coming</div><h2>Four topics we are <span className="gradient">writing about.</span></h2></Reveal>
+      <Reveal><div className="eyebrow">What’s coming</div><h2>Four topics I am <span className="gradient">writing about.</span></h2></Reveal>
       <div className="in-topics">{topics.map((t, n) => <Reveal key={t.id} delay={n * 110}><article className="in-topic">
         <Visual id={t.id} />
         <div className="in-topic-body"><small>{t.tag}</small><h3>{t.title}</h3><p>{t.text}</p><span className="in-chip"><span className="in-pulse" />In draft</span></div>
@@ -74,7 +74,7 @@ export default function Insights() {
 
     <section className="shell in-section in-cta-sec">
       <Reveal><div className="in-cta">
-        <div><div className="eyebrow">Stay close</div><h2>Want to read the first article <span className="gradient">when it lands?</span></h2><p>Send a message and we will let you know as soon as new writing is published.</p></div>
+        <div><div className="eyebrow">Stay close</div><h2>Want to read the first article <span className="gradient">when it lands?</span></h2><p>Send me a message and I will let you know as soon as new writing is published.</p></div>
         <Link className="btn primary in-cta-btn" href="/contact">Get in touch <ArrowUpRight size={16} /></Link>
       </div></Reveal>
     </section>

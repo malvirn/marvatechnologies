@@ -5,7 +5,7 @@ import { ArrowUpRight, ArrowDown, Code2, Database, Layers3 } from "lucide-react"
 import { useTypewriter } from "@/hooks/useTypewriter";
 
 const INTRO =
-  "We build useful software, thoughtful websites and digital tools that help ideas grow. From the first idea to launch, we make technology work for people.";
+  "I build useful software, thoughtful websites and digital tools that help ideas grow. From the first idea to launch, I make technology work for people.";
 
 const focus = [
   { icon: Code2, no: "01", title: "Web applications", text: "Responsive web experiences designed around real people and practical needs." },
@@ -22,7 +22,7 @@ export default function Hero() {
       <div className="shell intro-inner">
         <div className="intro-layout">
           <div className="intro-main">
-            <p className="intro-kicker">A little about us</p>
+            <p className="intro-kicker">A little about me</p>
             <h1 className="intro-heading">
               Ideas into <span className="intro-accent">impact.</span>
             </h1>
@@ -36,7 +36,7 @@ export default function Hero() {
             </p>
             <div className="intro-cta">
               <Link className="intro-btn intro-btn-solid" href="/projects">
-                View our work <ArrowUpRight size={16} aria-hidden="true" />
+                View my work <ArrowUpRight size={16} aria-hidden="true" />
               </Link>
               <Link className="intro-btn intro-btn-ghost" href="/contact">
                 Get in touch

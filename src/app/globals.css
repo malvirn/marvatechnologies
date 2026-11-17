@@ -1524,3 +1524,6 @@ button.fm-btn{border:0;background:none;padding:0;cursor:pointer}
 .chat-send-btn:disabled{opacity:.35;cursor:default}
 .chat-send-btn:not(:disabled):hover{transform:scale(1.06)}
 @media(prefers-reduced-motion:reduce){.chat,.msg,.chat-chips,.chat-send,.msg-typing i{animation:none!important}}
+.sv-tools{margin-top:26px}
+.ct-open{align-items:center;margin:20px 0 0}
+.ct-open span:first-child{border-color:transparent;padding-left:0;color:var(--text)}

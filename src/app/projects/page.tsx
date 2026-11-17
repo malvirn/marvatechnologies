@@ -22,7 +22,7 @@ export default function Projects() {
           <div className="eyebrow">Completed project · Business software</div>
           <h2>Repair Management System</h2>
           <p className="section-copy">A lightweight repair-workshop management system built with a framework-free frontend and Supabase services. The project also includes an AI-assisted diagnostic feature, powered by a Groq-backed Edge Function, to help with fault diagnosis.</p>
-          <p className="section-copy">The stack was deliberately kept simple and dependency-light, with the aim of making the system fast to load and straightforward to maintain for small repair shops using modest devices and internet connections.</p>
+          <p className="section-copy">I deliberately kept the stack simple and dependency-light, with the aim of making the system fast to load and straightforward to maintain for small repair shops using modest devices and internet connections.</p>
           <div className="chips"><span>Completed</span><span>Vanilla JavaScript</span><span>Supabase</span><span>AI-assisted diagnostics</span></div>
         </div>
       </article>
