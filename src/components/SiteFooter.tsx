@@ -13,7 +13,6 @@ const links = [
 
 const email = channels.find(c => c.key === "email")!;
 const call = channels.find(c => c.key === "call")!;
-const whatsapp = channels.find(c => c.key === "whatsapp")!;
 
 export default function SiteFooter() {
   return (
@@ -60,8 +59,7 @@ export default function SiteFooter() {
           </ul>
           <ul className="sf-details">
             <li><a href={email.href}>{email.value}</a></li>
-            <li><a href={whatsapp.href} target="_blank" rel="noopener noreferrer">WhatsApp {whatsapp.value}</a></li>
-            <li><a href={call.href}>Call {call.value}</a></li>
+            <li><a href={call.href}>{call.value}</a></li>
           </ul>
         </div>
       </div>
