@@ -817,10 +817,77 @@ button{font:inherit}
 .tech-stat{padding:22px 24px;border:1px solid var(--border);border-radius:18px;background:linear-gradient(145deg,rgba(77,163,255,.08),rgba(255,122,26,.05));backdrop-filter:blur(6px)}
 .tech-stat strong{display:block;font:800 clamp(1.8rem,5vw,2.6rem)/1.1 "Sora",Arial,sans-serif;letter-spacing:-.03em}
 .tech-stat span{display:block;margin-top:6px;color:var(--muted);font-size:.85rem}
-.tech-marquee{position:relative;z-index:1;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:18px 0;background:rgba(255,255,255,.02)}
-.tech-marquee-inner{display:flex;width:max-content;gap:0;animation:tech-marquee 28s linear infinite;font:800 clamp(1.4rem,4vw,2.4rem)/1 "Sora",Arial,sans-serif;letter-spacing:-.03em;text-transform:uppercase;color:transparent;-webkit-text-stroke:1px rgba(245,245,245,.55)}
-.tech-marquee-inner span{display:inline-flex;align-items:center;white-space:nowrap}
-.tech-marquee-inner i{font-style:normal;margin:0 28px;color:#ff9a3d;-webkit-text-stroke:0;font-size:.6em}
-@keyframes tech-marquee{to{transform:translateX(-33.333%)}}
 @media (min-width:760px){.tech-stats{grid-template-columns:repeat(3,1fr)}}
-@media (prefers-reduced-motion:reduce){.tech-stage,.tech-glow,.tech-scan,.tech-marquee-inner,.tech-word-accent,.tech-handle-knob,.tech-hint{animation:none!important}}
+@media (prefers-reduced-motion:reduce){.tech-stage,.tech-glow,.tech-scan,.tech-word-accent,.tech-handle-knob,.tech-hint{animation:none!important}}
+
+/* ===== Marquee: glass pills, two rows, opposite directions ===== */
+.mq{position:relative;z-index:1;display:grid;gap:12px;padding:30px 0 40px;margin-top:8px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.mq-row{overflow:hidden}
+.mq-track{display:flex;width:max-content;gap:12px;animation:mq-left 38s linear infinite}
+.mq-rev .mq-track{animation-name:mq-right;animation-duration:46s}
+.mq:hover .mq-track{animation-play-state:paused}
+.mq-pill{display:inline-flex;align-items:center;gap:10px;white-space:nowrap;padding:12px 20px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#F5F5F5;
+  font:500 .82rem/1 "JetBrains Mono",monospace;letter-spacing:.06em;transition:transform .25s,border-color .25s,background .25s}
+.mq-pill i{width:7px;height:7px;border-radius:50%;flex:none}
+.mq-pill:hover{transform:translateY(-3px);border-color:rgba(255,154,61,.6);background:rgba(255,154,61,.1)}
+@keyframes mq-left{to{transform:translateX(calc(-50% - 6px))}}
+@keyframes mq-right{from{transform:translateX(calc(-50% - 6px))}to{transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.mq-track{animation:none!important}}
+
+/* ===== Contact stage: click-to-change ===== */
+.cta-stage{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .3s,box-shadow .3s}
+.cta-stage:hover{border-color:rgba(217,119,87,.55);box-shadow:0 0 0 1px rgba(217,119,87,.2),0 18px 50px rgba(217,119,87,.14)}
+.cta-stage:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.stage-progress{position:absolute;top:0;left:0;right:0;height:3px;z-index:5;background:rgba(255,255,255,.08)}
+.stage-progress span{display:block;height:100%;width:100%;transform-origin:left;background:linear-gradient(90deg,#D97757,#ffb36b);animation:stage-fill linear forwards}
+.cta-stage.is-paused .stage-progress span{animation-play-state:paused}
+@keyframes stage-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.stage-wipe{position:absolute;inset:-20% -40%;z-index:6;pointer-events:none;transform:translateX(-120%) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(217,119,87,.0) 20%,rgba(255,200,170,.38) 50%,rgba(217,119,87,0) 80%,transparent);
+  animation:stage-wipe .9s cubic-bezier(.6,0,.2,1) forwards}
+@keyframes stage-wipe{to{transform:translateX(120%) skewX(-18deg)}}
+.stage-ripple{position:absolute;z-index:6;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;pointer-events:none;border:2px solid rgba(255,190,150,.9);animation:stage-ripple .8s ease-out forwards}
+@keyframes stage-ripple{to{transform:scale(18);opacity:0}}
+.stage-label,.stage-hint{position:absolute;z-index:5;top:14px;padding:6px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(10,10,10,.6);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#F5F5F5;font:500 .58rem/1 "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
+.stage-label{left:12px}
+.stage-hint{right:12px;color:#ffd2b8;animation:hint-blink 2.4s ease-in-out infinite}
+.stage-hint::before{content:"";display:inline-block;width:6px;height:6px;margin-right:7px;border-radius:50%;background:#D97757;vertical-align:1px}
+@keyframes hint-blink{50%{opacity:.45}}
+.cta-stage .scene{top:30px}
+
+/* devices (image) scene */
+.scene-devices{top:0!important;overflow:hidden}
+.dev-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;animation:dev-zoom 7.2s ease-out both}
+.dev-img-top{animation:dev-zoom 7.2s ease-out both,dev-reveal 4.2s .5s cubic-bezier(.6,0,.2,1) both}
+@keyframes dev-zoom{from{transform:scale(1.12)}to{transform:scale(1)}}
+@keyframes dev-reveal{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.dev-line{position:absolute;top:0;bottom:0;left:0;width:2px;background:#fff;box-shadow:0 0 18px 4px rgba(77,163,255,.9);animation:dev-line 4.2s .5s cubic-bezier(.6,0,.2,1) both;pointer-events:none}
+@keyframes dev-line{from{left:0;opacity:1}to{left:100%;opacity:0}}
+.dev-tag{position:absolute;bottom:34px;padding:6px 11px;border-radius:999px;background:rgba(5,9,20,.7);border:1px solid rgba(255,255,255,.2);color:#fff;font:500 .58rem/1 "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
+.dev-tag-a{left:12px;color:#cfe3ff}
+.dev-tag-b{right:12px;color:#ffd2a8;animation:tag-in .5s 4.2s both}
+@keyframes tag-in{from{opacity:0;transform:translateY(6px)}}
+
+/* launch scene */
+.launch{position:absolute;inset:0;width:100%;height:100%;padding:8px}
+.launch .star{fill:#fff;animation:twinkle 2.4s ease-in-out var(--d) infinite}
+@keyframes twinkle{50%{opacity:.2}}
+.launch .orbit{stroke:rgba(217,119,87,.7);stroke-width:1.4;stroke-dasharray:1;stroke-dashoffset:1;stroke-linecap:round;animation:orbit-draw 3.2s .3s ease-out forwards}
+@keyframes orbit-draw{to{stroke-dashoffset:0}}
+.launch .rocket{offset-path:path("M40 210 C 120 200, 150 90, 290 40");offset-rotate:auto 90deg;offset-distance:0%;animation:fly 3.2s .3s cubic-bezier(.5,0,.3,1) forwards}
+@keyframes fly{to{offset-distance:100%}}
+.launch .flame{transform-box:fill-box;transform-origin:top;animation:flame .15s ease-in-out infinite alternate}
+@keyframes flame{to{transform:scaleY(1.5)}}
+.live-badge{position:absolute;right:14%;top:22%;display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;background:rgba(124,227,166,.15);border:1px solid rgba(124,227,166,.5);color:#7CE3A6;
+  font:600 .7rem/1 "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;animation:tag-in .5s 3.5s both}
+.live-badge i{width:7px;height:7px;border-radius:50%;background:#7CE3A6;animation:ring-pulse 1.4s ease-out infinite}
+@keyframes ring-pulse{0%{box-shadow:0 0 0 0 rgba(124,227,166,.7)}100%{box-shadow:0 0 0 9px rgba(124,227,166,0)}}
+.launch-cta{position:absolute;left:50%;bottom:36px;translate:-50% 0;display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:999px;background:#F5F5F5;color:#0A0A0A;font:600 .78rem/1 "Inter",Arial,sans-serif;white-space:nowrap;animation:tag-in .5s 4s backwards,cta-pulse 2.2s 4.6s ease-out infinite}
+@media(prefers-reduced-motion:reduce){
+  .stage-progress span,.stage-wipe,.stage-ripple,.stage-hint,.dev-img,.dev-line,.dev-tag-b,.launch .star,.launch .orbit,.launch .rocket,.launch .flame,.live-badge,.live-badge i,.launch-cta{animation:none!important}
+  .dev-img-top{clip-path:none}.launch .orbit{stroke-dashoffset:0}.launch .rocket{offset-distance:100%}.stage-wipe{display:none}
+}

@@ -12,7 +12,9 @@ import {
   useTransform,
 } from "framer-motion";
 
-const words = ["Web apps", "Dashboards", "Business systems", "Databases", "Integrations", "Mobile-first", "Made in Zimbabwe"];
+const rowOne = ["Web apps", "Dashboards", "Business systems", "Databases", "Integrations", "Mobile-first", "Made in Zimbabwe"];
+const rowTwo = ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase", "APIs", "Responsive UI"];
+const dotColors = ["#4da3ff", "#ff9a3d", "#7CE3A6"];
 
 const stats = [
   { value: 100, suffix: "%", label: "Responsive by design" },
@@ -81,7 +83,6 @@ export default function TechShowcase() {
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const glowY = useTransform(scrollYProgress, [0, 1], [-80, 120]);
   const glowY2 = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const marqueeX = useTransform(scrollYProgress, [0, 1], ["0%", "-18%"]);
   const stageScale = useTransform(scrollYProgress, [0, 0.35, 0.6], [0.88, 1, 1]);
   const stageRotate = useTransform(scrollYProgress, [0, 0.35], [6, 0]);
   const [pct, setPct] = useState(50);
@@ -173,12 +174,19 @@ export default function TechShowcase() {
         </div>
       </div>
 
-      <div className="tech-marquee" aria-hidden>
-        <motion.div className="tech-marquee-inner" style={{ x: marqueeX }}>
-          {[...words, ...words, ...words].map((w, i) => (
-            <span key={i}>{w}<i>✦</i></span>
-          ))}
-        </motion.div>
+      <div className="mq" aria-hidden>
+        {[rowOne, rowTwo].map((row, r) => (
+          <div className={`mq-row ${r === 1 ? "mq-rev" : ""}`} key={r}>
+            <div className="mq-track">
+              {[...row, ...row].map((w, i) => (
+                <span className="mq-pill" key={i}>
+                  <i style={{ background: dotColors[i % 3], boxShadow: `0 0 10px ${dotColors[i % 3]}` }} />
+                  {w}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

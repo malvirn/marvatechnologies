@@ -4,8 +4,8 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const SCENES = ["chat", "idea", "code"] as const;
-const SCENE_LABELS = ["Let's talk", "Idea to product", "Built in code"];
+const SCENES = ["chat", "idea", "code", "devices", "launch"] as const;
+const SCENE_LABELS = ["Let's talk", "Idea to product", "Built in code", "Every screen", "Launch day"];
 const SCENE_MS = 7200;
 
 function ChatScene() {
@@ -82,10 +82,50 @@ function CodeScene() {
   );
 }
 
+
+function DevicesScene() {
+  return (
+    <div className="scene scene-devices">
+      <img className="dev-img" src="/tech-blueprint.webp" width={1672} height={941} alt="" loading="lazy" decoding="async" draggable={false} />
+      <img className="dev-img dev-img-top" src="/tech-render.webp" width={1672} height={941} alt="" loading="lazy" decoding="async" draggable={false} />
+      <span className="dev-line" />
+      <span className="dev-tag dev-tag-a">Sketch</span>
+      <span className="dev-tag dev-tag-b">Shipped</span>
+    </div>
+  );
+}
+
+function LaunchScene() {
+  return (
+    <div className="scene scene-launch">
+      <svg viewBox="0 0 360 240" className="launch" fill="none" aria-hidden="true">
+        {Array.from({ length: 14 }).map((_, i) => (
+          <circle key={i} className="star" cx={(i * 53 + 17) % 350 + 5} cy={(i * 37 + 11) % 170 + 8} r={i % 3 === 0 ? 1.8 : 1.1} style={{ ["--d" as string]: `${(i % 5) * 0.4}s` }} />
+        ))}
+        <path className="orbit" d="M40 210 C 120 200, 150 90, 290 40" pathLength={1} />
+        <g className="rocket">
+          <path d="M0 -14 C 7 -8, 7 6, 4 12 L -4 12 C -7 6, -7 -8, 0 -14 Z" fill="#F5F5F5" />
+          <circle cx="0" cy="-3" r="3" fill="#6c8dff" />
+          <path d="M-4 8 L-10 15 L-4 13 Z M4 8 L10 15 L4 13 Z" fill="#D97757" />
+          <path className="flame" d="M-3 12 Q0 26 3 12 Z" fill="#ffb36b" />
+        </g>
+        <g className="pad">
+          <rect x="22" y="212" width="70" height="6" rx="3" fill="#ffffff" fillOpacity=".25" />
+        </g>
+      </svg>
+      <span className="live-badge"><i /> Live</span>
+      <span className="launch-cta" aria-hidden="true">Get in touch <ArrowUpRight size={14} /></span>
+    </div>
+  );
+}
+
 export default function ContactBand() {
   const [scene, setScene] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [ripple, setRipple] = useState<{ x: number; y: number; id: number } | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+
+  const next = (dir = 1) => setScene(s => (s + dir + SCENES.length) % SCENES.length);
 
   useEffect(() => {
     if (paused) return;
@@ -110,6 +150,14 @@ export default function ContactBand() {
     el.style.setProperty("--my", "0");
     setPaused(false);
   };
+  const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const el = stageRef.current;
+    if (el) {
+      const r = el.getBoundingClientRect();
+      setRipple({ x: event.clientX - r.left, y: event.clientY - r.top, id: Date.now() });
+    }
+    next();
+  };
 
   return (
     <div className="contact-band cta-live">
@@ -126,16 +174,39 @@ export default function ContactBand() {
       </div>
 
       <div
-        className="cta-stage"
+        className={`cta-stage ${paused ? "is-paused" : ""}`}
         ref={stageRef}
+        role="button"
+        tabIndex={0}
+        aria-label={`Change animation. Currently showing: ${SCENE_LABELS[scene]}`}
+        onClick={onClick}
+        onKeyDown={e => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            next();
+          } else if (e.key === "ArrowRight") next();
+          else if (e.key === "ArrowLeft") next(-1);
+        }}
         onPointerMove={onMove}
         onPointerEnter={() => setPaused(true)}
         onPointerLeave={onLeave}
-        aria-hidden="true"
       >
+        <div className="stage-progress" aria-hidden="true">
+          <span key={scene} style={{ animationDuration: `${SCENE_MS}ms` }} />
+        </div>
+
         {scene === 0 && <ChatScene key="chat" />}
         {scene === 1 && <IdeaScene key="idea" />}
         {scene === 2 && <CodeScene key="code" />}
+        {scene === 3 && <DevicesScene key="devices" />}
+        {scene === 4 && <LaunchScene key="launch" />}
+
+        <span className="stage-wipe" key={`w${scene}`} aria-hidden="true" />
+        {ripple && <span className="stage-ripple" key={ripple.id} style={{ left: ripple.x, top: ripple.y }} aria-hidden="true" />}
+
+        <span className="stage-label" aria-hidden="true">{String(scene + 1).padStart(2, "0")} · {SCENE_LABELS[scene]}</span>
+        <span className="stage-hint" aria-hidden="true">Tap to change</span>
+
         <div className="stage-dots">
           {SCENES.map((name, i) => (
             <button
@@ -144,7 +215,10 @@ export default function ContactBand() {
               tabIndex={-1}
               aria-label={SCENE_LABELS[i]}
               className={i === scene ? "is-active" : ""}
-              onClick={() => setScene(i)}
+              onClick={e => {
+                e.stopPropagation();
+                setScene(i);
+              }}
             />
           ))}
         </div>
