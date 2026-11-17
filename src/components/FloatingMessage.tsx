@@ -15,8 +15,6 @@ export default function FloatingMessage() {
       </span>
 
       <Link href="/contact" className="fm-btn" aria-label="Send us a message">
-        <span className="fm-pulse" aria-hidden="true" />
-        <span className="fm-pulse fm-pulse-2" aria-hidden="true" />
         <svg className="fm-icon" viewBox="0 0 60 60" aria-hidden="true">
           <defs>
             <linearGradient id="fm-green" x1="0" y1="0" x2="0" y2="1">
