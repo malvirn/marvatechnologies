@@ -1,6 +1,3 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-
 export default function Founder() {
   return (
     <section className="mh" id="founder" aria-label="Meet the founder">
@@ -22,11 +19,6 @@ export default function Founder() {
           <p className="mh-text">
             Founder of Marva Technologies, building useful software, thoughtful websites and digital tools from Zimbabwe.
           </p>
-          <div className="mh-actions">
-            <Link className="mh-btn mh-btn-solid" href="/contact">
-              Start a conversation <ArrowUpRight size={16} aria-hidden="true" />
-            </Link>
-          </div>
         </div>
       </div>
     </section>
