@@ -1487,3 +1487,41 @@ html[data-theme="light"] .in-particles i{box-shadow:none}
  .sf-links{grid-template-columns:repeat(2,minmax(0,1fr))}
  .sf-bottom{flex-direction:row;justify-content:space-between;gap:16px}
 }
+
+/* Chat widget */
+button.fm-btn{border:0;background:none;padding:0;cursor:pointer}
+.chat{position:fixed;z-index:120;right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom));display:flex;flex-direction:column;width:min(380px,calc(100vw - 20px));height:min(560px,calc(100dvh - 90px));border:1px solid var(--border);border-radius:22px;background:var(--surface);box-shadow:0 24px 70px rgba(var(--shade-rgb),.55);overflow:hidden;transform-origin:bottom right;animation:chat-in .28s cubic-bezier(.2,.8,.2,1) both}
+@keyframes chat-in{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+.chat-head{display:flex;align-items:center;gap:10px;padding:11px 10px 11px 14px;border-bottom:1px solid var(--border);background:var(--background)}
+.chat-av{width:36px;height:36px}
+.chat-who{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.chat-who strong{font:700 .92rem/1.1 "Sora",Arial,sans-serif;color:var(--text)}
+.chat-status{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.7rem;line-height:1}
+.chat-status i{width:7px;height:7px;border-radius:50%;background:#25D366;box-shadow:0 0 0 3px rgba(37,211,102,.22)}
+.chat-icon-btn{display:grid;place-items:center;width:34px;height:34px;flex:none;border:0;border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;transition:background .2s,color .2s}
+.chat-icon-btn:hover{background:var(--soft);color:var(--text)}
+.chat-body{flex:1;display:flex;flex-direction:column;gap:8px;padding:16px 14px;overflow-y:auto;overscroll-behavior:contain}
+.msg{max-width:84%;padding:10px 13px;border-radius:16px;font-size:.88rem;line-height:1.5;overflow-wrap:anywhere;animation:msg-in .25s both}
+@keyframes msg-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg-bot{align-self:flex-start;border:1px solid var(--border);border-bottom-left-radius:5px;background:var(--soft);color:var(--text)}
+.msg-me{align-self:flex-end;border-bottom-right-radius:5px;background:var(--text);color:var(--background)}
+.msg-typing{display:flex;gap:4px;padding:13px 14px}
+.msg-typing i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:fm-bounce .6s ease-in-out infinite}
+.msg-typing i:nth-child(2){animation-delay:.12s}.msg-typing i:nth-child(3){animation-delay:.24s}
+.chat-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px;animation:msg-in .25s both}
+.chat-chip{padding:8px 13px;border:1px solid var(--border);border-radius:999px;background:transparent;color:var(--text);font-size:.8rem;cursor:pointer;transition:background .2s,border-color .2s}
+.chat-chip:hover{background:var(--soft);border-color:rgba(var(--ink-rgb),.4)}
+.chat-send{display:grid;gap:10px;margin-top:4px;animation:msg-in .25s both}
+.chat-wa{display:flex;align-items:center;justify-content:center;gap:9px;min-height:48px;border-radius:14px;background:#25D366;color:#06210F;font:700 .92rem "Inter",Arial,sans-serif;transition:transform .2s,filter .2s}
+.chat-wa:hover{transform:translateY(-1px);filter:brightness(1.06)}
+.chat-alt{display:flex;justify-content:center;gap:18px}
+.chat-alt a{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.78rem}
+.chat-alt a:hover{color:var(--text)}
+.chat-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--border);background:var(--background)}
+.chat-form input{flex:1;min-width:0;height:44px;padding:0 16px;border:1px solid var(--border);border-radius:999px;background:var(--soft);color:var(--text);font:400 16px "Inter",Arial,sans-serif}
+.chat-form input:focus{outline:none;border-color:rgba(var(--ink-rgb),.5)}
+.chat-form input:disabled{opacity:.5}
+.chat-send-btn{display:grid;place-items:center;width:44px;height:44px;flex:none;border:0;border-radius:50%;background:var(--text);color:var(--background);cursor:pointer;transition:opacity .2s,transform .2s}
+.chat-send-btn:disabled{opacity:.35;cursor:default}
+.chat-send-btn:not(:disabled):hover{transform:scale(1.06)}
+@media(prefers-reduced-motion:reduce){.chat,.msg,.chat-chips,.chat-send,.msg-typing i{animation:none!important}}
