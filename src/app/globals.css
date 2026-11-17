@@ -1137,3 +1137,17 @@ button{font:inherit}
 .lb-view.is-zoom img{max-width:none;max-height:none;width:220%;cursor:zoom-out}
 .lb button:focus-visible,.jn-expand:focus-visible{outline:2px solid #D97757;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.jn-expand,.lb-btn{transition:none}}
+
+
+/* Project screenshots: use the showcase area generously and identify by project */
+.jn-slide.is-portrait{width:min(76%,430px)}
+.jn-slide.is-landscape{width:min(100%,860px)}
+.jn-slide img{width:100%;height:100%;object-fit:cover}
+@media(max-width:899px){
+  .jn-slide.is-portrait{width:min(82%,390px)}
+  .jn-slide.is-landscape{width:min(100%,680px)}
+}
+@media(max-width:599px){
+  .jn-slide.is-portrait{width:min(88%,360px)}
+  .jn-slide.is-landscape{width:100%}
+}
