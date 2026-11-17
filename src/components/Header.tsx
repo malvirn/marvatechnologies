@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import BrandMark from "@/components/BrandMark";
 
 const links = [
   { label: "Home", href: "/" },
@@ -46,10 +47,7 @@ export default function Header() {
     <header className={`site-header ${scrolled ? "scrolled" : ""}`}>
       <div className="header-inner">
         <Link href="/" className="brand-lockup" aria-label="Marva Technologies home">
-          <span className="brand-emblem" aria-hidden="true">
-            <img className="logo-ring" src="/logo-ring.svg" alt="" />
-            <img className="logo-m" src="/logo-m.svg" alt="" />
-          </span>
+          <span className="brand-emblem" aria-hidden="true"><BrandMark /></span>
           <span className="wordmark"><span className="wordmark-main">MARVA</span><span className="wordmark-sub">TECHNOLOGIES</span></span>
         </Link>
         <nav className="desktop-nav" aria-label="Main navigation">
