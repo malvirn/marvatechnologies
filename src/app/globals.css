@@ -933,19 +933,19 @@ button{font:inherit}
 @keyframes tp-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @media(prefers-reduced-motion:reduce){.tech-progress span{animation:none}}
 
-/* ===== Floating Messages-style button: fixed at the left middle, glides along a small arc ===== */
-.fm{position:fixed;z-index:90;left:max(10px,env(safe-area-inset-left));top:50%;transform:translateY(-50%);display:flex;flex-direction:row-reverse;align-items:center;gap:10px;pointer-events:none}
+/* ===== Floating Messages-style button: fixed at the right middle, glides along a small arc ===== */
+.fm{position:fixed;z-index:90;right:max(10px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);display:flex;flex-direction:row;align-items:center;gap:10px;pointer-events:none}
 .fm>*{pointer-events:auto}
 .fm-btn{position:relative;display:block;width:56px;height:56px;border-radius:14px;-webkit-tap-highlight-color:transparent;
   filter:drop-shadow(0 10px 20px rgba(0,0,0,.55));
-  offset-path:path("M 0 -30 A 38 38 0 0 1 0 30");offset-rotate:0deg;offset-distance:0%;
+  offset-path:path("M 0 -30 A 38 38 0 0 0 0 30");offset-rotate:0deg;offset-distance:0%;
   animation:fm-arc 4.8s ease-in-out infinite alternate,fm-in .8s .6s cubic-bezier(.3,1.5,.5,1) backwards;transition:scale .2s}
 .fm-btn:hover{scale:1.1}.fm-btn:active{scale:.94}
 .fm-btn:focus-visible{outline:2px solid #fff;outline-offset:4px}
 .fm-icon{position:relative;z-index:1;display:block;width:100%;height:100%}
 .fm-bubble{transform-box:fill-box;transform-origin:25% 90%;animation:fm-wiggle 6s 2s ease-in-out infinite}
 .fm-badge{position:absolute;z-index:2;top:-7px;right:-7px;min-width:22px;height:22px;padding:0 6px;display:grid;place-items:center;border-radius:999px;background:#ff3b30;border:2px solid #0A0A0A;color:#fff;font:700 .72rem/1 "Inter",Arial,sans-serif;animation:fm-badge 6s 1.4s cubic-bezier(.3,1.6,.5,1) infinite}
-.fm-tip{display:inline-grid;padding:10px 16px;border-radius:18px 18px 18px 5px;background:#F5F5F5;color:#0A0A0A;font:600 .82rem/1 "Inter",Arial,sans-serif;box-shadow:0 10px 24px rgba(0,0,0,.45);transform-origin:left center;opacity:0;animation:fm-tip 9s 2.4s ease-in-out infinite;pointer-events:none!important}
+.fm-tip{display:inline-grid;padding:10px 16px;border-radius:18px 18px 5px 18px;background:#F5F5F5;color:#0A0A0A;font:600 .82rem/1 "Inter",Arial,sans-serif;box-shadow:0 10px 24px rgba(0,0,0,.45);transform-origin:right center;opacity:0;animation:fm-tip 9s 2.4s ease-in-out infinite;pointer-events:none!important}
 .fm-tip>*{grid-area:1 / 1}
 .fm-dots{display:flex;align-items:center;justify-content:center;gap:4px;animation:fm-dots 9s 2.4s infinite}
 .fm-dots i{width:6px;height:6px;border-radius:50%;background:#555;animation:fm-bounce .6s ease-in-out infinite}
@@ -956,7 +956,7 @@ button{font:inherit}
 @keyframes fm-wiggle{0%,86%,100%{transform:rotate(0) scale(1)}89%{transform:rotate(-10deg) scale(1.08)}92%{transform:rotate(9deg) scale(1.08)}95%{transform:rotate(-5deg)}98%{transform:rotate(3deg)}}
 @keyframes fm-badge{0%,80%,100%{transform:scale(1)}86%{transform:scale(1.35)}92%{transform:scale(.95)}}
 @keyframes fm-bounce{50%{transform:translateY(-4px)}}
-@keyframes fm-tip{0%,6%{opacity:0;transform:translateX(-16px) scale(.85)}12%,86%{opacity:1;transform:none}94%,100%{opacity:0;transform:translateX(-16px) scale(.85)}}
+@keyframes fm-tip{0%,6%{opacity:0;transform:translateX(16px) scale(.85)}12%,86%{opacity:1;transform:none}94%,100%{opacity:0;transform:translateX(16px) scale(.85)}}
 @keyframes fm-dots{0%,12%{opacity:1}22%,100%{opacity:0}}
 @keyframes fm-msg{0%,20%{opacity:0}30%,100%{opacity:1}}
 @media(max-width:480px){.fm-tip{display:none}}
