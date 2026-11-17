@@ -8,6 +8,7 @@ const stacks=[
   {id:"fe",label:"Frontend",src:"/services/frontend.webp",alt:"Frontend Development: React and Next.js power fast, responsive interfaces"},
   {id:"be",label:"Backend",src:"/services/backend.webp",alt:"Backend and APIs: Node.js and TypeScript services that handle logic, authentication and integrations"},
   {id:"db",label:"Database",src:"/services/database.webp",alt:"Database and Storage: Supabase and PostgreSQL give your data a secure, structured home"},
+  {id:"dp",label:"Deployment",src:"/services/deployment.webp",alt:"Deployment and Hosting: Netlify, Vercel and Cloudflare deliver your site fast and securely"},
 ];
 
 export default function Services(){return <main className="shell page-hero">

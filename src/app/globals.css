@@ -1201,6 +1201,12 @@ button{font:inherit}
 @keyframes sv-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 @keyframes sv-glow{0%,100%{box-shadow:inset 0 0 40px rgba(40,230,140,0)}50%{box-shadow:inset 0 0 90px rgba(40,200,255,.38)}}
 
+/* Deployment: launch drift toward the top-right + rocket-glow flare */
+.sv-dp .sv-img{transform:scale(1.05);animation:sv-launch 8s ease-in-out infinite alternate}
+.sv-dp .sv-frame::after{background:radial-gradient(28% 34% at 57% 22%,rgba(255,150,40,.34),transparent 70%);animation:sv-flare 2.4s ease-in-out infinite}
+@keyframes sv-launch{from{transform:scale(1.05) translate(-1.2%,1.2%)}to{transform:scale(1.05) translate(1.2%,-1.2%)}}
+@keyframes sv-flare{0%,100%{opacity:.1;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
+
 /* When a fifth stack image is added, it spans the full row */
 .sv-grid>.sv-card:last-child:nth-child(odd){grid-column:1/-1}
 
