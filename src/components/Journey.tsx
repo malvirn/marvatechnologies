@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import {
   AnimatePresence,
   motion,
@@ -23,6 +23,7 @@ type Project = {
   stack: string[];
   href: string; // leave "" to hide the live-link button
   image: string;
+  ratio: number; // width / height of the screenshot
   imageAlt: string;
   device: string;
   accent: string;
@@ -47,6 +48,7 @@ const PROJECTS: Project[] = [
     stack: ["Web app", "Supabase", "Netlify"],
     href: "https://maternityhelp2.netlify.app",
     image: "/projects/maternityhelp-samsung.webp",
+    ratio: 1122 / 1402,
     imageAlt: "MaternityHelp dashboard shown on a Samsung Galaxy S26 Ultra",
     device: "Samsung S26 Ultra",
     accent: "#f472b6",
@@ -68,6 +70,7 @@ const PROJECTS: Project[] = [
     stack: ["Workshop", "Inventory", "Accounting"],
     href: "",
     image: "/projects/centric-iphone6.webp",
+    ratio: 1672 / 941,
     imageAlt: "Centric Auto Mobile cashbook shown on an iPhone 6",
     device: "iPhone 6",
     accent: "#D97757",
@@ -135,9 +138,128 @@ function TimelineItem({
   );
 }
 
+type LbItem = { src: string; alt: string; title: string; device: string };
+
+/* Full-screen viewer: swipe/arrows to switch, tap the image to zoom 2x and pan */
+function Lightbox({
+  items,
+  index,
+  onIndex,
+  onClose,
+}: {
+  items: LbItem[];
+  index: number;
+  onIndex: (n: number) => void;
+  onClose: () => void;
+}) {
+  const reduce = useReducedMotion();
+  const [zoom, setZoom] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const viewRef = useRef<HTMLDivElement>(null);
+  const item = items[index];
+
+  useEffect(() => setZoom(false), [index]);
+
+  useEffect(() => {
+    const prev = document.activeElement as HTMLElement | null;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+    return () => {
+      document.body.style.overflow = "";
+      prev?.focus?.();
+    };
+  }, []);
+
+  useEffect(() => {
+    const el = viewRef.current;
+    if (!el || !zoom) return;
+    el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
+    el.scrollTop = (el.scrollHeight - el.clientHeight) / 2;
+  }, [zoom]);
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") onClose();
+    else if (e.key === "ArrowRight" && index < items.length - 1) onIndex(index + 1);
+    else if (e.key === "ArrowLeft" && index > 0) onIndex(index - 1);
+    else if (e.key === "Tab" && dialogRef.current) {
+      const f = dialogRef.current.querySelectorAll<HTMLElement>("button:not(:disabled)");
+      if (!f.length) return;
+      const first = f[0];
+      const last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
+
+  const onDragEnd = (_: unknown, info: PanInfo) => {
+    if (info.offset.x < -60 && index < items.length - 1) onIndex(index + 1);
+    else if (info.offset.x > 60 && index > 0) onIndex(index - 1);
+  };
+
+  return (
+    <motion.div
+      ref={dialogRef}
+      className="lb"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${item.title} screenshot`}
+      onKeyDown={onKeyDown}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: reduce ? 0 : 0.25 }}
+    >
+      <div className="lb-top">
+        <div className="lb-title">
+          <strong>{item.title}</strong> <span>{item.device}</span>
+        </div>
+        <button ref={closeRef} type="button" className="lb-btn" onClick={onClose} aria-label="Close viewer">
+          ✕
+        </button>
+      </div>
+
+      <div className={`lb-view${zoom ? " is-zoom" : ""}`} ref={viewRef} onClick={(e) => e.target === e.currentTarget && onClose()}>
+        <motion.img
+          key={item.src}
+          src={item.src}
+          alt={item.alt}
+          draggable={false}
+          drag={zoom ? false : "x"}
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.25}
+          onDragEnd={onDragEnd}
+          onTap={() => setZoom((z) => !z)}
+          initial={reduce ? false : { opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: reduce ? 0 : 0.3 }}
+        />
+      </div>
+
+      <div className="lb-bottom">
+        <button type="button" className="lb-btn" onClick={() => onIndex(index - 1)} disabled={index === 0} aria-label="Previous screenshot">
+          ←
+        </button>
+        <span className="lb-hint">
+          {index + 1} / {items.length} · {zoom ? "Scroll to pan, tap to zoom out" : "Tap image to zoom"}
+        </span>
+        <button type="button" className="lb-btn" onClick={() => onIndex(index + 1)} disabled={index === items.length - 1} aria-label="Next screenshot">
+          →
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function Journey() {
   const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
+  const [view, setView] = useState(false);
   const listRef = useRef<HTMLOListElement>(null);
 
   const { scrollYProgress } = useScroll({ target: listRef, offset: ["start 75%", "end 55%"] });
@@ -225,8 +347,8 @@ export default function Journey() {
                   return (
                     <motion.figure
                       key={p.id}
-                      className="jn-slide"
-                      style={{ zIndex: 10 - Math.abs(o) }}
+                      className={`jn-slide ${p.ratio > 1 ? "is-landscape" : "is-portrait"}`}
+                      style={{ zIndex: 10 - Math.abs(o), aspectRatio: p.ratio }}
                       initial={false}
                       animate={{
                         x: `${o * 62}%`,
@@ -236,15 +358,24 @@ export default function Journey() {
                         filter: isActive ? "blur(0px)" : "blur(3px)",
                       }}
                       transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 140, damping: 22, mass: 0.9 }}
-                      onTap={() => go(i)}
+                      onTap={() => (isActive ? setView(true) : go(i))}
                       aria-hidden={!isActive}
                     >
                       <img src={p.image} alt={p.imageAlt} draggable={false} loading={i === 0 ? "eager" : "lazy"} decoding="async" />
+                      {isActive && (
+                        <span className="jn-hint" aria-hidden>
+                          Tap to view details
+                        </span>
+                      )}
                       <figcaption>{p.device}</figcaption>
                     </motion.figure>
                   );
                 })}
               </motion.div>
+
+              <button type="button" className="jn-expand" onClick={() => setView(true)} aria-label={`View ${current.title} screenshot full size`}>
+                Expand ⤢
+              </button>
 
               <div className="jn-controls">
                 <button type="button" onClick={() => go(active - 1)} disabled={active === 0} aria-label="Previous project">
@@ -275,32 +406,64 @@ export default function Journey() {
                   {...blurIn}
                   transition={{ duration: reduce ? 0 : 0.5, ease: [0.2, 0.7, 0.2, 1] }}
                 >
-                  <div className="jn-tag">
-                    <span style={{ background: current.accent }} aria-hidden /> {current.tag}
+                  <div className="jn-panel">
+                    <div className="jn-meta">
+                      <div className="jn-tag">
+                        <span style={{ background: current.accent }} aria-hidden /> {current.tag}
+                      </div>
+                      <span className="jn-years-pill">{current.years}</span>
+                    </div>
+                    <h3>{current.title}</h3>
+                    <p className="jn-lead">{current.summary}</p>
+
+                    <div className="jn-block">
+                      <h4>Overview</h4>
+                      <p className="jn-about">{current.about}</p>
+                    </div>
+                    <div className="jn-block">
+                      <h4>Key features</h4>
+                      <ul className="jn-points">
+                        {current.highlights.map((h) => (
+                          <li key={h}>{h}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="jn-block">
+                      <h4>Built with</h4>
+                      <div className="chips">
+                        {current.stack.map((s) => (
+                          <span key={s}>{s}</span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="jn-actions">
+                      {current.href && (
+                        <a className="btn primary" href={current.href} target="_blank" rel="noopener noreferrer">
+                          Visit live site ↗
+                        </a>
+                      )}
+                      <button type="button" className="btn secondary" onClick={() => setView(true)}>
+                        View full screenshot
+                      </button>
+                    </div>
                   </div>
-                  <h3>{current.title}</h3>
-                  <p className="jn-about">{current.about}</p>
-                  <ul className="jn-points">
-                    {current.highlights.map((h) => (
-                      <li key={h}>{h}</li>
-                    ))}
-                  </ul>
-                  <div className="chips">
-                    {current.stack.map((s) => (
-                      <span key={s}>{s}</span>
-                    ))}
-                  </div>
-                  {current.href && (
-                    <a className="btn primary" href={current.href} target="_blank" rel="noopener noreferrer">
-                      Visit live site ↗
-                    </a>
-                  )}
                 </motion.div>
               </AnimatePresence>
             </div>
           </div>
         </div>
       </div>
+      <AnimatePresence>
+        {view && (
+          <Lightbox
+            items={PROJECTS.map((p) => ({ src: p.image, alt: p.imageAlt, title: p.title, device: p.device }))}
+            index={active}
+            onIndex={go}
+            onClose={() => setView(false)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }
