@@ -4,7 +4,7 @@ import { useTypewriter } from "@/hooks/useTypewriter";
 
 export default function Hero() {
   const typed = useTypewriter(
-    "We build useful software, thoughtful websites and digital tools that help ideas grow.",
+    "We build useful software, thoughtful websites and digital tools that help ideas grow. From the first idea to launch, we make technology work for people.",
     { speed: 34 }
   );
 
