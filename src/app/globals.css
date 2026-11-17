@@ -1304,8 +1304,6 @@ html[data-theme="light"] .site-header .bm > circle:nth-of-type(2){stroke:#0E1116
 html[data-theme="light"] .in-orb{opacity:.55}
 @keyframes orb-a{from{transform:translate(0,0) scale(1)}to{transform:translate(-90px,70px) scale(1.2)}}
 @keyframes orb-b{from{transform:translate(0,0) scale(1)}to{transform:translate(110px,-60px) scale(1.15)}}
-.in-grid{position:absolute;z-index:-1;inset:0 -24px;background-image:linear-gradient(rgba(var(--ink-rgb),.06) 1px,transparent 1px),linear-gradient(90deg,rgba(var(--ink-rgb),.06) 1px,transparent 1px);background-size:54px 54px;-webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 35%,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse 70% 70% at 50% 35%,#000 20%,transparent 75%);animation:grid-move 20s linear infinite}
-@keyframes grid-move{to{background-position:54px 54px,54px 54px}}
 .in-roll{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:22px 0 0;font:500 clamp(15px,2vw,19px)/1.4 "JetBrains Mono",monospace;color:var(--muted)}
 .in-roll-window{position:relative;display:inline-block;height:1.5em;min-width:18ch;overflow:hidden;vertical-align:bottom}
 .in-roll-window span{position:absolute;left:0;top:0;white-space:nowrap;color:#D97757;opacity:0;transform:translateY(100%);animation:roll 12s calc(var(--n) * 2s) infinite}
@@ -1316,14 +1314,6 @@ html[data-theme="light"] .in-orb{opacity:.55}
 .in-pulse::after{content:"";position:absolute;inset:0;border-radius:50%;background:#7CE3A6;animation:ping 1.8s ease-out infinite}
 @keyframes ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(3.2);opacity:0}}
 
-/* marquee */
-.in-marquee{overflow:hidden;border-block:1px solid var(--border);padding:18px 0;background:rgba(var(--ink-rgb),.03);-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
-.in-marquee-track{display:flex;width:max-content;animation:marq 34s linear infinite}
-.in-marquee:hover .in-marquee-track{animation-play-state:paused}
-.in-marquee-track span{display:inline-flex;align-items:center;gap:26px;padding-right:26px;font:700 clamp(22px,3.4vw,38px)/1 "Sora",Arial,sans-serif;letter-spacing:-.02em;color:transparent;-webkit-text-stroke:1px rgba(var(--ink-rgb),.5)}
-.in-marquee-track span:nth-child(even){color:var(--text);-webkit-text-stroke:0}
-.in-marquee-track b{font-size:.5em;color:#D97757;-webkit-text-stroke:0}
-@keyframes marq{to{transform:translateX(-50%)}}
 
 /* sections */
 .in-section{padding:84px 0 20px}
@@ -1340,7 +1330,7 @@ html[data-theme="light"] .in-orb{opacity:.55}
 .in-topic p{font-size:14px;line-height:1.75;color:var(--muted);margin:0 0 20px;flex:1}
 .in-chip{display:inline-flex;align-items:center;gap:9px;align-self:flex-start;padding:7px 12px;border:1px solid var(--border);border-radius:999px;font:400 .66rem "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--text)}
 .in-vis{position:relative;height:210px;overflow:hidden;background:radial-gradient(120% 90% at 70% 0%,#0f2a66 0%,#050b1f 55%,#030816 100%);border-bottom:1px solid rgba(110,170,255,.18)}
-.in-vis::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(120,170,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(120,170,255,.07) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.in-vis::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 70% at 15% 100%,rgba(217,119,87,.18),transparent 70%),radial-gradient(50% 60% at 90% 0%,rgba(70,130,255,.22),transparent 70%);pointer-events:none}
 
 /* 1 code: lines typing in */
 .in-code{padding:46px 28px 20px;display:flex;flex-direction:column;gap:12px}
@@ -1425,7 +1415,22 @@ html[data-theme="light"] .in-orb{opacity:.55}
 @media(min-width:860px){.in-cta{flex-direction:row;align-items:center;justify-content:space-between;padding:52px 56px}}
 
 @media(prefers-reduced-motion:reduce){
-  .in-hero h1,.in-hero .eyebrow,.in-hero .lead,.in-roll,.in-status,.in-orb,.in-grid,.in-marquee-track,.in-ln,.in-cursor,.in-fill,.in-runner,.in-node i,.in-bars span,.in-bars polyline,.in-ring,.in-spin,.in-step-ico,.in-steps-line span,.in-cta,.in-pr::before,.in-pulse::after{animation:none!important}
+  .in-hero h1,.in-hero .eyebrow,.in-hero .lead,.in-roll,.in-status,.in-orb,.in-wave-run,.in-particles i,.in-ln,.in-cursor,.in-fill,.in-runner,.in-node i,.in-bars span,.in-bars polyline,.in-ring,.in-spin,.in-step-ico,.in-steps-line span,.in-cta,.in-pr::before,.in-pulse::after{animation:none!important}
   .in-bars polyline{stroke-dashoffset:0}.in-roll-window span:first-child{opacity:1;transform:none}.in-fill,.in-steps-line span{transform:none}
   .rv.rv-hide{opacity:1;transform:none}
 }
+
+
+/* Insights hero: flowing light lines + drifting particles (no grid, no boxes) */
+.in-waves{position:absolute;z-index:-1;left:50%;top:40px;width:100vw;height:620px;transform:translateX(-50%);pointer-events:none;overflow:visible}
+.in-wave-base{fill:none;stroke:url(#in-wg);stroke-width:1.2;opacity:.25}
+.in-wave-run{fill:none;stroke:url(#in-wg);stroke-width:2.4;stroke-linecap:round;stroke-dasharray:260 1500;filter:drop-shadow(0 0 8px rgba(217,119,87,.8));animation:in-flow-line 9.6s var(--d,0s) linear infinite}
+@keyframes in-flow-line{from{stroke-dashoffset:260}to{stroke-dashoffset:-1500}}
+html[data-theme="light"] .in-wave-base{opacity:.4}
+html[data-theme="light"] .in-wave-run{filter:none}
+.in-particles{position:absolute;z-index:-1;inset:0;left:50%;width:100vw;transform:translateX(-50%);pointer-events:none;overflow:hidden}
+.in-particles i{position:absolute;left:var(--x);top:var(--y);width:var(--s);height:var(--s);border-radius:50%;opacity:0;animation:in-drift var(--t) var(--d) ease-in-out infinite}
+.in-particles .pb{background:#6ea8ff;box-shadow:0 0 12px 2px rgba(110,168,255,.8)}
+.in-particles .po{background:#ff9a6b;box-shadow:0 0 12px 2px rgba(255,154,107,.8)}
+html[data-theme="light"] .in-particles i{box-shadow:none}
+@keyframes in-drift{0%{opacity:0;transform:translate(0,30px) scale(.6)}25%,70%{opacity:.9}100%{opacity:0;transform:translate(26px,-110px) scale(1.1)}}

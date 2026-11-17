@@ -36,7 +36,11 @@ function Visual({ id }: { id: string }) {
 export default function Insights() {
   return <main className="in-page">
     <section className="shell page-hero in-hero">
-      <div className="in-orb in-orb-a" aria-hidden="true" /><div className="in-orb in-orb-b" aria-hidden="true" /><div className="in-grid" aria-hidden="true" />
+      <div className="in-orb in-orb-a" aria-hidden="true" /><div className="in-orb in-orb-b" aria-hidden="true" /><svg className="in-waves" viewBox="0 0 1440 620" preserveAspectRatio="none" aria-hidden="true">
+        <defs><linearGradient id="in-wg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stopColor="#4682ff" stopOpacity="0"/><stop offset=".35" stopColor="#4682ff"/><stop offset=".7" stopColor="#D97757"/><stop offset="1" stopColor="#D97757" stopOpacity="0"/></linearGradient></defs>
+        {["M-20 420 C 260 300, 460 520, 740 400 S 1200 250, 1460 360","M-20 480 C 300 380, 520 580, 800 470 S 1180 330, 1460 430","M-20 360 C 220 260, 520 440, 760 330 S 1160 190, 1460 290"].map((d, n) => <g key={n}><path className="in-wave-base" d={d} /><path className="in-wave-run" d={d} style={{ ["--d" as string]: `${n * -3.2}s` }} /></g>)}
+      </svg>
+      <div className="in-particles" aria-hidden="true">{Array.from({ length: 22 }, (_, n) => <i key={n} style={{ ["--x" as string]: `${(n * 37 + 11) % 100}%`, ["--y" as string]: `${(n * 53 + 7) % 90}%`, ["--s" as string]: `${3 + (n % 4) * 1.5}px`, ["--d" as string]: `${(n * 0.7) % 9}s`, ["--t" as string]: `${9 + (n % 5) * 2}s` }} className={n % 3 ? "pb" : "po"} />)}</div>
       <div className="eyebrow">Notes from the build</div>
       <h1>Ideas, lessons & <span className="gradient">perspectives.</span></h1>
       <p className="in-roll" aria-label="Notes on software, product thinking, databases, design, learning and Zimbabwe">
@@ -47,7 +51,6 @@ export default function Insights() {
       <div className="in-status"><span className="in-pulse" />First articles are in progress</div>
     </section>
 
-    <div className="in-marquee" aria-hidden="true"><div className="in-marquee-track">{[...words, ...words, ...words, ...words].map((w, n) => <span key={n}>{w}<b>✦</b></span>)}</div></div>
 
     <section className="shell in-section">
       <Reveal><div className="eyebrow">What’s coming</div><h2>Four topics we are <span className="gradient">writing about.</span></h2></Reveal>
