@@ -5,8 +5,8 @@ import {
   animate,
   motion,
   useInView,
+  useMotionTemplate,
   useMotionValue,
-  useMotionValueEvent,
   useScroll,
   useSpring,
   useTransform,
@@ -14,12 +14,12 @@ import {
 
 const rowOne = ["Web apps", "Dashboards", "Business systems", "Databases", "Integrations", "Mobile-first", "Made in Zimbabwe"];
 const rowTwo = ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase", "APIs", "Responsive UI"];
-const dotColors = ["#4da3ff", "#ff9a3d", "#7CE3A6"];
 
-const stats = [
-  { value: 100, suffix: "%", label: "Responsive by design" },
-  { value: 24, suffix: "/7", label: "Always-on systems" },
-  { value: 1, suffix: " idea", label: "Is all we need to start" },
+type Stat = { value: number; suffix: string; label: string; visual: "ring" | "clock" | "pulse" };
+const stats: Stat[] = [
+  { value: 100, suffix: "%", label: "Responsive by design", visual: "ring" },
+  { value: 24, suffix: "/7", label: "Always-on systems", visual: "clock" },
+  { value: 1, suffix: " idea", label: "Is all we need to start", visual: "pulse" },
 ];
 
 function Counter({ to, suffix }: { to: number; suffix: string }) {
@@ -34,66 +34,136 @@ function Counter({ to, suffix }: { to: number; suffix: string }) {
   return <span ref={ref}>{n}{suffix}</span>;
 }
 
+function StatVisual({ kind }: { kind: Stat["visual"] }) {
+  if (kind === "ring")
+    return (
+      <svg className="sv" viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="18" className="sv-track" />
+        <motion.circle
+          cx="24" cy="24" r="18" className="sv-fill" pathLength={1}
+          initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }}
+          transition={{ duration: 1.8, ease: "easeOut" }}
+        />
+        <path className="sv-check" d="M16 25 L22 31 L33 18" />
+      </svg>
+    );
+  if (kind === "clock")
+    return (
+      <svg className="sv" viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="18" className="sv-track" />
+        {Array.from({ length: 12 }).map((_, i) => (
+          <line key={i} x1="24" y1="8" x2="24" y2={i % 3 === 0 ? 11.5 : 10} className="sv-tick" transform={`rotate(${i * 30} 24 24)`} />
+        ))}
+        <line x1="24" y1="24" x2="24" y2="12" className="sv-hand sv-hand-m" />
+        <line x1="24" y1="24" x2="24" y2="16" className="sv-hand sv-hand-h" />
+        <circle cx="24" cy="24" r="2" fill="#fff" />
+      </svg>
+    );
+  return (
+    <svg className="sv" viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r="4" fill="#fff" />
+      <circle cx="24" cy="24" r="4" className="sv-ripple" />
+      <circle cx="24" cy="24" r="4" className="sv-ripple sv-ripple-2" />
+      <circle cx="24" cy="24" r="4" className="sv-ripple sv-ripple-3" />
+    </svg>
+  );
+}
+
+function StatCard({ s, i }: { s: Stat; i: number }) {
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty("--sx", `${e.clientX - r.left}px`);
+    e.currentTarget.style.setProperty("--sy", `${e.clientY - r.top}px`);
+  };
+  return (
+    <motion.div
+      className="tech-stat"
+      onPointerMove={onMove}
+      initial={{ opacity: 0, y: 60, rotateX: -18, scale: 0.94 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.8, delay: i * 0.15, ease: [0.2, 0.7, 0.2, 1] }}
+      whileHover={{ y: -8 }}
+    >
+      <span className="ts-no">0{i + 1}</span>
+      <StatVisual kind={s.visual} />
+      <strong><Counter to={s.value} suffix={s.suffix} /></strong>
+      <span className="ts-label">{s.label}</span>
+      <span className="ts-bar" aria-hidden="true" />
+    </motion.div>
+  );
+}
+
 export default function TechShowcase() {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
-  const auto = useRef(true);
+  const hovering = useRef(false);
+  const [expanded, setExpanded] = useState(false);
 
-  // reveal position 0-100 (how much of the finished render is shown)
-  const reveal = useMotionValue(50);
-  const clip = useTransform(reveal, v => `inset(0 ${100 - v}% 0 0)`);
-  const handleLeft = useTransform(reveal, v => `${v}%`);
+  // flashlight lens: position (%) and radius (px), all spring-smoothed
+  const tx = useMotionValue(50);
+  const ty = useMotionValue(50);
+  const tr = useMotionValue(150);
+  const x = useSpring(tx, { stiffness: 70, damping: 16 });
+  const y = useSpring(ty, { stiffness: 70, damping: 16 });
+  const r = useSpring(tr, { stiffness: 80, damping: 16 });
+  const mask = useMotionTemplate`radial-gradient(circle ${r}px at ${x}% ${y}%, #000 0, #000 72%, transparent 100%)`;
+  const ringLeft = useMotionTemplate`${x}%`;
+  const ringTop = useMotionTemplate`${y}%`;
+  const ringSize = useTransform(r, v => Math.max(0, v * 1.44));
 
-  // sweep back and forth until the visitor takes control
+  // wander on its own until the visitor takes over
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const controls = animate(reveal, [8, 92, 8], {
-      duration: 9,
-      ease: "easeInOut",
-      repeat: Infinity,
-      onUpdate: () => {
-        if (!auto.current) controls.stop();
-      },
-    });
-    return () => controls.stop();
-  }, [reveal]);
+    let raf = 0;
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      if (!hovering.current && !expanded) {
+        const t = (now - t0) / 1000;
+        tx.set(50 + 30 * Math.sin(t * 0.55));
+        ty.set(50 + 24 * Math.sin(t * 0.9 + 1.2));
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [tx, ty, expanded]);
 
-  const setFromPointer = (clientX: number) => {
-    const el = stageRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    reveal.set(Math.min(100, Math.max(0, ((clientX - r.left) / r.width) * 100)));
-  };
+  useEffect(() => {
+    tr.set(expanded ? 2400 : hovering.current ? 230 : 150);
+  }, [expanded, tr]);
 
-  // mouse tilt
+  // tilt
   const tiltX = useSpring(0, { stiffness: 120, damping: 16 });
   const tiltY = useSpring(0, { stiffness: 120, damping: 16 });
   const onMove = (e: React.PointerEvent) => {
     const el = stageRef.current;
-    if (el && e.pointerType === "mouse") {
-      const r = el.getBoundingClientRect();
-      tiltY.set(((e.clientX - r.left) / r.width - 0.5) * 8);
-      tiltX.set(-((e.clientY - r.top) / r.height - 0.5) * 8);
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    if (!expanded) {
+      tx.set(px * 100);
+      ty.set(py * 100);
     }
-    if (dragging.current) setFromPointer(e.clientX);
+    if (e.pointerType === "mouse") {
+      tiltY.set((px - 0.5) * 6);
+      tiltX.set(-(py - 0.5) * 6);
+    }
   };
 
-  // scroll parallax
+  // scroll
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  const glowY = useTransform(scrollYProgress, [0, 1], [-80, 120]);
-  const glowY2 = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const stageScale = useTransform(scrollYProgress, [0, 0.35, 0.6], [0.88, 1, 1]);
+  const glowY = useTransform(scrollYProgress, [0, 1], [-60, 100]);
+  const stageScale = useTransform(scrollYProgress, [0, 0.35, 0.6], [0.9, 1, 1]);
   const stageRotate = useTransform(scrollYProgress, [0, 0.35], [6, 0]);
-  const [pct, setPct] = useState(50);
-  useMotionValueEvent(reveal, "change", v => setPct(Math.round(v)));
 
   const headline = ["From", "blueprint", "to", "product."];
 
   return (
     <section className="section tech-section" ref={sectionRef}>
       <motion.div className="tech-glow tech-glow-a" style={{ y: glowY }} aria-hidden />
-      <motion.div className="tech-glow tech-glow-b" style={{ y: glowY2 }} aria-hidden />
+      <div className="tech-grid" aria-hidden />
 
       <div className="shell">
         <div className="tech-head">
@@ -127,62 +197,46 @@ export default function TechShowcase() {
             ref={stageRef}
             className="tech-stage"
             style={{ rotateX: tiltX, rotateY: tiltY }}
-            onPointerDown={e => {
-              auto.current = false;
-              dragging.current = true;
-              (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-              setFromPointer(e.clientX);
+            onPointerEnter={() => {
+              hovering.current = true;
+              if (!expanded) tr.set(230);
             }}
-            onPointerUp={() => (dragging.current = false)}
-            onPointerCancel={() => (dragging.current = false)}
             onPointerMove={onMove}
             onPointerLeave={() => {
+              hovering.current = false;
               tiltX.set(0);
               tiltY.set(0);
+              if (!expanded) tr.set(150);
             }}
+            onClick={() => setExpanded(v => !v)}
           >
-            <img className="tech-img" src="/tech-blueprint.webp" width={1672} height={941} alt="Blueprint wireframe of a dashboard on a laptop and a phone" loading="lazy" decoding="async" draggable={false} />
-            <motion.img className="tech-img tech-img-top" style={{ clipPath: clip }} src="/tech-render.webp" width={1672} height={941} alt="The finished dashboard shown on a laptop and a phone" loading="lazy" decoding="async" draggable={false} />
-            <div className="tech-scan" aria-hidden />
+            <img className="tech-img tech-img-base" src="/tech-blueprint.webp" width={1672} height={941} alt="Blueprint wireframe of a dashboard on a laptop and a phone" loading="lazy" decoding="async" draggable={false} />
+            <motion.img className="tech-img tech-img-top" style={{ maskImage: mask, WebkitMaskImage: mask }} src="/tech-render.webp" width={1672} height={941} alt="The finished dashboard shown on a laptop and a phone" loading="lazy" decoding="async" draggable={false} />
 
-            <motion.div className="tech-handle" style={{ left: handleLeft }} aria-hidden>
-              <span className="tech-handle-line" />
-              <span className="tech-handle-knob">⟷</span>
-            </motion.div>
+            <motion.span className="tech-lens" style={{ left: ringLeft, top: ringTop, width: ringSize, height: ringSize }} aria-hidden />
+
+            <i className="tech-corner tc-tl" aria-hidden />
+            <i className="tech-corner tc-tr" aria-hidden />
+            <i className="tech-corner tc-bl" aria-hidden />
+            <i className="tech-corner tc-br" aria-hidden />
 
             <span className="tech-tag tech-tag-l">Blueprint</span>
-            <span className="tech-tag tech-tag-r">Product · {pct}%</span>
-            <span className="tech-hint">Drag to reveal</span>
+            <span className="tech-tag tech-tag-r">{expanded ? "Product" : "Lens"}</span>
+            <span className="tech-hint">{expanded ? "Click to shrink" : "Move to explore · Click to expand"}</span>
           </motion.div>
         </motion.div>
 
         <div className="tech-stats">
-          {stats.map((s, i) => (
-            <motion.div
-              className="tech-stat"
-              key={s.label}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.7, delay: i * 0.12 }}
-              whileHover={{ y: -6 }}
-            >
-              <strong><Counter to={s.value} suffix={s.suffix} /></strong>
-              <span>{s.label}</span>
-            </motion.div>
-          ))}
+          {stats.map((s, i) => <StatCard s={s} i={i} key={s.label} />)}
         </div>
       </div>
 
       <div className="mq" aria-hidden>
-        {[rowOne, rowTwo].map((row, r) => (
-          <div className={`mq-row ${r === 1 ? "mq-rev" : ""}`} key={r}>
+        {[rowOne, rowTwo].map((row, ri) => (
+          <div className={`mq-row ${ri === 1 ? "mq-rev" : ""}`} key={ri}>
             <div className="mq-track">
               {[...row, ...row].map((w, i) => (
-                <span className="mq-pill" key={i}>
-                  <i style={{ background: dotColors[i % 3], boxShadow: `0 0 10px ${dotColors[i % 3]}` }} />
-                  {w}
-                </span>
+                <span className="mq-pill" key={i}><i />{w}</span>
               ))}
             </div>
           </div>
