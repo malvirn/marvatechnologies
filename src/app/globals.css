@@ -1457,3 +1457,29 @@ html[data-theme="light"] .in-particles i{box-shadow:none}
  .ct-grid{grid-template-columns:minmax(0,1fr) 380px;gap:56px}
  .ct-poster-wrap{position:sticky;top:110px;margin-inline:0}
 }
+
+/* Brand-coloured contact icons */
+.ct-icon{border-color:color-mix(in srgb,var(--brand,var(--text)) 38%,transparent);background:color-mix(in srgb,var(--brand,var(--text)) 13%,transparent);color:var(--brand,var(--text))}
+.ct-item:hover .ct-icon{background:color-mix(in srgb,var(--brand,var(--text)) 22%,transparent)}
+
+/* Shared site footer */
+.site-footer{margin-top:72px;border-top:1px solid var(--border);background:var(--surface)}
+.sf-inner{display:grid;grid-template-columns:1fr;gap:36px;width:min(1200px,calc(100% - 36px));margin-inline:auto;padding:48px 0 34px}
+.sf-brand .brand-lockup{display:inline-flex}
+.sf-tag{margin:18px 0 6px;color:var(--text);font:600 .95rem/1.4 "Sora",Arial,sans-serif}
+.sf-about{max-width:34ch;margin:0;color:var(--muted);font-size:.85rem;line-height:1.7}
+.sf-title{margin:0 0 16px;color:var(--muted);font:400 .68rem/1.4 "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase}
+.sf-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0;padding:0;list-style:none}
+.sf-links a{display:inline-block;padding:7px 0;color:var(--text);font-size:.92rem;transition:color .2s,transform .2s}
+.sf-links a:hover{color:var(--accent);transform:translateX(3px)}
+.sf-social{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 18px;padding:0;list-style:none}
+.sf-icon{transition:transform .2s,background .2s}
+.sf-icon:hover{transform:translateY(-3px);background:color-mix(in srgb,var(--brand,var(--text)) 24%,transparent)}
+.sf-details{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.sf-details a{color:var(--muted);font-size:.85rem;overflow-wrap:anywhere;transition:color .2s}
+.sf-details a:hover{color:var(--text)}
+.sf-bottom{display:flex;flex-direction:column;gap:6px;width:min(1200px,calc(100% - 36px));margin-inline:auto;padding:20px 0 28px;border-top:1px solid var(--border);color:var(--muted);font:400 .64rem/1.7 "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase}
+@media(min-width:760px){
+ .sf-inner{grid-template-columns:1.3fr .9fr 1.2fr;gap:48px;padding:60px 0 40px}
+ .sf-bottom{flex-direction:row;justify-content:space-between;gap:20px}
+}

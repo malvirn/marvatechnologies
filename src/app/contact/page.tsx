@@ -1,80 +1,12 @@
 import Link from "next/link";
-import { ArrowUpRight, Instagram, Linkedin, Mail, MessageCircle, Phone } from "lucide-react";
+import { ArrowUpRight, Phone } from "lucide-react";
 import Reveal from "@/components/Reveal";
+import { channels } from "@/lib/channels";
 
 export const metadata = {
   title: "Contact — Marva Technologies",
   description: "Get in touch with Marva Technologies by WhatsApp, phone, email, LinkedIn, Instagram or X."
 };
-
-function XIcon({ size = 20 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  );
-}
-
-const WHATSAPP = "263711478580";
-const PHONE = "+263787874724";
-const EMAIL = "malvirngomo8@gmail.com";
-
-const channels = [
-  {
-    key: "whatsapp",
-    label: "WhatsApp",
-    value: "+263 71 147 8580",
-    note: "Fastest way to reach us",
-    href: `https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hello Marva Technologies, I’d like to talk about a project.")}`,
-    icon: <MessageCircle size={20} />,
-    external: true
-  },
-  {
-    key: "call",
-    label: "Call",
-    value: "+263 78 787 4724",
-    note: "Speak to us directly",
-    href: `tel:${PHONE}`,
-    icon: <Phone size={20} />,
-    external: false
-  },
-  {
-    key: "email",
-    label: "Email",
-    value: EMAIL,
-    note: "Projects, collaborations and opportunities",
-    href: `mailto:${EMAIL}?subject=${encodeURIComponent("Marva Technologies enquiry")}`,
-    icon: <Mail size={20} />,
-    external: false
-  },
-  {
-    key: "linkedin",
-    label: "LinkedIn",
-    value: "Malvirn Gomo",
-    note: "Professional profile",
-    href: "https://www.linkedin.com/in/malvirn-gomo-4a7a6841a",
-    icon: <Linkedin size={20} />,
-    external: true
-  },
-  {
-    key: "instagram",
-    label: "Instagram",
-    value: "@m_a_r_v_a_8",
-    note: "Behind the scenes",
-    href: "https://www.instagram.com/m_a_r_v_a_8",
-    icon: <Instagram size={20} />,
-    external: true
-  },
-  {
-    key: "x",
-    label: "X",
-    value: "@GMOMO05",
-    note: "Updates and thoughts",
-    href: "https://x.com/GMOMO05",
-    icon: <XIcon />,
-    external: true
-  }
-];
 
 export default function Contact() {
   return (
@@ -107,7 +39,7 @@ export default function Contact() {
                   {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   aria-label={`${c.label}: ${c.value}`}
                 >
-                  <span className="ct-icon">{c.icon}</span>
+                  <span className="ct-icon" style={{ ["--brand" as string]: c.color }}>{c.icon}</span>
                   <span className="ct-text">
                     <span className="ct-label">{c.label}</span>
                     <span className="ct-value">{c.value}</span>
