@@ -35,7 +35,7 @@ export default function Hero() {
               </span>
             </p>
             <div className="intro-cta">
-              <Link className="intro-btn intro-btn-solid" href="/projects">
+              <Link className="intro-btn intro-btn-solid" href="/about#jn-heading">
                 View my work <ArrowUpRight size={16} aria-hidden="true" />
               </Link>
               <Link className="intro-btn intro-btn-ghost" href="/contact">

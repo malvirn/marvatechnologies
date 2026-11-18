@@ -1547,3 +1547,7 @@ a.chat-chip{display:inline-block}
 .tk-kw{color:#c792ea}.tk-str{color:#7ce3a6}.tk-fn{color:#7cc4ff}.tk-prop{color:#ffcb6b}.tk-num{color:#f78c6c}.tk-pun{color:#8fa3c7}
 .ct-caret{display:inline-block;width:7px;height:1.1em;margin-left:1px;vertical-align:-.15em;background:#7cc4ff;box-shadow:0 0 10px #7cc4ff;animation:blink 1s steps(2,start) infinite}
 @media(prefers-reduced-motion:reduce){.ct-caret{animation:none}}
+
+/* Tall screens (e.g. "desktop site" on a phone): never stretch the intro to the full viewport height */
+.intro{min-height:min(100svh,900px)}
+#jn-heading{scroll-margin-top:120px}

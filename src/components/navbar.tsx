@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
-const links = [["About", "/about"], ["Services", "/services"], ["Projects", "/projects"], ["Insights", "/insights"]];
+const links = [["About", "/about"], ["Services", "/services"], ["Insights", "/insights"]];
 export default function Navbar() {
  const [open, setOpen] = useState(false);
  return <header className="nav-wrap"><nav className="nav shell">
