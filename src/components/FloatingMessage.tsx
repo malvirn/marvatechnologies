@@ -1,21 +1,22 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Mail, Phone, RotateCcw, Send, X } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
 import { EMAIL, PHONE, WHATSAPP } from "@/lib/channels";
+import { DEFAULT_CHIPS, answerFor, cleanName, looksLikeQuestion, type Chip } from "@/lib/faq";
 
 type Msg = { id: number; from: "bot" | "me"; text: string };
-type Step = "topic" | "name" | "message" | "done";
+type Step = "chat" | "name" | "message";
 
-const TOPICS = ["Project idea", "Website", "Mobile app", "Just saying hi"];
 const PLACEHOLDER: Record<Step, string> = {
-  topic: "Or type your own topic…",
+  chat: "Ask me anything…",
   name: "Your name",
-  message: "Tell me what you need…",
-  done: "Ready to send"
+  message: "What do you need?"
 };
+
+const waLink = (text: string) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
 
 function WhatsAppGlyph() {
   return (
@@ -31,11 +32,12 @@ export default function FloatingMessage() {
   const [seen, setSeen] = useState(false);
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [typing, setTyping] = useState(false);
-  const [step, setStep] = useState<Step>("topic");
+  const [step, setStep] = useState<Step>("chat");
   const [draft, setDraft] = useState("");
-  const [topic, setTopic] = useState("");
   const [name, setName] = useState("");
-  const [details, setDetails] = useState("");
+  const [chips, setChips] = useState<Chip[]>([]);
+  const [leadText, setLeadText] = useState<string | null>(null);
+  const [askText, setAskText] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
 
   const idRef = useRef(0);
@@ -49,22 +51,28 @@ export default function FloatingMessage() {
   };
 
   /** Bot says each line in turn, with a short "typing…" pause before each. */
-  const say = useCallback((lines: string[]) => {
+  const say = useCallback((lines: string[], after?: Chip[]) => {
     let wait = 0;
     lines.forEach((text, i) => {
       timers.current.push(setTimeout(() => setTyping(true), wait));
-      wait += 650 + Math.min(text.length * 12, 600);
+      wait += 450 + Math.min(text.length * 8, 450);
       timers.current.push(
         setTimeout(() => {
           setMsgs(m => [...m, { id: ++idRef.current, from: "bot", text }]);
-          if (i === lines.length - 1) setTyping(false);
+          if (i === lines.length - 1) {
+            setTyping(false);
+            setChips(after ?? []);
+          }
         }, wait)
       );
-      wait += 120;
+      wait += 100;
     });
   }, []);
 
-  const greet = useCallback(() => say(["Hi 👋 Welcome to Marva Technologies.", "What can I help you with?"]), [say]);
+  const greet = useCallback(
+    () => say(["Hi 👋 Welcome to Marva Technologies.", "Ask me about my work, projects or tech stack, or start a project chat."], DEFAULT_CHIPS),
+    [say]
+  );
 
   // First open: start the conversation
   useEffect(() => {
@@ -76,7 +84,7 @@ export default function FloatingMessage() {
   // Keep the newest message in view
   useEffect(() => {
     bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: "smooth" });
-  }, [msgs, typing, sent]);
+  }, [msgs, typing, chips, sent]);
 
   // Escape closes
   useEffect(() => {
@@ -88,31 +96,67 @@ export default function FloatingMessage() {
 
   // Focus the box whenever it is the user's turn
   useEffect(() => {
-    if (open && !typing && step !== "done") inputRef.current?.focus({ preventScroll: true });
+    if (open && !typing) inputRef.current?.focus({ preventScroll: true });
   }, [open, typing, step, msgs.length]);
 
-  const waHref = useMemo(() => {
-    const text = `Hello Marva Technologies, I’m ${name || "a visitor"}.\nTopic: ${topic}\n${details}`.trim();
-    return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
-  }, [name, topic, details]);
+  const startLead = () => {
+    if (name) {
+      setStep("message");
+      say([`Sure, ${name}. Tell me a little about what you need.`]);
+    } else {
+      setStep("name");
+      say(["Great, let’s set it up.", "What’s your name?"]);
+    }
+  };
 
   const submit = (raw: string) => {
     const text = raw.trim();
-    if (!text || typing || step === "done") return;
+    if (!text || typing) return;
     setMsgs(m => [...m, { id: ++idRef.current, from: "me", text }]);
     setDraft("");
-    if (step === "topic") {
-      setTopic(text);
-      setStep("name");
-      say(["Great choice. What’s your name?"]);
-    } else if (step === "name") {
-      setName(text);
+    setChips([]);
+    setAskText(null);
+    setSent(false);
+
+    if (step !== "chat" && /^(cancel|stop|back|never ?mind|exit)$/i.test(text)) {
+      setStep("chat");
+      say(["No problem. Ask me anything else, or start again whenever you like."], DEFAULT_CHIPS);
+      return;
+    }
+
+    if (step === "name") {
+      const q = looksLikeQuestion(text) ? answerFor(text) : null;
+      if (q && q.action !== "lead") {
+        say([...q.lines, "By the way, what’s your name?"]);
+        return;
+      }
+      const nm = cleanName(text);
+      setName(nm);
       setStep("message");
-      say([`Nice to meet you, ${text}.`, "Tell me a little about what you need."]);
-    } else if (step === "message") {
-      setDetails(text);
-      setStep("done");
-      say(["All set. Tap the button below to send this on WhatsApp and I’ll reply there."]);
+      say([`Nice to meet you, ${nm}.`, "Tell me a little about what you need."]);
+      return;
+    }
+
+    if (step === "message") {
+      const q = looksLikeQuestion(text) ? answerFor(text) : null;
+      if (q && q.action !== "lead") {
+        say([...q.lines, "When you’re ready, tell me about your project."]);
+        return;
+      }
+      setLeadText(`Hello Marva Technologies, I’m ${name || "a visitor"}.\n${text}`);
+      setStep("chat");
+      say(["All set. Tap the button below to send this on WhatsApp and I’ll reply there."], DEFAULT_CHIPS);
+      return;
+    }
+
+    const a = answerFor(text);
+    if (a?.action === "lead") {
+      startLead();
+    } else if (a) {
+      say(a.lines, a.chips ?? DEFAULT_CHIPS);
+    } else {
+      setAskText(`Hello Marva Technologies, I have a question: ${text}`);
+      say(["Good question, and I don’t want to guess on that one.", "Send it to me on WhatsApp and I’ll answer you personally."], DEFAULT_CHIPS);
     }
   };
 
@@ -120,17 +164,18 @@ export default function FloatingMessage() {
     clearTimers();
     setMsgs([]);
     setTyping(false);
-    setStep("topic");
+    setStep("chat");
     setDraft("");
-    setTopic("");
     setName("");
-    setDetails("");
+    setChips([]);
+    setLeadText(null);
+    setAskText(null);
     setSent(false);
   };
 
   if (pathname === "/contact" || pathname === "/contact/") return null;
 
-  const chipsReady = step === "topic" && !typing && msgs.length >= 2 && !msgs.some(m => m.from === "me");
+  const waText = askText ?? leadText;
 
   return (
     <>
@@ -174,7 +219,7 @@ export default function FloatingMessage() {
             <span className="brand-emblem chat-av" aria-hidden="true"><BrandMark /></span>
             <div className="chat-who">
               <strong>Marva Technologies</strong>
-              <span className="chat-status"><i /> Replies on WhatsApp</span>
+              <span className="chat-status"><i /> Instant answers · WhatsApp replies</span>
             </div>
             <button type="button" className="chat-icon-btn" onClick={reset} aria-label="Start over" title="Start over">
               <RotateCcw size={16} />
@@ -192,19 +237,30 @@ export default function FloatingMessage() {
               <div className="msg msg-bot msg-typing" aria-label="Typing"><i /><i /><i /></div>
             )}
 
-            {chipsReady && (
+            {!typing && chips.length > 0 && (
               <div className="chat-chips">
-                {TOPICS.map(t => (
-                  <button key={t} type="button" className="chat-chip" onClick={() => submit(t)}>{t}</button>
-                ))}
+                {chips.map(c =>
+                  c.href ? (
+                    <a
+                      key={c.label}
+                      className="chat-chip"
+                      href={c.href}
+                      {...(c.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    >
+                      {c.label}
+                    </a>
+                  ) : (
+                    <button key={c.label} type="button" className="chat-chip" onClick={() => submit(c.label)}>{c.label}</button>
+                  )
+                )}
               </div>
             )}
 
-            {step === "done" && !typing && (
+            {waText && !typing && (
               <div className="chat-send">
                 <a
                   className="chat-wa"
-                  href={waHref}
+                  href={waLink(waText)}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {
@@ -213,10 +269,10 @@ export default function FloatingMessage() {
                     say(["Thanks! WhatsApp should be opening now. Just press send there. 🙌"]);
                   }}
                 >
-                  <WhatsAppGlyph /> Send on WhatsApp
+                  <WhatsAppGlyph /> {askText ? "Ask on WhatsApp" : "Send on WhatsApp"}
                 </a>
                 <div className="chat-alt">
-                  <a href={`mailto:${EMAIL}?subject=${encodeURIComponent("Marva Technologies enquiry")}&body=${encodeURIComponent(`Hi, I’m ${name}.\nTopic: ${topic}\n${details}`)}`}><Mail size={14} /> Email instead</a>
+                  <a href={`mailto:${EMAIL}?subject=${encodeURIComponent("Marva Technologies enquiry")}&body=${encodeURIComponent(waText)}`}><Mail size={14} /> Email instead</a>
                   <a href={`tel:${PHONE}`}><Phone size={14} /> Call</a>
                 </div>
               </div>
@@ -229,12 +285,12 @@ export default function FloatingMessage() {
               value={draft}
               onChange={e => setDraft(e.target.value)}
               placeholder={PLACEHOLDER[step]}
-              disabled={step === "done" || typing}
+              disabled={typing}
               maxLength={500}
               autoComplete={step === "name" ? "name" : "off"}
               aria-label={PLACEHOLDER[step]}
             />
-            <button type="submit" className="chat-send-btn" aria-label="Send message" disabled={!draft.trim() || typing || step === "done"}>
+            <button type="submit" className="chat-send-btn" aria-label="Send message" disabled={!draft.trim() || typing}>
               <Send size={18} />
             </button>
           </form>

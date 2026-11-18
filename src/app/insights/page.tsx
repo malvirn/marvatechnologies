@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Lightbulb, PenLine, SearchCheck, Rocket, ArrowUpRight } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import Principles from "@/components/Principles";
+import CodeTyper from "@/components/CodeTyper";
 
 const topics = [
   { id: "code", tag: "01 / Engineering", title: "Building software", text: "Practical lessons from building web and business applications: what worked, what broke and what I would do differently." },
@@ -13,11 +14,7 @@ const steps = [["Idea", "A problem worth writing about", Lightbulb], ["Draft", "
 const words = ["Software", "Product thinking", "Databases", "Design", "Learning", "Zimbabwe"];
 
 function Visual({ id }: { id: string }) {
-  if (id === "code") return <div className="in-vis in-code" aria-hidden="true">
-    <div className="in-dots"><i /><i /><i /></div>
-    {[["62%", "#7cc4ff"], ["38%", "#c792ea"], ["74%", "#7ce3a6"], ["50%", "#ffcb6b"], ["68%", "#7cc4ff"], ["30%", "#c792ea"]].map(([w, c], n) => <span key={n} className="in-ln" style={{ ["--w" as string]: w, ["--c" as string]: c, ["--d" as string]: `${n * 0.45}s`, ["--ind" as string]: n === 1 || n === 2 || n === 3 ? "18px" : "0px" }} />)}
-    <b className="in-cursor" />
-  </div>;
+  if (id === "code") return <div className="in-vis in-code in-code-live" aria-hidden="true"><CodeTyper /></div>;
   if (id === "flow") return <div className="in-vis in-flow" aria-hidden="true">
     <span className="in-track" /><span className="in-fill" /><span className="in-runner" />
     {["Idea", "Prototype", "Launch"].map((t, n) => <div key={t} className="in-node" style={{ ["--n" as string]: n }}><i /><small>{t}</small></div>)}
