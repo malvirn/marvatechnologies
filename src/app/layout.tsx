@@ -17,6 +17,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return <html lang="en" suppressHydrationWarning>
     <head>
+      <meta name="google-site-verification" content="HthND9GFMhWDO0xQ0nVUwLaQxU3s5BZoXLKEDRb_ROE" />
       <script dangerouslySetInnerHTML={{ __html: `try{var t=localStorage.getItem("marva-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;else document.documentElement.dataset.theme="dark";if(t==="light"){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#F6F4EF")}}catch(e){document.documentElement.dataset.theme="dark"}` }} />
     </head>
     <body>
