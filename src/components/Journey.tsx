@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
   motion,
+  useInView,
+  useMotionValue,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -47,9 +49,9 @@ const PROJECTS: Project[] = [
     ],
     stack: ["Web app", "Supabase", "Netlify"],
     href: "https://maternityhelp2.netlify.app",
-    image: "/projects/maternityhelp-samsung.webp",
-    ratio: 1122 / 1402,
-    imageAlt: "MaternityHelp dashboard shown on a Samsung Galaxy S26 Ultra",
+    image: "/projects/maternityhelp-iphone6.webp",
+    ratio: 9 / 19,
+    imageAlt: "MaternityHelp dashboard shown on an iPhone 6",
     device: "MaternityHelp",
     accent: "#f472b6",
   },
@@ -69,9 +71,9 @@ const PROJECTS: Project[] = [
     ],
     stack: ["Workshop", "Inventory", "Accounting"],
     href: "",
-    image: "/projects/centric-s26-ultra.webp",
+    image: "/projects/centric-iphone6.webp",
     ratio: 9 / 19,
-    imageAlt: "Centric Auto Mobile cashbook shown on a Samsung Galaxy S26 Ultra",
+    imageAlt: "Centric Auto Mobile billing screen shown on an iPhone 6",
     device: "Centric Auto Mobile",
     accent: "#D97757",
   },
@@ -138,141 +140,75 @@ function TimelineItem({
   );
 }
 
-type LbItem = { src: string; alt: string; title: string; device: string };
+const AUTOPLAY_MS = 5200;
+const mod = (n: number, m: number) => ((n % m) + m) % m;
 
-/* Full-screen viewer: swipe/arrows to switch, tap the image to zoom 2x and pan */
-function Lightbox({
-  items,
-  index,
-  onIndex,
-  onClose,
+/* One phone travelling on a 3D orbit; `pos` is a spring-driven "turn" counter */
+function OrbitSlide({
+  p,
+  i,
+  pos,
+  active,
+  onSelect,
 }: {
-  items: LbItem[];
-  index: number;
-  onIndex: (n: number) => void;
-  onClose: () => void;
+  p: Project;
+  i: number;
+  pos: MotionValue<number>;
+  active: boolean;
+  onSelect: () => void;
 }) {
-  const reduce = useReducedMotion();
-  const [zoom, setZoom] = useState(false);
-  const dialogRef = useRef<HTMLDivElement>(null);
-  const closeRef = useRef<HTMLButtonElement>(null);
-  const viewRef = useRef<HTMLDivElement>(null);
-  const item = items[index];
-
-  useEffect(() => setZoom(false), [index]);
-
-  useEffect(() => {
-    const prev = document.activeElement as HTMLElement | null;
-    document.body.style.overflow = "hidden";
-    closeRef.current?.focus();
-    return () => {
-      document.body.style.overflow = "";
-      prev?.focus?.();
-    };
-  }, []);
-
-  useEffect(() => {
-    const el = viewRef.current;
-    if (!el || !zoom) return;
-    el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
-    el.scrollTop = (el.scrollHeight - el.clientHeight) / 2;
-  }, [zoom]);
-
-  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Escape") onClose();
-    else if (e.key === "ArrowRight" && index < items.length - 1) onIndex(index + 1);
-    else if (e.key === "ArrowLeft" && index > 0) onIndex(index - 1);
-    else if (e.key === "Tab" && dialogRef.current) {
-      const f = dialogRef.current.querySelectorAll<HTMLElement>("button:not(:disabled)");
-      if (!f.length) return;
-      const first = f[0];
-      const last = f[f.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    }
-  };
-
-  const onDragEnd = (_: unknown, info: PanInfo) => {
-    if (info.offset.x < -60 && index < items.length - 1) onIndex(index + 1);
-    else if (info.offset.x > 60 && index > 0) onIndex(index - 1);
-  };
+  const step = (Math.PI * 2) / PROJECTS.length;
+  const th = useTransform(pos, (v) => (i - v) * step);
+  const x = useTransform(th, (t) => `${Math.sin(t) * 50}%`);
+  const z = useTransform(th, (t) => Math.cos(t) * 170 - 170);
+  const rotateY = useTransform(th, (t) => -Math.sin(t) * 48);
+  const rotateZ = useTransform(th, (t) => -Math.sin(t) * 5);
+  const scale = useTransform(th, (t) => 0.72 + 0.28 * ((Math.cos(t) + 1) / 2));
+  const opacity = useTransform(th, (t) => 0.25 + 0.75 * Math.pow((Math.cos(t) + 1) / 2, 0.7));
+  const filter = useTransform(th, (t) => `blur(${(((1 - Math.cos(t)) / 2) * 5).toFixed(2)}px)`);
 
   return (
-    <motion.div
-      ref={dialogRef}
-      className="lb"
-      role="dialog"
-      aria-modal="true"
-      aria-label={`${item.title} screenshot`}
-      onKeyDown={onKeyDown}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: reduce ? 0 : 0.25 }}
+    <motion.figure
+      className="jn-slide is-phone"
+      style={{ x, z, rotateY, rotateZ, scale, opacity, filter, aspectRatio: p.ratio, ["--mask" as string]: `url(${p.image})` }}
+      onTap={() => !active && onSelect()}
+      aria-hidden={!active}
     >
-      <div className="lb-top">
-        <div className="lb-title">
-          <strong>{item.title}</strong> <span>{item.device}</span>
-        </div>
-        <button ref={closeRef} type="button" className="lb-btn" onClick={onClose} aria-label="Close viewer">
-          ✕
-        </button>
-      </div>
-
-      <div className={`lb-view${zoom ? " is-zoom" : ""}`} ref={viewRef} onClick={(e) => e.target === e.currentTarget && onClose()}>
-        <motion.img
-          key={item.src}
-          src={item.src}
-          alt={item.alt}
-          draggable={false}
-          drag={zoom ? false : "x"}
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.25}
-          onDragEnd={onDragEnd}
-          onTap={() => setZoom((z) => !z)}
-          initial={reduce ? false : { opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: reduce ? 0 : 0.3 }}
-        />
-      </div>
-
-      <div className="lb-bottom">
-        <button type="button" className="lb-btn" onClick={() => onIndex(index - 1)} disabled={index === 0} aria-label="Previous screenshot">
-          ←
-        </button>
-        <span className="lb-hint">
-          {index + 1} / {items.length} · {zoom ? "Scroll to pan, tap to zoom out" : "Tap image to zoom"}
-        </span>
-        <button type="button" className="lb-btn" onClick={() => onIndex(index + 1)} disabled={index === items.length - 1} aria-label="Next screenshot">
-          →
-        </button>
-      </div>
-    </motion.div>
+      <img src={p.image} alt={p.imageAlt} draggable={false} loading={i === 0 ? "eager" : "lazy"} decoding="async" />
+    </motion.figure>
   );
 }
 
 export default function Journey() {
   const reduce = useReducedMotion();
-  const [active, setActive] = useState(0);
-  const [view, setView] = useState(false);
+  const [turn, setTurn] = useState(0);
+  const [hover, setHover] = useState(false);
+  const stageRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLOListElement>(null);
+  const inView = useInView(stageRef, { amount: 0.35 });
+  const active = mod(turn, PROJECTS.length);
+
+  const raw = useMotionValue(0);
+  const spring = useSpring(raw, { stiffness: 55, damping: 13, mass: 1 });
+  const pos = reduce ? raw : spring;
+  useEffect(() => {
+    raw.set(turn);
+  }, [turn, raw]);
 
   const { scrollYProgress } = useScroll({ target: listRef, offset: ["start 75%", "end 55%"] });
   const fill = useSpring(scrollYProgress, { stiffness: 90, damping: 24, mass: 0.4 });
 
-  const go = (n: number) => setActive(Math.max(0, Math.min(PROJECTS.length - 1, n)));
+  const next = () => setTurn((t) => t + 1);
+  const prev = () => setTurn((t) => t - 1);
+  const go = (n: number) => setTurn((t) => t + mod(n - mod(t, PROJECTS.length), PROJECTS.length));
 
   const onDragEnd = (_: unknown, info: PanInfo) => {
-    if (info.offset.x < -50 || info.velocity.x < -400) go(active + 1);
-    else if (info.offset.x > 50 || info.velocity.x > 400) go(active - 1);
+    if (info.offset.x < -50 || info.velocity.x < -400) next();
+    else if (info.offset.x > 50 || info.velocity.x > 400) prev();
   };
 
   const current = PROJECTS[active];
+  const accentVar = { ["--c" as string]: current.accent };
   const blurIn = reduce
     ? {}
     : {
@@ -290,7 +226,7 @@ export default function Journey() {
             What I’ve <span className="gradient">built</span>
           </h2>
           <p className="section-copy">
-            A timeline of the products I’ve shipped. Pick a milestone or swipe the phones to see what each one does.
+            A timeline of the products I’ve shipped. Watch the phones swap places on their own, or pick a milestone.
           </p>
         </div>
 
@@ -318,15 +254,18 @@ export default function Journey() {
           {/* Carousel + details */}
           <div className="jn-showcase">
             <div
+              ref={stageRef}
               className="jn-stage"
               tabIndex={0}
               role="group"
               aria-roledescription="carousel"
               aria-label="Project screenshots"
               onKeyDown={(e) => {
-                if (e.key === "ArrowRight") go(active + 1);
-                if (e.key === "ArrowLeft") go(active - 1);
+                if (e.key === "ArrowRight") next();
+                if (e.key === "ArrowLeft") prev();
               }}
+              onPointerEnter={() => setHover(true)}
+              onPointerLeave={() => setHover(false)}
             >
               <motion.div
                 className="jn-glow"
@@ -334,6 +273,34 @@ export default function Journey() {
                 animate={{ backgroundColor: current.accent }}
                 transition={{ duration: reduce ? 0 : 0.9 }}
               />
+
+              {/* Hologram platform under the phones */}
+              <div className="jn-halo" aria-hidden style={accentVar}>
+                <i className="jn-halo-r1" />
+                <i className="jn-halo-r2" />
+                <div className="jn-halo-spin">
+                  {Array.from({ length: 14 }, (_, k) => (
+                    <b key={k} style={{ ["--a" as string]: `${k * (360 / 14)}deg` }} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Shockwave and sparks on every swap */}
+              <span key={`rg-${turn}`} className="jn-ring" aria-hidden style={accentVar} />
+              <span key={`rg2-${turn}`} className="jn-ring jn-ring-2" aria-hidden style={accentVar} />
+              <div key={`sp-${turn}`} className="jn-sparks" aria-hidden style={accentVar}>
+                {Array.from({ length: 16 }, (_, k) => (
+                  <i
+                    key={k}
+                    style={{
+                      ["--a" as string]: `${k * (360 / 16) + (k % 2 ? 9 : 0)}deg`,
+                      ["--d" as string]: `${95 + ((k * 37) % 80)}px`,
+                      ["--dl" as string]: `${(k % 4) * 0.04}s`,
+                    }}
+                  />
+                ))}
+              </div>
+
               <motion.div
                 className="jn-track"
                 drag="x"
@@ -341,40 +308,15 @@ export default function Journey() {
                 dragElastic={0.18}
                 onDragEnd={onDragEnd}
               >
-                {PROJECTS.map((p, i) => {
-                  const o = i - active;
-                  const isActive = o === 0;
-                  return (
-                    <motion.figure
-                      key={p.id}
-                      className={`jn-slide ${p.id === "centric" ? "is-phone" : p.ratio > 1 ? "is-landscape" : "is-portrait"}`}
-                      style={{ zIndex: 10 - Math.abs(o), aspectRatio: p.ratio }}
-                      initial={false}
-                      animate={{
-                        x: `${o * 62}%`,
-                        rotateY: reduce ? 0 : o * -34,
-                        scale: isActive ? 1 : 0.76,
-                        opacity: isActive ? 1 : 0.5,
-                        filter: isActive ? "blur(0px)" : "blur(3px)",
-                      }}
-                      transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 140, damping: 22, mass: 0.9 }}
-                      onTap={() => (isActive ? setView(true) : go(i))}
-                      aria-hidden={!isActive}
-                    >
-                      <img src={p.image} alt={p.imageAlt} draggable={false} loading={i === 0 ? "eager" : "lazy"} decoding="async" />
-                      {isActive && (
-                        <span className="jn-hint" aria-hidden>
-                          Tap to enlarge
-                        </span>
-                      )}
-                      <figcaption>{p.device}</figcaption>
-                    </motion.figure>
-                  );
-                })}
+                <div className="jn-bob">
+                  {PROJECTS.map((p, i) => (
+                    <OrbitSlide key={p.id} p={p} i={i} pos={pos} active={i === active} onSelect={() => go(i)} />
+                  ))}
+                </div>
               </motion.div>
 
               <div className="jn-controls">
-                <button type="button" onClick={() => go(active - 1)} disabled={active === 0} aria-label="Previous project">
+                <button type="button" onClick={prev} aria-label="Previous project">
                   ←
                 </button>
                 <div className="jn-dots">
@@ -389,10 +331,25 @@ export default function Journey() {
                     />
                   ))}
                 </div>
-                <button type="button" onClick={() => go(active + 1)} disabled={active === PROJECTS.length - 1} aria-label="Next project">
+                <button type="button" onClick={next} aria-label="Next project">
                   →
                 </button>
               </div>
+
+              {/* Autoplay timer: when its animation ends, the phones swap */}
+              {!reduce && (
+                <span
+                  key={`pg-${turn}`}
+                  className="jn-progress"
+                  aria-hidden
+                  style={{
+                    ...accentVar,
+                    animationDuration: `${AUTOPLAY_MS}ms`,
+                    animationPlayState: hover || !inView ? "paused" : "running",
+                  }}
+                  onAnimationEnd={next}
+                />
+              )}
             </div>
 
             <div className="jn-detail" aria-live="polite">
@@ -433,16 +390,13 @@ export default function Journey() {
                       </div>
                     </div>
 
-                    <div className="jn-actions">
-                      {current.href && (
+                    {current.href && (
+                      <div className="jn-actions">
                         <a className="btn primary" href={current.href} target="_blank" rel="noopener noreferrer">
                           Visit live site ↗
                         </a>
-                      )}
-                      <button type="button" className="btn secondary" onClick={() => setView(true)}>
-                        View full screenshot
-                      </button>
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -450,16 +404,6 @@ export default function Journey() {
           </div>
         </div>
       </div>
-      <AnimatePresence>
-        {view && (
-          <Lightbox
-            items={PROJECTS.map((p) => ({ src: p.image, alt: p.imageAlt, title: p.title, device: p.device }))}
-            index={active}
-            onIndex={go}
-            onClose={() => setView(false)}
-          />
-        )}
-      </AnimatePresence>
     </section>
   );
 }
