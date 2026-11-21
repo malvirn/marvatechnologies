@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function DuplicateRequestsDemo() {
   const inFlight = useRef(false);
+  const timer = useRef<number | null>(null);
+  useEffect(() => () => { if (timer.current !== null) window.clearTimeout(timer.current); }, []);
   const [pending, setPending] = useState(false);
   const [accepted, setAccepted] = useState(0);
   const [ignored, setIgnored] = useState(0);
@@ -11,10 +13,11 @@ export default function DuplicateRequestsDemo() {
     if (inFlight.current) { setIgnored((count) => count + 1); return; }
     inFlight.current = true;
     setPending(true);
-    window.setTimeout(() => {
+    timer.current = window.setTimeout(() => {
       setAccepted((count) => count + 1);
       setPending(false);
       inFlight.current = false;
+      timer.current = null;
     }, 1200);
   };
   return (
