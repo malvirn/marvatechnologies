@@ -120,7 +120,7 @@ test("Build Notes hub has a raster 1200 by 630 social image and CollectionPage J
   await page.goto("/insights");
   const jsonLd = await page.locator('script[type="application/ld+json"]').textContent();
   expect(jsonLd).toContain("CollectionPage");
-  const response = await request.get("/insights/opengraph-image");
+  const response = await request.get("/insights/opengraph-image.png");
   expect(response.ok()).toBeTruthy();
   expect(response.headers()["content-type"]).toContain("image/png");
   const png = await response.body();
@@ -153,7 +153,7 @@ test("published lesson exposes Article and BreadcrumbList JSON-LD and its own so
   const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
   expect(scripts.join(" ")).toContain("Article");
   expect(scripts.join(" ")).toContain("BreadcrumbList");
-  const response = await request.get("/insights/opengraph-image");
+  const response = await request.get("/insights/opengraph-image.png");
   expect(response.ok()).toBeTruthy();
   expect(response.headers()["content-type"]).toContain("image/png");
 });
