@@ -37,6 +37,8 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
   const [search, setSearch] = useState<SearchFunction | null>(null);
   const [loading, setLoading] = useState(true);
   const [indexError, setIndexError] = useState(false);
+  const filtersRef = useRef({ track, level });
+  filtersRef.current = { track, level };
   const updateUrl = useCallback((next: { query: string; track: string; level: string }) => writeFilters(next), []);
 
   useEffect(() => {
@@ -74,7 +76,7 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
         if (timerRef.current) clearTimeout(timerRef.current);
         setQuery("");
         setCommittedQuery("");
-        updateUrl({ query: "", track, level });
+        updateUrl({ query: "", track: filtersRef.current.track, level: filtersRef.current.level });
         inputRef.current?.blur();
       }
     };
@@ -86,7 +88,7 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
       window.removeEventListener("keydown", onKeyDown);
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [lessons, track, level, updateUrl]);
+  }, [lessons, updateUrl]);
 
   const handleQuery = (value: string) => {
     setQuery(value);
@@ -94,7 +96,7 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
     timerRef.current = setTimeout(() => {
       const committed = value.trim();
       setCommittedQuery(committed);
-      updateUrl({ query: committed, track, level });
+      updateUrl({ query: committed, track: filtersRef.current.track, level: filtersRef.current.level });
     }, 250);
   };
   const handleTrack = (value: string) => {
