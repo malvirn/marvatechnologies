@@ -29,7 +29,7 @@ Lesson headings use GitHub-style heading IDs with a `bn-` prefix to avoid generi
 - Run unit tests with `npm test`.
 - Install the Chromium browser once with `npx playwright install chromium`.
 - Run browser tests with `npm run test:e2e`.
-- To enable the published-lesson browser checks, set `E2E_LESSON_SLUG` and `E2E_LESSON_TITLE` to an owner-approved published lesson.
+- To enable the published-lesson browser checks, set `E2E_LESSON_SLUG` and `E2E_LESSON_TITLE` to an owner-approved published lesson. Set `E2E_TEACHING_LESSON_SLUG` to the approved audit lesson to test BeforeAfter and PromptBlock, and `E2E_DEMO_LESSON_SLUG` to an approved demo lesson to test lazy loading.
 
 The browser suite can exercise the hub and 404 route without publishing content. Lesson-content assertions are skipped until an approved lesson is published.
 
