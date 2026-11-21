@@ -13,7 +13,7 @@ const SITE_URL = normalizeSiteUrl();
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getPublishedLessons().map((lesson) => ({ slug: lesson.slug }));
+  return getPublishedLessons().map((lesson: { slug: string }) => ({ slug: lesson.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
