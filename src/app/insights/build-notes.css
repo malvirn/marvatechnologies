@@ -217,3 +217,14 @@
 @media(prefers-reduced-motion:reduce) {
   .bn-demo *, .bn-before-after * { scroll-behavior: auto !important; transition: none !important; }
 }
+
+
+/* Phase 4 accessibility polish */
+.bn-skip-link { position: fixed; z-index: 1000; top: -80px; left: 14px; display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--text); color: var(--background); font-size: .8rem; font-weight: 600; }
+.bn-skip-link:focus { top: 14px; outline: 3px solid var(--accent); outline-offset: 3px; }
+#main-content { scroll-margin-top: 92px; }
+.bn-article-body pre { max-width: 100%; overflow-x: auto; }
+.bn-article-body pre:focus-visible { outline-offset: -3px; }
+@media(prefers-reduced-motion:reduce) {
+  .bn-article, .bn-article-body, .bn-skip-link { scroll-behavior: auto !important; transition: none !important; }
+}
