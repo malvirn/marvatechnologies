@@ -1,9 +1,23 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, Clock3 } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import Principles from "@/components/Principles";
 import CodeTyper from "@/components/CodeTyper";
 import { getPublishedLessons } from "@/lib/insights-content";
+
+export const metadata: Metadata = {
+  title: "Build Notes | Marva Technologies",
+  description: "Practical software engineering lessons from planning, building and maintaining real systems.",
+  alternates: { canonical: "https://marvatechnologies.pages.dev/insights" },
+  openGraph: {
+    title: "Build Notes | Marva Technologies",
+    description: "Practical software engineering lessons from planning, building and maintaining real systems.",
+    url: "https://marvatechnologies.pages.dev/insights",
+    siteName: "Marva Technologies"
+  },
+  twitter: { card: "summary", title: "Build Notes | Marva Technologies", description: "Practical software engineering lessons from planning, building and maintaining real systems." }
+};
 
 export default function Insights() {
   const lessons = getPublishedLessons();
