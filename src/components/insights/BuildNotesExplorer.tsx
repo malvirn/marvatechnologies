@@ -19,8 +19,12 @@ function readFilters() {
 }
 function writeFilters(filters: { query: string; track: string; level: string }) {
   const url = new URL(window.location.href);
-  (["q", "track", "level"] as const).forEach((key) => {
-    const value = filters[key].trim();
+  ([
+    ["q", "query"],
+    ["track", "track"],
+    ["level", "level"]
+  ] as const).forEach(([key, field]) => {
+    const value = filters[field].trim();
     if (value) url.searchParams.set(key, value);
     else url.searchParams.delete(key);
   });
