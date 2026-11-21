@@ -26,8 +26,8 @@ export const lessonSchema = z.object({
 });
 
 export function estimateReadingTime(content) {
-  const withoutCode = content.replace(/```[\\s\\S]*?```/g, " ");
-  const words = withoutCode.replace(/<[^>]+>/g, " ").replace(/[#>*_`~|-]/g, " ").trim().split(/\\s+/).filter(Boolean).length;
+  const withoutCode = content.replace(/```[\s\S]*?```/g, " ");
+  const words = withoutCode.replace(/<[^>]+>/g, " ").replace(/[#>*_`~|-]/g, " ").trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.ceil(words / 220));
 }
 
