@@ -6,8 +6,7 @@ import Principles from "@/components/Principles";
 import CodeTyper from "@/components/CodeTyper";
 import BuildNotesExplorer from "@/components/insights/BuildNotesExplorer";
 import { getPublishedLessons } from "@/lib/insights-content.mjs";
-import { normalizeSiteUrl } from "@/lib/insights-seo.mjs";
-import { buildCollectionJsonLd, serializeJsonLd } from "@/lib/insights-seo.mjs";
+import { normalizeSiteUrl, buildCollectionJsonLd, serializeJsonLd } from "@/lib/insights-seo.mjs";
 
 const SITE_URL = normalizeSiteUrl();
 
