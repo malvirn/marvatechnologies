@@ -31,7 +31,7 @@ test("published lesson renders its table of contents and reading progress", asyn
   await page.goto("/insights/" + process.env.E2E_LESSON_SLUG);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.locator(".bn-reading-progress")).toHaveAttribute("aria-hidden", "true");
-  await expect(page.getByText("On this page").first()).toBeVisible();
+  await expect(page.locator(".bn-toc-desktop .bn-toc-title")).toBeVisible();
   await expect(page.locator(".bn-article-footer")).toBeVisible();
 });
 
