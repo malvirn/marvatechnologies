@@ -63,3 +63,11 @@ test("existing theme toggle works on the new Insights route", async ({ page }) =
   await page.getByRole("button", { name: "Switch to dark theme" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
+
+for (const route of ["/", "/about", "/services", "/contact"]) {
+  test("existing route remains available: " + route, async ({ page }) => {
+    const response = await page.goto(route);
+    expect(response?.status()).toBe(200);
+    await expect(page.locator("header.site-header")).toBeVisible();
+  });
+}
