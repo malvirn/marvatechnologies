@@ -6,7 +6,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPublishedLessonBySlug, getPublishedLessons } from "@/lib/insights-content.mjs";
 import { mdxComponents } from "@/components/insights/MdxComponents";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://marvatechnologies.pages.dev";
+const SITE_URL = process.env.SITE_URL || "https://marvatechnologies.pages.dev";
 
 export const dynamicParams = false;
 
