@@ -43,6 +43,14 @@ function runBuild(label) {
   if (result.status !== 0) fail("npm run build failed for " + label + " with exit code " + result.status + ".");
 }
 
+function assertUnknownSlugNotExported() {
+  const candidates = [
+    path.join(outDirectory, "insights", "this-lesson-does-not-exist.html"),
+    path.join(outDirectory, "insights", "this-lesson-does-not-exist", "index.html")
+  ];
+  if (candidates.some((candidate) => fs.existsSync(candidate))) fail("An unknown lesson slug was unexpectedly exported.");
+}
+
 function assertZeroPublishedOutput() {
   const feedPath = path.join(outDirectory, "insights", "rss.xml");
   const sitemapPath = path.join(outDirectory, "sitemap.xml");
@@ -51,6 +59,7 @@ function assertZeroPublishedOutput() {
   const feed = fs.readFileSync(feedPath, "utf8");
   const sitemap = fs.readFileSync(sitemapPath, "utf8");
   if (feed.includes(lessonSlug) || sitemap.includes(lessonSlug)) fail("The zero-published build unexpectedly exposed a draft lesson.");
+  assertUnknownSlugNotExported();
 }
 
 function assertOnePublishedOutput() {
@@ -58,6 +67,7 @@ function assertOnePublishedOutput() {
   const sitemap = fs.readFileSync(path.join(outDirectory, "sitemap.xml"), "utf8");
   if (!feed.includes(lessonSlug)) fail("The one-published build did not include the lesson in RSS.");
   if (!sitemap.includes(lessonSlug)) fail("The one-published build did not include the lesson in the sitemap.");
+  assertUnknownSlugNotExported();
 
   const pageCandidates = [
     path.join(outDirectory, "insights", lessonSlug + ".html"),
