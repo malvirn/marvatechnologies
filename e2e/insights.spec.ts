@@ -9,8 +9,8 @@ test("hub loads and keeps combined filters in the URL after reload", async ({ pa
   await expect(page.getByRole("heading", { name: /No notes match those filters/ })).toBeVisible();
   await page.getByLabel("Filter by track").selectOption("Frontend Engineering");
   await page.getByLabel("Filter by level").selectOption("Foundation");
-  await expect(page).toHaveURL(/track=Frontend+Engineering/);
-  await expect(page).toHaveURL(/level=Foundation/);
+  await expect.poll(() => new URL(page.url()).searchParams.get("track")).toBe("Frontend Engineering");
+  await expect.poll(() => new URL(page.url()).searchParams.get("level")).toBe("Foundation");
   await page.reload();
   await expect(page.getByLabel("Filter by track")).toHaveValue("Frontend Engineering");
   await expect(page.getByLabel("Filter by level")).toHaveValue("Foundation");
