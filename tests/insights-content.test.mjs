@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { estimateReadingTime, parseLessonSource, validateLessonCollection } from "../src/lib/insights-content.mjs";
+import { estimateReadingTime, parseLessonSource, validateLessonCollection, extractTableOfContents, getRelatedLessons, getLessonNavigation } from "../src/lib/insights-content.mjs";
 
 const base = {
   title: "A useful test lesson",
@@ -53,4 +53,30 @@ test("estimates reading time from prose and ignores fenced code", () => {
   const prose = Array.from({ length: 230 }, () => "word").join(" ");
   const content = prose + "\n\n```ts\nconst ignored = true;\n```";
   assert.equal(estimateReadingTime(content), 2);
+});
+
+test("extracts h2 and h3 headings while ignoring fenced code", () => {
+  const toc = extractTableOfContents("# Page title\n\n## Why it matters\n### When to use it\n\n```md\n## Not a real heading\n```\n\n## Why it matters");
+  assert.deepEqual(toc.map(({ id, level }) => [id, level]), [
+    ["why-it-matters", 2],
+    ["when-to-use-it", 3],
+    ["why-it-matters-1", 2]
+  ]);
+});
+
+test("uses explicit related lessons first and same-track notes as fallback", () => {
+  const current = { ...base, related: ["another-track"] };
+  const explicit = { ...base, slug: "another-track", track: "Backend Engineering" };
+  const fallback = { ...base, slug: "same-track", publishedAt: "2026-11-22T00:00:00.000Z" };
+  assert.deepEqual(getRelatedLessons(current, [current, explicit, fallback]).map((item) => item.slug), ["another-track", "same-track"]);
+});
+
+test("returns previous and next lessons from the same track only", () => {
+  const older = { ...base, slug: "older", publishedAt: "2026-11-19T00:00:00.000Z" };
+  const current = { ...base, slug: "current", publishedAt: "2026-11-20T00:00:00.000Z" };
+  const newer = { ...base, slug: "newer", publishedAt: "2026-11-21T00:00:00.000Z" };
+  const other = { ...base, slug: "other-track", track: "System Design" };
+  const nav = getLessonNavigation(current, [newer, other, current, older]);
+  assert.equal(nav.previous.slug, "older");
+  assert.equal(nav.next.slug, "newer");
 });
