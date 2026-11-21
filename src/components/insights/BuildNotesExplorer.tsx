@@ -137,7 +137,7 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
           <Search size={17} aria-hidden="true" />
           <input ref={inputRef} id="bn-search-input" type="search" aria-label="Search practical engineering notes" value={query} onChange={(event) => handleQuery(event.target.value)} placeholder="Search practical engineering notes..." autoComplete="off" />
           {query ? <button type="button" className="bn-search-clear" onClick={() => handleQuery("")} aria-label="Clear search"><X size={15} /></button> : <kbd aria-hidden="true">/</kbd>}
-        </label>
+        </div>
         <div className="bn-filter-row">
           <label className="bn-filter"><span>Track</span><select aria-label="Filter by track" value={track} onChange={(event) => handleTrack(event.target.value)}><option value="">All tracks</option>{TRACKS.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
           <label className="bn-filter"><span>Level</span><select aria-label="Filter by level" value={level} onChange={(event) => handleLevel(event.target.value)}><option value="">All levels</option>{LEVELS.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
