@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function OptimisticUiDemo() {
+  const timer = useRef<number | null>(null);
+  useEffect(() => () => { if (timer.current !== null) window.clearTimeout(timer.current); }, []);
   const [rejectNext, setRejectNext] = useState(false);
   const [complete, setComplete] = useState(false);
   const [pending, setPending] = useState(false);
@@ -14,7 +16,7 @@ export default function OptimisticUiDemo() {
     setComplete(next);
     setPending(true);
     setMessage("Updated locally. Waiting for the simulated server…");
-    window.setTimeout(() => {
+    timer.current = window.setTimeout(() => {
       if (rejectNext) {
         setRejectNext(false);
         setComplete(previous);
@@ -23,6 +25,7 @@ export default function OptimisticUiDemo() {
         setMessage("The simulated server accepted the change.");
       }
       setPending(false);
+      timer.current = null;
     }, 900);
   };
   return (
