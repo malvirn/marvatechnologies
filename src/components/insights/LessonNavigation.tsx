@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export type TocItem = { id: string; text: string; level: 2 | 3 };
+export type TocItem = { id: string; text: string; level: number };
 
 function TocLinks({ items, activeId }: { items: TocItem[]; activeId: string }) {
   return <ol className="bn-toc-list">{items.map((item) => <li className={item.level === 3 ? "bn-toc-sub" : ""} key={item.id}><a href={"#" + item.id} aria-current={activeId === item.id ? "location" : undefined}>{item.text}</a></li>)}</ol>;
