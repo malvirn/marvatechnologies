@@ -153,7 +153,7 @@ test("published lesson exposes Article and BreadcrumbList JSON-LD and its own so
   const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
   expect(scripts.join(" ")).toContain("Article");
   expect(scripts.join(" ")).toContain("BreadcrumbList");
-  const response = await request.get("/insights/opengraph-image.png");
+  const response = await request.get("/insights/" + slug + "/opengraph-image.png");
   expect(response.ok()).toBeTruthy();
   expect(response.headers()["content-type"]).toContain("image/png");
 });
