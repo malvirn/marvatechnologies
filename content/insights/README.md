@@ -22,7 +22,7 @@ Do not invent personal incidents, metrics, client details or project outcomes. U
 
 The Insights hub builds its client search index from published lessons only. Search waits 250 ms after typing, while the selected query, track and level are kept in the URL. The slash key focuses search and Escape clears it.
 
-Lesson headings use GitHub-style heading IDs. The table of contents is generated from h2 and h3 headings. Related notes prefer explicit frontmatter references, then fall back to the same track. Previous and next links stay within the current track.
+Lesson headings use GitHub-style heading IDs with a `bn-` prefix to avoid generic global names. The table of contents is generated from h2 and h3 headings. Related notes prefer explicit frontmatter references, then fall back to the same track. Previous and next links stay within the current track.
 
 ## Tests
 
@@ -35,7 +35,7 @@ The browser suite can exercise the hub and 404 route without publishing content.
 
 ## Added dependencies
 
-- `rehype-slug@6.0.0`: creates stable, GitHub-style IDs for MDX headings so the TOC can link to them. npm reports approximately 11.2 kB unpacked.
+- `rehype-slug@6.0.0`: creates heading IDs during MDX rendering. npm reports approximately 11.2 kB unpacked.\n- `github-slugger@2.0.0`: keeps the server-generated TOC IDs identical to rendered heading IDs, including duplicate and Unicode headings. It has no dependencies and ships about 10 kB of JavaScript.
 - `@playwright/test@1.65.1`: development-only browser test runner. The test-runner package is reported at approximately 29 kB; its Playwright runtime dependency is approximately 4.8 MB unpacked. Browser binaries are installed separately and are not shipped to visitors.
 
 No new runtime service, database or user tracking was added.
