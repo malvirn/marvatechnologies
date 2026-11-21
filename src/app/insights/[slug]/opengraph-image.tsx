@@ -1,17 +1,17 @@
 import { ImageResponse } from "next/og";
-import { getPublishedLessonBySlug, getPublishedLessons } from "@/lib/insights-content.mjs";
+import { publishedOgLessons } from "@/generated/insights-og-data.mjs";
 
 export const runtime = "edge";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return getPublishedLessons().map((lesson) => ({ slug: lesson.slug }));
+  return publishedOgLessons.map((lesson) => ({ slug: lesson.slug }));
 }
 
 export default async function OpenGraphImage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const lesson = getPublishedLessonBySlug(slug);
+  const lesson = publishedOgLessons.find((item) => item.slug === slug);
   const title = lesson?.title ?? "Build Notes";
   const track = lesson?.track ?? "Marva Technologies";
   const summary = lesson?.summary ?? "Practical software engineering lessons.";
