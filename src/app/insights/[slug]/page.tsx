@@ -62,7 +62,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }} />
       <ReadingProgress />
-      <main id="main-content" className="bn-article">
+      <main id="main-content" tabIndex={-1} className="bn-article">
         <nav className="bn-breadcrumb" aria-label="Breadcrumb">
           <Link href="/insights">Insights</Link><span aria-hidden="true">/</span><Link href={"/insights?track=" + encodeURIComponent(lesson.track)}>{lesson.track}</Link>
         </nav>
