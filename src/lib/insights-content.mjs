@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import GithubSlugger from "github-slugger";
 import { z } from "zod";
 
 const CONTENT_DIR = path.join(process.cwd(), "content", "insights");
@@ -57,16 +58,13 @@ export function validateLessonCollection(lessons) {
 
 export function extractTableOfContents(content) {
   const withoutCode = content.replace(/```[\s\S]*?```/g, " ");
-  const used = new Map();
+  const slugger = new GithubSlugger();
   const items = [];
   for (const line of withoutCode.split(/\r?\n/)) {
     const match = line.match(/^(##|###)\s+(.+?)\s*#*\s*$/);
     if (!match) continue;
     const text = match[2].replace(/\[([^\]]+)\]\([^)]*\)/g, "$1").replace(/[*_`~]/g, "").trim();
-    const base = text.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}\s-]/gu, "").trim().replace(/[\s-]+/g, "-");
-    const count = used.get(base) || 0;
-    used.set(base, count + 1);
-    items.push({ id: count ? base + "-" + count : base, text, level: match[1].length });
+    items.push({ id: "bn-" + slugger.slug(text), text, level: match[1].length });
   }
   return items;
 }
