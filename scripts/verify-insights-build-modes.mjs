@@ -67,7 +67,7 @@ function assertOnePublishedOutput() {
     fail("The published lesson HTML was not exported for " + lessonSlug + ".");
   }
 
-  const imagePath = path.join(outDirectory, "insights", lessonSlug, "opengraph-image.png");
+  const imagePath = path.join(outDirectory, "insights", lessonSlug, "opengraph-image");
   if (!fs.existsSync(imagePath)) fail("The published lesson social image is missing: " + imagePath);
   const signature = fs.readFileSync(imagePath).subarray(0, 8).toString("hex");
   if (signature !== "89504e470d0a1a0a") fail("The published lesson social image is not a PNG.");
