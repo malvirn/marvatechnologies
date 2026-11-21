@@ -5,7 +5,7 @@ import { Clock3 } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import rehypeSlug from "rehype-slug";
 import { getPublishedLessonBySlug, getPublishedLessons, extractTableOfContents, getRelatedLessons, getLessonNavigation } from "@/lib/insights-content.mjs";
-import { mdxComponents } from "@/components/insights/MdxComponents";\nimport { buildArticleJsonLd, buildBreadcrumbJsonLd, serializeJsonLd } from "@/lib/insights-seo.mjs";
+import { mdxComponents } from "@/components/insights/MdxComponents";
 import { buildArticleJsonLd, buildBreadcrumbJsonLd, serializeJsonLd } from "@/lib/insights-seo.mjs";
 import { LessonNavigation, LessonPager, ReadingProgress } from "@/components/insights/LessonNavigation";
 
@@ -33,9 +33,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       siteName: "Marva Technologies",
       publishedTime: lesson.publishedAt,
       modifiedTime: lesson.updatedAt,
-      authors: ["Malvirn Gomo"]
+      authors: ["Malvirn Gomo"],
+      images: [{ url: url + "/opengraph-image.png", width: 1200, height: 630, alt: lesson.title }]
     },
-    twitter: { card: "summary", title: lesson.title, description: lesson.summary }
+    twitter: { card: "summary_large_image", title: lesson.title, description: lesson.summary, images: [url + "/opengraph-image.png"] }
   };
 }
 
@@ -52,11 +53,16 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
   const toc = extractTableOfContents(lesson.content);
   const related = getRelatedLessons(lesson, lessons);
   const pager = getLessonNavigation(lesson, lessons);
+  const articleJsonLd = buildArticleJsonLd(lesson, SITE_URL);
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(lesson, SITE_URL);
 
   return (
     <>
+      <a className="bn-skip-link" href="#main-content">Skip to content</a>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }} />
       <ReadingProgress />
-      <main className="bn-article">
+      <main id="main-content" className="bn-article">
         <nav className="bn-breadcrumb" aria-label="Breadcrumb">
           <Link href="/insights">Insights</Link><span aria-hidden="true">/</span><Link href={"/insights?track=" + encodeURIComponent(lesson.track)}>{lesson.track}</Link>
         </nav>
