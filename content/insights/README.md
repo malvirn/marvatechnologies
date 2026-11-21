@@ -35,7 +35,8 @@ The browser suite can exercise the hub and 404 route without publishing content.
 
 ## Added dependencies
 
-- `rehype-slug@6.0.0`: creates heading IDs during MDX rendering. npm reports approximately 11.2 kB unpacked.\n- `github-slugger@2.0.0`: keeps the server-generated TOC IDs identical to rendered heading IDs, including duplicate and Unicode headings. It has no dependencies and ships about 10 kB of JavaScript.
+- `rehype-slug@6.0.0`: creates heading IDs during MDX rendering. npm reports approximately 11.2 kB unpacked.
+- `github-slugger@2.0.0`: keeps the server-generated TOC IDs identical to rendered heading IDs, including duplicate and Unicode headings. It has no dependencies and ships about 10 kB of JavaScript.
 - `@playwright/test@1.65.1`: development-only browser test runner. The test-runner package is reported at approximately 29 kB; its Playwright runtime dependency is approximately 4.8 MB unpacked. Browser binaries are installed separately and are not shipped to visitors.
 
 No new runtime service, database or user tracking was added.
