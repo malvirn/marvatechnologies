@@ -1,24 +1,22 @@
 "use client";
 
-import { Children, useState, type ReactNode } from "react";
+import { useState } from "react";
+import CopyButton from "@/components/insights/CopyButton";
 
-export default function BeforeAfter({ children, beforeLabel = "Before", afterLabel = "After" }: { children: ReactNode; beforeLabel?: string; afterLabel?: string }) {
-  const panels = Children.toArray(children).filter(Boolean).slice(0, 2);
+export default function BeforeAfter({ before, after, beforeLabel = "Before", afterLabel = "After" }: { before: string; after: string; beforeLabel?: string; afterLabel?: string }) {
   const [active, setActive] = useState(0);
-  if (panels.length !== 2) return <div className="bn-before-after">{children}</div>;
+  const panels = [{ label: beforeLabel, code: before }, { label: afterLabel, code: after }];
   return (
-    <section className="bn-before-after" aria-label="Before and after comparison">
+    <section className="bn-before-after" aria-label="Before and after code comparison">
       <div className="bn-before-after-tabs" role="tablist" aria-label="Choose code version">
         <button type="button" role="tab" aria-selected={active === 0} aria-controls="bn-before-panel" id="bn-before-tab" onClick={() => setActive(0)}>{beforeLabel}</button>
         <button type="button" role="tab" aria-selected={active === 1} aria-controls="bn-after-panel" id="bn-after-tab" onClick={() => setActive(1)}>{afterLabel}</button>
       </div>
       <div className="bn-before-after-grid">
-        <div id="bn-before-panel" role="tabpanel" aria-labelledby="bn-before-tab" data-active={active === 0 ? "true" : "false"} className="bn-before-after-panel">
-          <span className="bn-before-after-label">{beforeLabel}</span>{panels[0]}
-        </div>
-        <div id="bn-after-panel" role="tabpanel" aria-labelledby="bn-after-tab" data-active={active === 1 ? "true" : "false"} className="bn-before-after-panel">
-          <span className="bn-before-after-label">{afterLabel}</span>{panels[1]}
-        </div>
+        {panels.map((panel, index) => <section id={index === 0 ? "bn-before-panel" : "bn-after-panel"} role="tabpanel" aria-labelledby={index === 0 ? "bn-before-tab" : "bn-after-tab"} data-active={active === index ? "true" : "false"} className="bn-before-after-panel" key={panel.label}>
+          <div className="bn-before-after-label">{panel.label}</div>
+          <div className="bn-code"><CopyButton text={panel.code} /><pre tabIndex={0} aria-label={panel.label + " code example"}><code>{panel.code}</code></pre></div>
+        </section>)}
       </div>
     </section>
   );
