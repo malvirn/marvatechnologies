@@ -47,4 +47,10 @@ export function Checklist({ children }: { children: ReactNode }) {
   return <div className="bn-checklist"><ul>{children}</ul></div>;
 }
 
-export const mdxComponents = { Callout, CodeBlock, Steps, Checklist, BeforeAfter, PromptBlock, Demo, pre: CodeBlock };
+function SafeAnchor({ href, rel, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+  const isExternal = typeof href === "string" && /^https?:\\/\\//i.test(href);
+  const safeRel = isExternal ? Array.from(new Set([...(rel?.split(/\\s+/).filter(Boolean) ?? []), "noopener", "noreferrer"])).join(" ") : rel;
+  return <a href={href} rel={safeRel} {...props} />;
+}
+
+export const mdxComponents = { Callout, CodeBlock, Steps, Checklist, BeforeAfter, PromptBlock, Demo, a: SafeAnchor, pre: CodeBlock };
