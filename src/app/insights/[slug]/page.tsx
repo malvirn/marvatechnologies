@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       modifiedTime: lesson.updatedAt,
       authors: ["Malvirn Gomo"]
     },
-    twitter: { card: "summary_large_image", title: lesson.title, description: lesson.summary, images: [url + "/opengraph-image"] }
+    twitter: { card: "summary_large_image", title: lesson.title, description: lesson.summary, images: [SITE_URL + "/insights/opengraph-image"] }
   };
 }
 
