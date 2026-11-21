@@ -45,5 +45,5 @@ test("hub remains usable on a narrow mobile viewport", async ({ page }) => {
   await page.goto("/insights");
   await expect(page.getByRole("heading", { name: /Build Notes/ })).toBeVisible();
   await expect(page.getByRole("searchbox")).toBeVisible();
-  await expect(page.locator("body")).not.toHaveJSProperty("scrollWidth", 0);
+  const width = await page.evaluate(() => document.documentElement.scrollWidth);\n  expect(width).toBeLessThanOrEqual(390);
 });
