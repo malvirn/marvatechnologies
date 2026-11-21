@@ -71,3 +71,21 @@ for (const route of ["/", "/about", "/services", "/contact"]) {
     await expect(page.locator("header.site-header")).toBeVisible();
   });
 }
+
+test("owner-approved teaching lesson renders comparison tabs and copyable prompt", async ({ page }) => {
+  test.skip(!process.env.E2E_TEACHING_LESSON_SLUG, "Set E2E_TEACHING_LESSON_SLUG to the approved audit-before-you-modify lesson.");
+  await page.goto("/insights/" + process.env.E2E_TEACHING_LESSON_SLUG);
+  const comparison = page.locator(".bn-before-after").first();
+  await expect(comparison).toBeVisible();
+  await comparison.getByRole("tab", { name: "After" }).click();
+  await expect(comparison.getByRole("tab", { name: "After" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator(".bn-prompt-block")).toBeVisible();
+});
+
+test("owner-approved demo lesson loads its interactive example near the viewport", async ({ page }) => {
+  test.skip(!process.env.E2E_DEMO_LESSON_SLUG, "Set E2E_DEMO_LESSON_SLUG to an approved lesson containing a demo.");
+  await page.goto("/insights/" + process.env.E2E_DEMO_LESSON_SLUG);
+  const demo = page.locator(".bn-demo").first();
+  await demo.scrollIntoViewIfNeeded();
+  await expect(demo.getByRole("button", { name: /Submit order|Mark complete|Reset example/ }).first()).toBeVisible();
+});
