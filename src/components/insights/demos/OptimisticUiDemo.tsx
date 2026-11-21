@@ -15,8 +15,8 @@ export default function OptimisticUiDemo() {
     setPending(true);
     setMessage("Updated locally. Waiting for the simulated server…");
     window.setTimeout(() => {
-      if (rejectNext.current) {
-        rejectNext.current = false;
+      if (rejectNext) {
+        setRejectNext(false);
         setComplete(previous);
         setMessage("The server rejected the change. The interface rolled back.");
       } else {
