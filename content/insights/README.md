@@ -72,3 +72,18 @@ The six draft slugs are:
 6. `plan-before-you-code`
 
 Each draft includes an owner TODO for the real-build evidence that must be supplied or reviewed before publication.
+
+
+## Phase 4 distribution, metadata and security
+
+- `/insights/rss.xml` is a static RSS 2.0 feed generated from published lessons only.
+- `/sitemap.xml` includes the site's public static routes and published lesson URLs only.
+- `/robots.txt` points crawlers to the generated sitemap. The existing Google site-verification tag remains in the root layout.
+- The hub emits CollectionPage JSON-LD. Published lessons emit Article and BreadcrumbList JSON-LD.
+- The hub and published lessons have branded 1200 × 630 PNG Open Graph images. Lesson image data is generated before `next dev` and `next build`; the Edge image renderer imports only the generated static module and does not read the filesystem.
+- Build Notes pages include a keyboard skip link and focusable main landmark. Code blocks remain individually scrollable.
+- Cloudflare Pages headers add MIME sniffing protection, a strict referrer policy, frame protection and a restrictive Permissions-Policy. CSP is report-only until existing site scripts and styles can be observed in production.
+- Cloudflare Web Analytics was not added because it requires separate owner approval.
+- No new npm dependency or database service was added.
+
+The repository did not contain a package lock file at the start of Phase 4. The CI workflow runs `npm audit --audit-level=high` against the dependency tree installed for that run, but transitive versions are not reproducibly pinned until a lock file is committed. Do not treat the audit as passed until the workflow has completed successfully.
