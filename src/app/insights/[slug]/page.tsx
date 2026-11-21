@@ -72,12 +72,12 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
           </div>
         </header>
 
-        <LessonNavigation items={toc} />
+        <LessonNavigation items={toc} variant="mobile" />
         <div className="bn-article-layout">
           <article id="bn-article-body" className="bn-article-body">
             <MDXRemote source={lesson.content} components={mdxComponents} options={{ mdxOptions: { rehypePlugins: [rehypeSlug] } }} />
           </article>
-          <div className="bn-toc-rail"><LessonNavigation items={toc} /></div>
+          <div className="bn-toc-rail"><LessonNavigation items={toc} variant="desktop" /></div>
         </div>
 
         {related.length > 0 && <section className="bn-related" aria-labelledby="bn-related-title">
