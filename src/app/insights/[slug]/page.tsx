@@ -11,9 +11,11 @@ import { LessonNavigation, LessonPager, ReadingProgress } from "@/components/ins
 
 const SITE_URL = normalizeSiteUrl();
 export const dynamicParams = false;
+const EMPTY_BUILD_SLUG = "__build-notes-empty__";
 
 export function generateStaticParams() {
-  return getPublishedLessons().map((lesson: { slug: string }) => ({ slug: lesson.slug }));
+  const lessons = getPublishedLessons();
+  return lessons.length ? lessons.map((lesson) => ({ slug: lesson.slug })) : [{ slug: EMPTY_BUILD_SLUG }];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
