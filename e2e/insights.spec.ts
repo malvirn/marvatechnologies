@@ -32,7 +32,7 @@ test("published lesson renders its table of contents and reading progress", asyn
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.locator(".bn-reading-progress")).toHaveAttribute("aria-hidden", "true");
   await expect(page.getByText("On this page").first()).toBeVisible();
-  await expect(page.locator(".bn-related")).toBeVisible();
+  await expect(page.locator(".bn-article-footer")).toBeVisible();
 });
 
 test("unknown lesson slugs return a 404", async ({ page }) => {
@@ -46,4 +46,11 @@ test("hub remains usable on a narrow mobile viewport", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /Build Notes/ })).toBeVisible();
   await expect(page.getByRole("searchbox")).toBeVisible();
   const width = await page.evaluate(() => document.documentElement.scrollWidth);\n  expect(width).toBeLessThanOrEqual(390);
+});
+
+test("search finds an owner-approved lesson when one is configured", async ({ page }) => {
+  test.skip(!process.env.E2E_LESSON_TITLE, "Set E2E_LESSON_TITLE to the title of a published lesson.");
+  await page.goto("/insights");
+  await page.getByRole("searchbox").fill(process.env.E2E_LESSON_TITLE!);
+  await expect(page.getByRole("link", { name: process.env.E2E_LESSON_TITLE!, exact: false }).first()).toBeVisible();
 });
