@@ -3,7 +3,7 @@ name: Build Notes checks
 on:
   push:
     branches:
-      - feat/build-notes-phase-1
+      - main
   pull_request:
     branches:
       - main
@@ -17,9 +17,9 @@ concurrency:
 
 jobs:
   verify:
-    name: Audit, tests and static build
+    name: Audit, tests, types and static builds
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -28,9 +28,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
 
       - name: Audit dependency tree
         run: npm audit --audit-level=high
@@ -38,8 +39,16 @@ jobs:
       - name: Run unit tests
         run: npm test
 
-      - name: Build static site
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Build static site with no published lessons
         run: npm run build
+        env:
+          SITE_URL: https://marvatechnologies.pages.dev
+
+      - name: Verify zero and one published lesson exports
+        run: node scripts/verify-insights-build-modes.mjs
         env:
           SITE_URL: https://marvatechnologies.pages.dev
 
