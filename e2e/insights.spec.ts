@@ -40,9 +40,9 @@ test("published lesson renders its table of contents and reading progress", asyn
   await expect(page.locator(".bn-article-footer")).toBeVisible();
 });
 
-test("unknown lesson slugs are not linked from the published hub", async ({ page }) => {
-  await page.goto("/insights");
-  await expect(page.locator('a[href="/insights/this-lesson-does-not-exist"]')).toHaveCount(0);
+test("unknown lesson slugs return a static 404", async ({ page }) => {
+  const response = await page.goto("/insights/this-lesson-does-not-exist");
+  expect(response?.status()).toBe(404);
 });
 
 test("hub remains usable on a narrow mobile viewport", async ({ page }) => {
@@ -104,8 +104,10 @@ test("Build Notes publishes a valid RSS feed containing no draft lessons", async
   expect(response.headers()["content-type"]).toContain("application/rss+xml");
   const xml = await response.text();
   expect(xml).toContain("<rss version=\"2.0\"");
+  const publishedSlug = process.env.E2E_LESSON_SLUG;
   for (const slug of ["debounced-search-url-state", "preventing-duplicate-submissions", "building-unreliable-networks", "database-transactions-ledger-consistency", "audit-before-you-modify", "plan-before-you-code"]) {
-    expect(xml).not.toContain(slug);
+    if (slug === publishedSlug) expect(xml).toContain(slug);
+    else expect(xml).not.toContain(slug);
   }
 });
 
