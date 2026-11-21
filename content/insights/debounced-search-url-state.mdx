@@ -53,17 +53,24 @@ Do not debounce simple local state updates that are already cheap. The text show
 The helper keeps one timer. Every new call clears the previous timer, so only the latest value runs after the pause.
 
 ```ts
-export function debounce(callback: (value: string) => void, delay = 250) {
-  let timer: ReturnType<typeof setTimeout> | undefined;
+type DebouncedSearch = ((value: string) => void) & { cancel: () => void };
 
-  return (value: string) => {
+export function debounce(callback: (value: string) => void, delay = 250): DebouncedSearch {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const schedule = ((value: string) => {
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => callback(value), delay);
+  }) as DebouncedSearch;
+
+  schedule.cancel = () => {
+    if (timer) clearTimeout(timer);
   };
+
+  return schedule;
 }
 ```
 
-For a component, remember to clean up pending work when it unmounts. A timer that outlives the component can update a page the user has already left.
+For a component, call the returned function’s cancel method during cleanup. A timer that outlives the component can update a page the user has already left. For example, return a cleanup function from useEffect that calls search.cancel().
 
 ## Sync the committed query to the URL
 
