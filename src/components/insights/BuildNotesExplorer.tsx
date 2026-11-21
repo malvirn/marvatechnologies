@@ -126,9 +126,9 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
     });
   }, [loading, index, search, committedQuery, track, level, lessons]);
 
-  const featured = filtered.find((lesson) => lesson.featured) ?? filtered[0];
-  const remaining = featured ? filtered.filter((lesson) => lesson.slug !== featured.slug) : [];
   const hasFilters = Boolean(query.trim() || track || level);
+  const featured = !hasFilters ? filtered.find((lesson) => lesson.featured) ?? filtered[0] : filtered[0];
+  const remaining = featured ? filtered.filter((lesson) => lesson.slug !== featured.slug) : [];
 
   return (
     <div className="bn-explorer">
