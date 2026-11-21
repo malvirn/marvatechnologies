@@ -24,7 +24,7 @@ export default function DuplicateRequestsDemo() {
       <div className="bn-demo-stats"><span>{pending ? "Request in progress" : "Ready for a new request"}</span><strong>{accepted} completed</strong></div>
       <p className="bn-demo-feedback" aria-live="polite">{ignored ? ignored + " repeated click(s) ignored while the first request was running." : "Try clicking several times quickly."}</p>
       <p className="bn-demo-note">The in-flight guard protects this UI. A real server still needs idempotency and transaction safeguards.</p>
-      <button type="button" className="bn-demo-secondary" onClick={() => { inFlight.current = false; setPending(false); setAccepted(0); setIgnored(0); }}>Reset example</button>
+      <button type="button" className="bn-demo-secondary" disabled={pending} onClick={() => { inFlight.current = false; setPending(false); setAccepted(0); setIgnored(0); }}>Reset example</button>
     </div>
   );
 }
