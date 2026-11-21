@@ -22,7 +22,7 @@ test("hub loads and keeps combined filters in the URL after reload", async ({ pa
 
 test("slash focuses search and escape clears it", async ({ page }) => {
   await page.goto("/insights");
-  await expect(page.locator(".bn-result-count")).toHaveText("0 notes");
+  await expect(page.locator(".bn-explorer")).toHaveAttribute("data-hydrated", "true");
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   await page.keyboard.press("/");
   await expect(page.getByRole("searchbox")).toBeFocused();
