@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { estimateReadingTime, parseLessonSource, validateLessonCollection, extractTableOfContents, getRelatedLessons, getLessonNavigation } from "../src/lib/insights-content.mjs";
+import { estimateReadingTime, parseLessonSource, validateLessonCollection, extractTableOfContents, getRelatedLessons, getLessonNavigation, getAllLessons } from "../src/lib/insights-content.mjs";
 
 const base = {
   title: "A useful test lesson",
@@ -79,4 +79,25 @@ test("returns previous and next lessons from the same track only", () => {
   const nav = getLessonNavigation(current, [newer, other, current, older]);
   assert.equal(nav.previous.slug, "older");
   assert.equal(nav.next.slug, "newer");
+});
+
+
+test("contains the complete six-lesson launch set and keeps every lesson as a draft", () => {
+  const lessons = getAllLessons();
+  assert.equal(lessons.length, 6);
+  assert.ok(lessons.every((lesson) => lesson.status === "draft"));
+  assert.equal(lessons.filter((lesson) => lesson.hasDemo).length, 3);
+});
+
+test("the three declared lazy demos match the launch lesson content", () => {
+  const lessons = getAllLessons();
+  const types = lessons.map((lesson) => lesson.content.match(/<Demo type="([^"]+)"/)?.[1]).filter(Boolean).sort();
+  assert.deepEqual(types, ["debounce", "duplicate-requests", "optimistic-ui"]);
+});
+
+test("teaching examples use BeforeAfter and PromptBlock without adding services", () => {
+  const lessons = getAllLessons();
+  assert.ok(lessons.some((lesson) => lesson.content.includes("<BeforeAfter")));
+  assert.ok(lessons.some((lesson) => lesson.content.includes("<PromptBlock")));
+  assert.ok(lessons.every((lesson) => !/https?:\/\//.test(lesson.content)));
 });
