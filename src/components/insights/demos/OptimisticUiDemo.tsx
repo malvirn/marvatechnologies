@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 export default function OptimisticUiDemo() {
-  const rejectNext = useRef(false);
+  const [rejectNext, setRejectNext] = useState(false);
   const [complete, setComplete] = useState(false);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("Changes appear immediately in the interface.");
@@ -32,9 +32,9 @@ export default function OptimisticUiDemo() {
         <div><strong>Prepare the job card</strong><small>{complete ? "Marked complete" : "Still in progress"}</small></div>
         <button type="button" className="bn-demo-primary" onClick={toggle} disabled={pending}>{pending ? "Saving…" : complete ? "Undo" : "Mark complete"}</button>
       </div>
-      <label className="bn-demo-reject"><input type="checkbox" onChange={(event) => { rejectNext.current = event.target.checked; }} /> Reject the next simulated save</label>
+      <label className="bn-demo-reject"><input type="checkbox" checked={rejectNext} onChange={(event) => setRejectNext(event.target.checked)} /> Reject the next simulated save</label>
       <p className="bn-demo-feedback" role="status">{message}</p>
-      <button type="button" className="bn-demo-secondary" onClick={() => { rejectNext.current = false; setComplete(false); setPending(false); setMessage("Example reset."); }}>Reset example</button>
+      <button type="button" className="bn-demo-secondary" onClick={() => { setRejectNext(false); setComplete(false); setPending(false); setMessage("Example reset."); }}>Reset example</button>
     </div>
   );
 }
