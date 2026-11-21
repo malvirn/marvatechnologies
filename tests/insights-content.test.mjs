@@ -110,3 +110,12 @@ test("teaching examples use BeforeAfter and PromptBlock without adding services"
   assert.ok(lessons.some((lesson) => lesson.content.includes("<PromptBlock")));
   assert.ok(lessons.every((lesson) => !/https?:\/\//.test(lesson.content)));
 });
+
+
+test("lesson bodies do not introduce a second page-level h1", () => {
+  const lessons = getAllLessons();
+  for (const lesson of lessons) {
+    const body = lesson.content.replace(/```[\s\S]*?```/g, "");
+    assert.doesNotMatch(body, /^#\s/m, lesson.slug + " should use h2 for its first section");
+  }
+});
