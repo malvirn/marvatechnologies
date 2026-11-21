@@ -138,8 +138,10 @@ test("Build Notes provides a working skip link and avoids horizontal overflow at
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/insights");
+  const skipLink = page.getByRole("link", { name: "Skip to content" });
+  await expect(skipLink).toBeAttached();
   await page.keyboard.press("Tab");
-  await expect(page.getByRole("link", { name: "Skip to content" })).toBeFocused();
+  await expect(skipLink).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.locator("#main-content")).toBeFocused();
 });
