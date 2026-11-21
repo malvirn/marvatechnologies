@@ -36,7 +36,7 @@ export function buildRssFeed(lessons = getPublishedLessons(), siteUrl = normaliz
         "      <title>" + escapeXml(lesson.title) + "</title>",
         "      <link>" + escapeXml(url) + "</link>",
         "      <guid isPermaLink=\"true\">" + escapeXml(url) + "</guid>",
-        "      <description>" + escapeXml(lesson.summary) + "</description>",
+        "      <description>" + escapeXml(lesson.summary + (excerpt ? " " + excerpt : "")) + "</description>",
         "      <pubDate>" + new Date(lesson.publishedAt).toUTCString() + "</pubDate>",
         "      <category>" + escapeXml(lesson.track) + "</category>",
         categories,
