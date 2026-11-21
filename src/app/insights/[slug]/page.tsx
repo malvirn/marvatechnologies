@@ -6,6 +6,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import rehypeSlug from "rehype-slug";
 import { getPublishedLessonBySlug, getPublishedLessons, extractTableOfContents, getRelatedLessons, getLessonNavigation } from "@/lib/insights-content.mjs";
 import { mdxComponents } from "@/components/insights/MdxComponents";
+import { buildArticleJsonLd, buildBreadcrumbJsonLd, serializeJsonLd } from "@/lib/insights-seo.mjs";
 import { LessonNavigation, LessonPager, ReadingProgress } from "@/components/insights/LessonNavigation";
 
 const SITE_URL = process.env.SITE_URL || "https://marvatechnologies.pages.dev";
