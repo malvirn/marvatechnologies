@@ -18,14 +18,13 @@ export const metadata: Metadata = {
     title: "Build Notes | Marva Technologies",
     description: "Practical software engineering lessons from planning, building and maintaining real systems.",
     url: SITE_URL + "/insights",
-    siteName: "Marva Technologies",
-    images: [{ url: SITE_URL + "/insights/opengraph-image.png", width: 1200, height: 630, alt: "Build Notes by Marva Technologies" }]
+    siteName: "Marva Technologies"
   },
   twitter: {
     card: "summary_large_image",
     title: "Build Notes | Marva Technologies",
     description: "Practical software engineering lessons from planning, building and maintaining real systems.",
-    images: [SITE_URL + "/insights/opengraph-image.png"]
+    images: [SITE_URL + "/insights/opengraph-image"]
   }
 };
 
