@@ -1,0 +1,56 @@
+---
+title: "Preventing duplicate requests and double submits"
+slug: "preventing-duplicate-submissions"
+summary: "A structural draft for explaining how to prevent repeated user actions from creating duplicate records or payments."
+track: "Frontend Engineering"
+level: "Intermediate"
+tags:
+  - Building software
+  - Requests
+  - Forms
+  - Reliability
+publishedAt: "2026-11-21T00:00:00.000Z"
+updatedAt: "2026-11-21T00:00:00.000Z"
+lastReviewed: "2026-11-21T00:00:00.000Z"
+status: "draft"
+related:
+  - "debounced-search-url-state"
+prerequisites:
+  - "debounced-search-url-state"
+featured: false
+hasDemo: false
+---
+
+# TODO(author): complete the teaching content
+
+## TL;DR
+
+TODO(author): Explain the difference between disabling a submit button, preventing duplicate client requests, and making a backend operation idempotent.
+
+## The real scenario
+
+TODO(author): Add a synthetic scenario that shows a user double-clicking a submit button or retrying after a slow response. Do not invent a personal incident.
+
+## Why it matters
+
+TODO(author): Explain duplicate records, repeated emails, repeated stock deductions and duplicate payment attempts.
+
+## When to use it
+
+TODO(author): Define where client-side guards are enough and where server-side idempotency is required.
+
+## Implementation
+
+TODO(author): Add a small, safe example using a pending state, request identity and an idempotency key placeholder. Do not include real payment endpoints or secrets.
+
+## Common mistakes
+
+TODO(author): Cover disabling a button only after the second click, trusting the browser as the only protection, and retrying non-idempotent operations blindly.
+
+## Checklist
+
+TODO(author): Add a practical verification checklist.
+
+## From my builds
+
+TODO(author): Supply a real, owner-approved example before this lesson can be published.
