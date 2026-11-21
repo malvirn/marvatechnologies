@@ -8,7 +8,8 @@ type Lesson = {
   slug: string; title: string; summary: string; track: string; level: string;
   tags: string[]; readingTime: number; featured?: boolean; publishedAt: string;
 };
-type SearchFunction = (index: any[], query: string, track: string, level: string) => Lesson[];
+type SearchEntry = { lesson: Lesson; title: string; summary: string; haystack: string };
+type SearchFunction = (index: SearchEntry[], query: string, track: string, level: string) => Lesson[];
 const TRACKS = ["Frontend Engineering", "Backend Engineering", "System Design", "AI-Assisted Development"];
 const LEVELS = ["Foundation", "Intermediate", "Advanced"];
 
@@ -33,7 +34,7 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
   const [committedQuery, setCommittedQuery] = useState("");
   const [track, setTrack] = useState("");
   const [level, setLevel] = useState("");
-  const [index, setIndex] = useState<any[] | null>(null);
+  const [index, setIndex] = useState<SearchEntry[] | null>(null);
   const [search, setSearch] = useState<SearchFunction | null>(null);
   const [loading, setLoading] = useState(true);
   const [indexError, setIndexError] = useState(false);
@@ -50,7 +51,7 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
     let active = true;
     import("@/lib/insights-search.mjs").then((module) => {
       if (!active) return;
-      setIndex(module.buildSearchIndex(lessons));
+      setIndex(module.buildSearchIndex(lessons) as SearchEntry[]);
       setSearch(() => module.searchLessons as SearchFunction);
       setLoading(false);
     }).catch(() => {
