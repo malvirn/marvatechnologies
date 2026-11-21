@@ -41,7 +41,7 @@ export default function Insights() {
     <>
       <a className="bn-skip-link" href="#main-content">Skip to content</a>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(collectionJsonLd) }} />
-      <main id="main-content" className="in-page bn-page">
+      <main id="main-content" tabIndex={-1} className="in-page bn-page">
       <section className="shell page-hero in-hero bn-hero">
         <div className="in-orb in-orb-a" aria-hidden="true" />
         <div className="in-orb in-orb-b" aria-hidden="true" />
