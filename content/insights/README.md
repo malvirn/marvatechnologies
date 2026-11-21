@@ -40,3 +40,24 @@ The browser suite can exercise the hub and 404 route without publishing content.
 - `@playwright/test@1.65.1`: development-only browser test runner. The test-runner package is reported at approximately 29 kB; its Playwright runtime dependency is approximately 4.8 MB unpacked. Browser binaries are installed separately and are not shipped to visitors.
 
 No new runtime service, database or user tracking was added.
+
+
+## Phase 3 teaching components and launch content
+
+The six launch lessons are stored as MDX drafts. They remain excluded from public routes, search results and the published lesson list until the owner changes their status after review.
+
+The Phase 3 MDX components are:
+
+- `BeforeAfter`: copyable code comparison, side by side on desktop and switchable tabs on narrow screens.
+- `PromptBlock`: labelled, copyable prompt text.
+- `Demo`: lazy wrapper that loads an interactive example near the viewport.
+
+Three self-contained demos are available:
+
+- `debounce`: local search input with a delayed commit and execution count.
+- `duplicate-requests`: simulated in-flight request guard and repeated-click counter.
+- `optimistic-ui`: immediate local state update with a simulated server rejection and rollback.
+
+Demos use local browser state and timers only. They do not call APIs, use real payment flows, persist data or require environment variables. The examples are teaching aids, not production-ready request or ledger implementations.
+
+No additional dependencies were introduced in Phase 3.
