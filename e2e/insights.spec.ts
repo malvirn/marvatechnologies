@@ -90,3 +90,67 @@ test("owner-approved demo lesson loads its interactive example near the viewport
   await demo.scrollIntoViewIfNeeded();
   await expect(demo.getByRole("button", { name: /Submit order|Mark complete|Reset example/ }).first()).toBeVisible();
 });
+
+
+test("Build Notes publishes a valid RSS feed containing no draft lessons", async ({ request }) => {
+  const response = await request.get("/insights/rss.xml");
+  expect(response.ok()).toBeTruthy();
+  expect(response.headers()["content-type"]).toContain("application/rss+xml");
+  const xml = await response.text();
+  expect(xml).toContain("<rss version=\"2.0\"");
+  for (const slug of ["debounced-search-url-state", "preventing-duplicate-submissions", "building-unreliable-networks", "database-transactions-ledger-consistency", "audit-before-you-modify", "plan-before-you-code"]) {
+    expect(xml).not.toContain(slug);
+  }
+});
+
+test("sitemap and robots expose only public routes and preserve the verification setup", async ({ request }) => {
+  const sitemapResponse = await request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  const sitemap = await sitemapResponse.text();
+  expect(sitemap).toContain("/insights");
+  expect(sitemap).not.toContain("debounced-search-url-state");
+  expect(sitemap).not.toContain("preventing-duplicate-submissions");
+  const robotsResponse = await request.get("/robots.txt");
+  expect(robotsResponse.ok()).toBeTruthy();
+  expect(await robotsResponse.text()).toContain("/sitemap.xml");
+});
+
+test("Build Notes hub has a raster 1200 by 630 social image and CollectionPage JSON-LD", async ({ page, request }) => {
+  await page.goto("/insights");
+  const jsonLd = await page.locator('script[type="application/ld+json"]').textContent();
+  expect(jsonLd).toContain("CollectionPage");
+  const response = await request.get("/insights/opengraph-image.png");
+  expect(response.ok()).toBeTruthy();
+  expect(response.headers()["content-type"]).toContain("image/png");
+  const png = await response.body();
+  expect(png.toString("hex", 0, 8)).toBe("89504e470d0a1a0a");
+  expect(png.readUInt32BE(16)).toBe(1200);
+  expect(png.readUInt32BE(20)).toBe(630);
+});
+
+test("Build Notes provides a working skip link and avoids horizontal overflow at target widths", async ({ page }) => {
+  for (const width of [360, 768, 1280, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/insights");
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(scrollWidth).toBeLessThanOrEqual(width);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/insights");
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("link", { name: "Skip to content" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#main-content")).toBeFocused();
+});
+
+test("published lesson exposes Article and BreadcrumbList JSON-LD and its own social image", async ({ page, request }) => {
+  test.skip(!process.env.E2E_LESSON_SLUG, "Set E2E_LESSON_SLUG to an owner-approved published lesson.");
+  const slug = process.env.E2E_LESSON_SLUG!;
+  await page.goto("/insights/" + slug);
+  const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
+  expect(scripts.join(" ")).toContain("Article");
+  expect(scripts.join(" ")).toContain("BreadcrumbList");
+  const response = await request.get("/insights/" + slug + "/opengraph-image.png");
+  expect(response.ok()).toBeTruthy();
+  expect(response.headers()["content-type"]).toContain("image/png");
+});
