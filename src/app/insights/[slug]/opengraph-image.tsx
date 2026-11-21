@@ -28,7 +28,7 @@ export default async function LessonOpenGraphImage({ params }: { params: Promise
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 1000 }}>
         <div style={{ color: "#D97757", fontSize: 23, letterSpacing: 5 }}>{track}</div>
-        <div style={{ fontSize: title.length > 34 ? 66 : 82, lineHeight: 1.06, fontWeight: 700, letterSpacing: -3 }}>{title}<span style={{ color: "#D97757" }}>.</span></div>
+        <div style={{ display: "flex", alignItems: "center", fontSize: title.length > 34 ? 66 : 82, lineHeight: 1.06, fontWeight: 700, letterSpacing: -3 }}>{title}<span style={{ color: "#D97757" }}>.</span></div>
         <div style={{ maxWidth: 900, fontSize: 27, lineHeight: 1.4, color: "#A3A3A3" }}>{lesson?.summary ?? "Practical lessons from planning, building and maintaining real software."}</div>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(245,245,245,.2)", paddingTop: 22, fontSize: 20, color: "#A3A3A3" }}>
