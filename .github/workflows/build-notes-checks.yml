@@ -62,3 +62,6 @@ jobs:
         run: npm run test:e2e
         env:
           SITE_URL: https://marvatechnologies.pages.dev
+          E2E_LESSON_SLUG: audit-before-you-modify
+          E2E_LESSON_TITLE: "Audit before you modify: prompting AI against an existing codebase"
+          E2E_TEACHING_LESSON_SLUG: audit-before-you-modify
