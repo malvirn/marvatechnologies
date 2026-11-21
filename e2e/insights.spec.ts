@@ -45,7 +45,8 @@ test("hub remains usable on a narrow mobile viewport", async ({ page }) => {
   await page.goto("/insights");
   await expect(page.getByRole("heading", { name: /Build Notes/ })).toBeVisible();
   await expect(page.getByRole("searchbox")).toBeVisible();
-  const width = await page.evaluate(() => document.documentElement.scrollWidth);\n  expect(width).toBeLessThanOrEqual(390);
+  const width = await page.evaluate(() => document.documentElement.scrollWidth);
+  expect(width).toBeLessThanOrEqual(390);
 });
 
 test("search finds an owner-approved lesson when one is configured", async ({ page }) => {
