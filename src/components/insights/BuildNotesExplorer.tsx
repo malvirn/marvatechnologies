@@ -128,12 +128,12 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
 
   const featured = filtered.find((lesson) => lesson.featured) ?? filtered[0];
   const remaining = featured ? filtered.filter((lesson) => lesson.slug !== featured.slug) : [];
-  const hasFilters = Boolean(query || track || level);
+  const hasFilters = Boolean(query.trim() || track || level);
 
   return (
     <div className="bn-explorer">
       <div className="bn-discovery-controls">
-        <label className="bn-search" htmlFor="bn-search-input">
+        <div className="bn-search">
           <Search size={17} aria-hidden="true" />
           <input ref={inputRef} id="bn-search-input" type="search" aria-label="Search practical engineering notes" value={query} onChange={(event) => handleQuery(event.target.value)} placeholder="Search practical engineering notes..." autoComplete="off" />
           {query ? <button type="button" className="bn-search-clear" onClick={() => handleQuery("")} aria-label="Clear search"><X size={15} /></button> : <kbd aria-hidden="true">/</kbd>}
