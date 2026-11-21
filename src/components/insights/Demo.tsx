@@ -15,7 +15,7 @@ const descriptions: Record<DemoType, string> = {
 };
 
 export default function Demo({ type }: { type: DemoType }) {
-  const host = useRef<HTMLDivElement>(null);
+  const host = useRef<HTMLElement>(null);
   const [ready, setReady] = useState(false);
   const DemoView = demos[type];
   useEffect(() => {
