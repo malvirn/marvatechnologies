@@ -49,12 +49,44 @@ export function validateLessonCollection(lessons) {
   }
   for (const lesson of lessons) {
     for (const reference of [...lesson.related, ...lesson.prerequisites]) {
-      if (!seen.has(reference)) {
-        throw new Error("Lesson \"" + lesson.slug + "\" references missing lesson \"" + reference + "\".");
-      }
+      if (!seen.has(reference)) throw new Error("Lesson \"" + lesson.slug + "\" references missing lesson \"" + reference + "\".");
     }
   }
   return lessons;
+}
+
+export function extractTableOfContents(content) {
+  const withoutCode = content.replace(/```[\s\S]*?```/g, " ");
+  const used = new Map();
+  const items = [];
+  for (const line of withoutCode.split(/\r?\n/)) {
+    const match = line.match(/^(##|###)\s+(.+?)\s*#*\s*$/);
+    if (!match) continue;
+    const text = match[2].replace(/\[([^\]]+)\]\([^)]*\)/g, "$1").replace(/[*_`~]/g, "").trim();
+    const base = text.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}\s-]/gu, "").trim().replace(/[\s-]+/g, "-");
+    const count = used.get(base) || 0;
+    used.set(base, count + 1);
+    items.push({ id: count ? base + "-" + count : base, text, level: match[1].length });
+  }
+  return items;
+}
+
+export function getRelatedLessons(lesson, lessons, limit = 3) {
+  const bySlug = new Map(lessons.map((item) => [item.slug, item]));
+  const explicit = (lesson.related || []).map((slug) => bySlug.get(slug)).filter((item) => item && item.slug !== lesson.slug);
+  const fallback = lessons
+    .filter((item) => item.slug !== lesson.slug && item.track === lesson.track && !explicit.some((related) => related.slug === item.slug))
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  return [...explicit, ...fallback].slice(0, limit);
+}
+
+export function getLessonNavigation(lesson, lessons) {
+  const sameTrack = lessons.filter((item) => item.track === lesson.track).sort((a, b) => a.publishedAt.localeCompare(b.publishedAt));
+  const index = sameTrack.findIndex((item) => item.slug === lesson.slug);
+  return {
+    previous: index > 0 ? sameTrack[index - 1] : null,
+    next: index >= 0 && index < sameTrack.length - 1 ? sameTrack[index + 1] : null
+  };
 }
 
 export function getAllLessons() {
