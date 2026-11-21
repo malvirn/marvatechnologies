@@ -47,6 +47,9 @@ jobs:
         env:
           SITE_URL: https://marvatechnologies.pages.dev
 
+      - name: Inspect exported Build Notes assets
+        run: find out/insights -maxdepth 4 -type f -printf '%P\\n' | sort
+
       - name: Verify zero and one published lesson exports
         run: node scripts/verify-insights-build-modes.mjs
         env:
