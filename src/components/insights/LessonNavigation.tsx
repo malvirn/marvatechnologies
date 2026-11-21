@@ -9,7 +9,7 @@ function TocLinks({ items, activeId }: { items: TocItem[]; activeId: string }) {
   return <ol className="bn-toc-list">{items.map((item) => <li className={item.level === 3 ? "bn-toc-sub" : ""} key={item.id}><a href={"#" + item.id} aria-current={activeId === item.id ? "location" : undefined}>{item.text}</a></li>)}</ol>;
 }
 
-export function LessonNavigation({ items }: { items: TocItem[] }) {
+export function LessonNavigation({ items, variant = "mobile" }: { items: TocItem[]; variant?: "mobile" | "desktop" }) {
   const [activeId, setActiveId] = useState(items[0]?.id ?? "");
   useEffect(() => {
     if (!items.length || !("IntersectionObserver" in window)) return;
@@ -22,10 +22,8 @@ export function LessonNavigation({ items }: { items: TocItem[] }) {
     return () => observer.disconnect();
   }, [items]);
   if (!items.length) return null;
-  return <>
-    <details className="bn-toc-mobile"><summary>On this page <span>{items.length} sections</span></summary><nav aria-label="On this page"><TocLinks items={items} activeId={activeId} /></nav></details>
-    <aside className="bn-toc-desktop" aria-label="On this page"><span className="bn-toc-title">On this page</span><nav><TocLinks items={items} activeId={activeId} /></nav></aside>
-  </>;
+  if (variant === "desktop") return <aside className="bn-toc-desktop" aria-label="On this page"><span className="bn-toc-title">On this page</span><nav><TocLinks items={items} activeId={activeId} /></nav></aside>;
+  return <details className="bn-toc-mobile"><summary>On this page <span>{items.length} sections</span></summary><nav aria-label="On this page"><TocLinks items={items} activeId={activeId} /></nav></details>;
 }
 
 export function ReadingProgress() {
