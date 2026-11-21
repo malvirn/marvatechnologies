@@ -58,9 +58,9 @@ test("estimates reading time from prose and ignores fenced code", () => {
 test("extracts h2 and h3 headings while ignoring fenced code", () => {
   const toc = extractTableOfContents("# Page title\n\n## Why it matters\n### When to use it\n\n```md\n## Not a real heading\n```\n\n## Why it matters");
   assert.deepEqual(toc.map(({ id, level }) => [id, level]), [
-    ["why-it-matters", 2],
-    ["when-to-use-it", 3],
-    ["why-it-matters-1", 2]
+    ["bn-why-it-matters", 2],
+    ["bn-when-to-use-it", 3],
+    ["bn-why-it-matters-1", 2]
   ]);
 });
 
