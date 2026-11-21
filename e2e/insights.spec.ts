@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 test("hub loads and keeps combined filters in the URL after reload", async ({ page }) => {
   await page.goto("/insights");
   await expect(page.getByRole("heading", { name: /Build Notes/ })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   await expect(page.getByRole("searchbox", { name: /Search practical engineering notes/ })).toBeVisible();
   await page.getByRole("searchbox").fill("no-result-expected");
   await expect(page).toHaveURL(/q=no-result-expected/);
@@ -29,7 +30,7 @@ test("slash focuses search and escape clears it", async ({ page }) => {
 test("published lesson renders its table of contents and reading progress", async ({ page }) => {
   test.skip(!process.env.E2E_LESSON_SLUG, "Set E2E_LESSON_SLUG to an owner-approved published lesson.");
   await page.goto("/insights/" + process.env.E2E_LESSON_SLUG);
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   await expect(page.locator(".bn-reading-progress")).toHaveAttribute("aria-hidden", "true");
   await expect(page.locator(".bn-toc-desktop .bn-toc-title")).toBeVisible();
   await expect(page.locator(".bn-article-footer")).toBeVisible();
