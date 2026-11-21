@@ -4,7 +4,7 @@ import { ArrowUpRight, Clock3 } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import Principles from "@/components/Principles";
 import CodeTyper from "@/components/CodeTyper";
-import { getPublishedLessons } from "@/lib/insights-content";
+import { getPublishedLessons } from "@/lib/insights-content.mjs";
 
 export const metadata: Metadata = {
   title: "Build Notes | Marva Technologies",
