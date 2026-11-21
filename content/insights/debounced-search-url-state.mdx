@@ -16,7 +16,7 @@ status: "draft"
 related: []
 prerequisites: []
 featured: true
-hasDemo: false
+hasDemo: true
 ---
 
 # TL;DR
@@ -48,6 +48,12 @@ Use a debounce when each change triggers work that becomes wasteful when repeate
 
 Do not debounce simple local state updates that are already cheap. The text shown inside the input should not wait for the debounce timer.
 
+## Try the debounce behaviour
+
+Type quickly in this local demonstration. Notice that the search count changes only after you pause.
+
+<Demo type="debounce" />
+
 ## A small debounce helper
 
 The helper keeps one timer. Every new call clears the previous timer, so only the latest value runs after the pause.
@@ -71,6 +77,12 @@ export function debounce(callback: (value: string) => void, delay = 250): Deboun
 ```
 
 For a component, call the returned function’s cancel method during cleanup. A timer that outlives the component can update a page the user has already left. For example, return a cleanup function from useEffect that calls search.cancel().
+
+## Before and after
+
+<BeforeAfter before="setQuery(value); runSearch(value);" after="setQuery(value); debouncedSearch(value);" />
+
+The input remains immediate. Only the expensive operation is delayed.
 
 ## Sync the committed query to the URL
 
