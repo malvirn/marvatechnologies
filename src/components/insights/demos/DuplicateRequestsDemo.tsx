@@ -20,7 +20,7 @@ export default function DuplicateRequestsDemo() {
   return (
     <div className="bn-demo-surface">
       <div className="bn-demo-order"><span>Sample order</span><strong>ORD-DEMO-001</strong><small>Idempotency key: demo-order-001</small></div>
-      <button type="button" className="bn-demo-primary" onClick={submit} disabled={pending}>{pending ? "Submitting…" : "Submit order"}</button>
+      <button type="button" className="bn-demo-primary" onClick={submit} aria-disabled="false">{pending ? "Submitting…" : "Submit order"}</button>
       <div className="bn-demo-stats"><span>{pending ? "Request in progress" : "Ready for a new request"}</span><strong>{accepted} completed</strong></div>
       <p className="bn-demo-feedback" aria-live="polite">{ignored ? ignored + " repeated click(s) ignored while the first request was running." : "Try clicking several times quickly."}</p>
       <p className="bn-demo-note">The in-flight guard protects this UI. A real server still needs idempotency and transaction safeguards.</p>
