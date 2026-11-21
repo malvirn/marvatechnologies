@@ -14,6 +14,7 @@ test("hub loads and keeps combined filters in the URL after reload", async ({ pa
   await expect.poll(() => new URL(page.url()).searchParams.get("track")).toBe("Frontend Engineering");
   await expect.poll(() => new URL(page.url()).searchParams.get("level")).toBe("Foundation");
   await page.reload();
+  await expect(page.locator(".bn-explorer")).toHaveAttribute("data-hydrated", "true");
   await expect(page.getByLabel("Filter by track")).toHaveValue("Frontend Engineering");
   await expect(page.getByLabel("Filter by level")).toHaveValue("Foundation");
   await expect(page.getByRole("searchbox")).toHaveValue("no-result-expected");
@@ -61,6 +62,7 @@ test("search finds an owner-approved lesson when one is configured", async ({ pa
 
 test("existing theme toggle works on the new Insights route", async ({ page }) => {
   await page.goto("/insights");
+  await expect(page.locator(".bn-explorer")).toHaveAttribute("data-hydrated", "true");
   await page.getByRole("button", { name: "Switch to light theme" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await page.getByRole("button", { name: "Switch to dark theme" }).click();
