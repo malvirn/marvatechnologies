@@ -1,0 +1,52 @@
+name: Build Notes checks
+
+on:
+  push:
+    branches:
+      - feat/build-notes-phase-1
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-notes-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Audit, tests and static build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Audit dependency tree
+        run: npm audit --audit-level=high
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Build static site
+        run: npm run build
+        env:
+          SITE_URL: https://marvatechnologies.pages.dev
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser checks
+        run: npm run test:e2e
+        env:
+          SITE_URL: https://marvatechnologies.pages.dev

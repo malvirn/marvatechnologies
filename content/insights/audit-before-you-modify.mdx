@@ -1,0 +1,92 @@
+---
+title: "Audit before you modify: prompting AI against an existing codebase"
+slug: "audit-before-you-modify"
+summary: "Give coding assistants enough evidence about an existing system before asking them to change it."
+track: "AI-Assisted Development"
+level: "Intermediate"
+tags:
+  - Learning in public
+  - AI-assisted development
+  - System design
+  - Building software
+publishedAt: "2026-11-21T00:00:00.000Z"
+updatedAt: "2026-11-21T00:00:00.000Z"
+lastReviewed: "2026-11-21T00:00:00.000Z"
+status: "draft"
+related:
+  - "plan-before-you-code"
+  - "preventing-duplicate-submissions"
+prerequisites:
+  - "plan-before-you-code"
+featured: false
+hasDemo: false
+---
+
+## TL;DR
+
+Do not start by asking an AI coding assistant to rewrite a feature. Start by asking it to inspect the repository, trace existing behaviour, identify constraints and propose a small plan. Make the change only after the plan matches the codebase.
+
+## The real scenario
+
+An existing application already has routes, shared components, database rules, theme behaviour and deployment assumptions. A requested feature touches one part of that system.
+
+If the assistant starts coding from a short description, it may create a second component that duplicates an existing one, change a shared style, or break a workflow outside the requested page.
+
+## Why it matters
+
+The repository is the source of truth. A prompt is a request, not proof of how the application works.
+
+A useful audit reduces guessing. It also gives you a baseline for checking whether the change stayed within scope.
+
+## When to use it
+
+Use an audit-first approach when modifying an existing codebase, especially when the application has shared layouts, production users, database integrations or deployment constraints.
+
+For a small isolated function in a new project, a full audit may be unnecessary. Inspect only the files and contracts that affect the change.
+
+## A practical audit sequence
+
+<Steps>
+<li>Confirm the active branch and working tree. Do not assume the default branch is safe to modify.</li>
+<li>Inspect the framework, routing, build scripts and deployment configuration.</li>
+<li>Trace the current user flow from the page through components and data operations.</li>
+<li>Identify shared components, design tokens, permissions and existing tests.</li>
+<li>List the exact files likely to change and the behaviour that must remain unchanged.</li>
+<li>Write a small implementation plan and wait for approval when the task requires a checkpoint.</li>
+<li>Implement the smallest change, then run focused tests and regression checks.</li>
+</Steps>
+
+## A prompt structure that asks for evidence
+
+<PromptBlock label="Copy this audit-first prompt">
+{"Before changing this repository, inspect the existing implementation.\n\n1. Identify relevant routes, components, data flow and shared dependencies.\n2. Trace current behaviour. Cite exact file paths and symbols.\n3. List constraints, existing patterns and regression risks.\n4. Do not edit files, install packages, deploy or push during the audit.\n5. Propose the smallest implementation plan and tests.\n6. Separate repository facts from assumptions.\n7. Stop and wait for approval before implementation."}
+</PromptBlock>
+
+## Before and after
+
+<BeforeAfter before="Build the new page. Use a modern design and make it work." after="Inspect the existing route and shared components. Trace the data flow and theme tokens. List the smallest files to change. Do not edit or deploy during the audit. Report risks and wait for approval." />
+
+## Common mistakes
+
+- Treating the assistant's summary as evidence without checking the files.
+- Asking for a large rewrite before understanding shared dependencies.
+- Allowing unrelated cleanup to enter a focused task.
+- Forgetting to state what must not change.
+- Accepting a successful commit as proof that the build and user flow work.
+- Giving the assistant production credentials or unnecessary customer data.
+
+## Practical checklist
+
+<Checklist>
+<li>The active branch and target environment are confirmed.</li>
+<li>Relevant routes and shared components have been inspected.</li>
+<li>Existing behaviour and constraints are written down.</li>
+<li>The proposed file list is limited to the requested change.</li>
+<li>Tests and regression checks are named before implementation.</li>
+<li>Deployment and merge permissions are explicit.</li>
+<li>Assumptions are labelled and verified before coding.</li>
+</Checklist>
+
+## From my builds
+
+TODO(author): Add a real example of an audit that changed the implementation plan. Name only public project details and verified repository paths. Do not claim an incident or result that has not been confirmed.

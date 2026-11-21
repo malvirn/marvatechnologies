@@ -1,0 +1,101 @@
+---
+title: "Plan before you code: from business process to schema"
+slug: "plan-before-you-code"
+summary: "Translate a real business workflow into clear entities, relationships and rules before designing tables or screens."
+track: "System Design"
+level: "Foundation"
+tags:
+  - Product thinking
+  - System design
+  - Building in Zimbabwe
+  - Building software
+publishedAt: "2026-11-21T00:00:00.000Z"
+updatedAt: "2026-11-21T00:00:00.000Z"
+lastReviewed: "2026-11-21T00:00:00.000Z"
+status: "draft"
+related:
+  - "audit-before-you-modify"
+  - "database-transactions-ledger-consistency"
+prerequisites: []
+featured: false
+hasDemo: false
+---
+
+## TL;DR
+
+Do not begin a business system with a list of database tables. First understand who does the work, what starts each process, what decisions are made, what can go wrong and what records must remain. The schema should represent those rules.
+
+## The real scenario
+
+A repair workshop receives a vehicle, diagnoses a fault, prepares a quotation, waits for approval, performs work, records parts used and takes payment.
+
+If you start by creating a generic customers table and products table, you may miss the actual workflow: one customer can have several vehicles, one vehicle can return for many jobs, and a quotation can be revised or rejected before work begins.
+
+This is a synthetic workflow example. Validate it with the real business before treating it as a specification.
+
+## Why it matters
+
+A screen can look complete while the underlying process is wrong. If the data model does not represent the business rules, later features become workarounds.
+
+Planning first helps answer which records are created at each step, which relationships are one-to-many or many-to-many, who can move a process forward, which changes need an audit trail, and which actions must be atomic.
+
+## When to use it
+
+Use process-first design when building systems that manage several connected activities, roles or records. It is especially useful for stock, bookings, approvals, payments and case management.
+
+For a small static site, this level of modelling may be unnecessary. Do not create entities for hypothetical future features.
+
+## Map the workflow before the tables
+
+<Steps>
+<li>Identify the people and roles involved.</li>
+<li>Write the process as a sequence of business events.</li>
+<li>Mark decisions, approvals, cancellations and exceptions.</li>
+<li>Identify the records created or changed by each event.</li>
+<li>Define the relationships and ownership rules.</li>
+<li>Write invariants that must always remain true.</li>
+<li>Only then design tables, constraints and screens.</li>
+</Steps>
+
+## A small example
+
+A simplified workshop workflow might have these records:
+
+- Customer: the person or organisation requesting work.
+- Vehicle: a vehicle associated with a customer.
+- Job card: the work request and its current status.
+- Quotation: the proposed cost, which may need approval.
+- Part usage: stock items consumed by an approved job.
+- Invoice: the amount charged for completed work.
+- Payment: money received against an invoice.
+
+Do not assume these are the correct tables for every workshop. The real process, reporting needs and accounting rules determine the final model.
+
+## Before and after
+
+<BeforeAfter before="Start with screens: Customers, Vehicles, Payments, Stock. Create a table for each screen." after="Start with the process: Vehicle received → diagnosis → quote → approval → repair → invoice → payment. Derive records, relationships, permissions and invariants from each step." />
+
+## Common mistakes
+
+- Designing tables directly from menu labels.
+- Treating a status field as a complete workflow model.
+- Ignoring rejected quotations, cancellations and reversals.
+- Assuming every record belongs to exactly one user.
+- Skipping permissions and audit requirements until later.
+- Adding speculative tables for features the business has not asked for.
+
+## Practical checklist
+
+<Checklist>
+<li>The business process has been confirmed with its users.</li>
+<li>Actors, roles and permissions are identified.</li>
+<li>Normal and exception paths are documented.</li>
+<li>Entities and relationships reflect real business records.</li>
+<li>Important invariants are written as testable rules.</li>
+<li>Audit and history requirements are understood.</li>
+<li>The schema is reviewed against real reporting needs before implementation.</li>
+</Checklist>
+
+## From my builds
+
+TODO(author): Add a verified example of how a business workflow informed a system's data model. Do not include private customer records, live schema details or credentials.

@@ -9,7 +9,7 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, them
 export const metadata: Metadata = {
   title: "Marva Technologies — Technology. Innovation. Impact.",
   description: "Digital solutions, thoughtful engineering and practical software by Marva Technologies.",
-  metadataBase: new URL("https://marvatechnologies.pages.dev"),
+  metadataBase: new URL(process.env.SITE_URL || "https://marvatechnologies.pages.dev"),
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   openGraph: { title: "Marva Technologies", description: "Technology. Innovation. Impact.", images: ["/branding/marva-logo.svg"] }
 };

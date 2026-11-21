@@ -1,0 +1,100 @@
+---
+title: "Preventing duplicate requests and double submits"
+slug: "preventing-duplicate-submissions"
+summary: "Protect important actions from repeated clicks, retries and duplicate writes at both client and server boundaries."
+track: "Frontend Engineering"
+level: "Intermediate"
+tags:
+  - Building software
+  - Requests
+  - Forms
+  - Reliability
+publishedAt: "2026-11-21T00:00:00.000Z"
+updatedAt: "2026-11-21T00:00:00.000Z"
+lastReviewed: "2026-11-21T00:00:00.000Z"
+status: "draft"
+related:
+  - "debounced-search-url-state"
+  - "building-unreliable-networks"
+prerequisites:
+  - "debounced-search-url-state"
+featured: false
+hasDemo: true
+---
+
+## TL;DR
+
+Disabling a button helps prevent accidental repeated clicks, but it is not a complete duplicate-request strategy. Guard the action while it is in flight, make important writes idempotent on the server, and enforce business constraints in the database.
+
+## The real scenario
+
+A user submits a form. The connection is slow, so they click again. The browser sends two requests before the first response arrives.
+
+The same uncertainty happens when a user refreshes, retries after a timeout or opens the same action in two tabs. The application must not rely on the user clicking only once.
+
+## Why it matters
+
+Duplicate writes can create repeated records, send repeated notifications, deduct stock more than once or attempt to charge a payment twice.
+
+The correct protection depends on the operation. A button state improves the experience. A server-side idempotency key protects the operation across retries. Database constraints protect the underlying data.
+
+## When to use it
+
+Protect any action that creates or changes important records: payments, orders, job cards, stock movements, registrations and form submissions.
+
+A client-side guard may be enough for a harmless local UI action. It is not enough for financial or business-critical writes.
+
+## A client-side in-flight guard
+
+Set the in-flight flag before starting the asynchronous operation. Reset it in a finally block so both success and failure restore the form.
+
+<CodeBlock>{"let inFlight = false;\n\nasync function submitOrder(payload) {\n  if (inFlight) return;\n  inFlight = true;\n  try {\n    await saveOrder(payload);\n  } finally {\n    inFlight = false;\n  }\n}"}</CodeBlock>
+
+For a React component, use state to disable the button and a ref or equivalent synchronous guard to protect against closely spaced events. The backend still needs its own protection.
+
+## Try it
+
+Click the submit button repeatedly while the simulated request is running. The demo uses a local in-flight guard. It does not send a real request.
+
+<Demo type="duplicate-requests" />
+
+## Before and after
+
+<BeforeAfter before="async function submit() { await saveOrder(data); }" after="async function submit() { if (pendingRef.current) return; pendingRef.current = true; try { await saveOrder(data); } finally { pendingRef.current = false; } }" />
+
+The client guard prevents duplicate work from this component instance. It cannot protect against another tab, another device or a retry after the response is lost.
+
+## Server-side idempotency
+
+For important operations, the client sends a unique idempotency key for one intended action. The server stores the key with the operation result and returns the original result when the same key is received again.
+
+Use a placeholder in examples and documentation. Never expose a real payment endpoint, credential or secret in client code.
+
+## Common mistakes
+
+- Disabling the button only after starting an asynchronous request.
+- Assuming a disabled button protects the server.
+- Generating a new idempotency key for every retry of the same intended action.
+- Reusing one key for two different intended actions.
+- Retrying a timed-out write without checking whether the first request completed.
+- Omitting database uniqueness constraints for values that must be unique.
+
+## Practical checklist
+
+<Checklist>
+<li>The button becomes unavailable while the request is pending.</li>
+<li>A synchronous in-flight guard blocks rapid repeated events.</li>
+<li>The server accepts and stores an idempotency key for critical writes.</li>
+<li>Retries of the same action reuse the same key.</li>
+<li>Database constraints enforce important uniqueness rules.</li>
+<li>Timeout and lost-response cases are tested.</li>
+<li>Pending state is restored after success and failure.</li>
+</Checklist>
+
+## From my builds
+
+TODO(author): Add a real, verified example of a duplicate-action risk and the protection used. Do not invent a payment incident or include customer records, private endpoints or secrets.
+
+## Further reading
+
+Debouncing reduces how often work starts. It does not guarantee that a business action happens only once.

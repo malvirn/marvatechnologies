@@ -1,0 +1,95 @@
+---
+title: "Database transactions and ledger consistency"
+slug: "database-transactions-ledger-consistency"
+summary: "Keep related financial and stock records consistent when one business action changes several database rows."
+track: "Backend Engineering"
+level: "Advanced"
+tags:
+  - Building software
+  - Databases
+  - Transactions
+  - Product thinking
+publishedAt: "2026-11-21T00:00:00.000Z"
+updatedAt: "2026-11-21T00:00:00.000Z"
+lastReviewed: "2026-11-21T00:00:00.000Z"
+status: "draft"
+related:
+  - "preventing-duplicate-submissions"
+  - "building-unreliable-networks"
+prerequisites:
+  - "preventing-duplicate-submissions"
+featured: false
+hasDemo: false
+---
+
+## TODO(author): review the examples against the actual database design before publication
+
+## TL;DR
+
+When one business action changes multiple records, those changes should succeed or fail together. A database transaction protects the consistency of the operation. It does not replace validation, authorisation, idempotency or a well-designed ledger.
+
+## The real scenario
+
+Consider a workshop invoice that records labour, parts and a payment. The business action may need to create an invoice, add invoice lines, reduce stock and record a payment.
+
+If the invoice is created but the stock update fails, the system can show a completed sale while the stock count remains wrong. If the payment is recorded twice, the financial record can also become inconsistent.
+
+This is a synthetic example. It is not a description of a live customer database.
+
+## Why it matters
+
+A user thinks in business actions. The database stores those actions across multiple rows and tables. The system must preserve the business rule even when one query fails or two users act nearly at the same time.
+
+A transaction provides atomicity: either all statements in the transaction commit, or none of them do.
+
+## When to use it
+
+Use a transaction when several database writes form one indivisible business operation. Examples include posting a ledger entry with its balancing lines, confirming an order while reserving stock, or applying a payment to an invoice.
+
+A transaction is not required for unrelated changes that can safely succeed independently. Keep transactions short and avoid network calls or slow user interaction inside them.
+
+## A simplified transaction shape
+
+The following SQL is illustrative. Table and column names are placeholders, not a production schema.
+
+<CodeBlock>{"BEGIN;\n\nUPDATE inventory\nSET quantity = quantity - 2\nWHERE item_id = 'ITEM-DEMO'\n  AND quantity >= 2;\n\n-- Check that exactly one inventory row was updated.\n-- Insert the related order and ledger records here.\n\nCOMMIT;"}</CodeBlock>
+
+If a required statement fails, the application must roll back instead of committing a partial operation. It must also check affected-row counts and handle insufficient stock explicitly.
+
+## Ledger rules to decide before coding
+
+- Decide whether entries are append-only or whether corrections use reversing entries.
+- Store amounts in a precise numeric representation. Do not use floating-point values for money.
+- Define the currency and precision for every amount.
+- Enforce the balancing rule at the database boundary or in a trusted transaction.
+- Record who performed the action and when, where the business requires an audit trail.
+- Make posting idempotent so a retry cannot create a second financial event.
+
+## Common mistakes
+
+- Updating stock, invoice and payment records in separate unprotected requests.
+- Assuming frontend validation protects database integrity.
+- Using floating-point arithmetic for currency.
+- Allowing a posted ledger entry to be silently edited.
+- Retrying a transaction without an idempotency strategy.
+- Holding a database transaction open while waiting for an external API.
+
+## Practical checklist
+
+<Checklist>
+<li>All related writes run inside one transaction.</li>
+<li>Business invariants are checked before commit.</li>
+<li>Money uses an exact numeric representation and an explicit currency.</li>
+<li>Concurrent updates cannot oversell or overdraw the relevant balance.</li>
+<li>Retries cannot post the same business event twice.</li>
+<li>Corrections and reversals are traceable.</li>
+<li>Failure paths are tested, not only the successful path.</li>
+</Checklist>
+
+## From my builds
+
+TODO(author): Review this against the actual Centric Auto Mobile ledger and stock workflow. Add only verified design decisions, safe schema examples and tests. Do not include real account data, credentials or customer information.
+
+## Technical review required
+
+This lesson discusses financial consistency. Keep it as a draft until the owner has reviewed the transaction model and examples.

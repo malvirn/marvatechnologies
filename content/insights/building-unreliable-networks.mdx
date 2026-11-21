@@ -1,0 +1,98 @@
+---
+title: "Building for unreliable networks"
+slug: "building-unreliable-networks"
+summary: "Design interfaces that handle slow, interrupted and unavailable connections without losing user trust or submitted work."
+track: "System Design"
+level: "Intermediate"
+tags:
+  - Building software
+  - Reliability
+  - Offline
+  - Building in Zimbabwe
+publishedAt: "2026-11-21T00:00:00.000Z"
+updatedAt: "2026-11-21T00:00:00.000Z"
+lastReviewed: "2026-11-21T00:00:00.000Z"
+status: "draft"
+related:
+  - "debounced-search-url-state"
+  - "preventing-duplicate-submissions"
+prerequisites:
+  - "preventing-duplicate-submissions"
+featured: false
+hasDemo: true
+---
+
+## TL;DR
+
+A network request can fail even when your code is correct. Treat loading, timeout, offline, retry and recovery as normal application states. Keep important user input safe, explain what is happening, and never pretend a change was saved when it was not.
+
+## The real scenario
+
+A user fills in a long form on a phone. The connection drops just as they submit. The screen keeps spinning, or the app shows an error and clears the form.
+
+The user does not know whether the action reached the server. They may submit again and create a duplicate. The interface needs to communicate uncertainty instead of hiding it.
+
+## Why it matters
+
+Network conditions vary. Mobile data can be slow, a connection can disappear between requests, and a server can respond after the user has already moved on.
+
+A reliable interface should preserve user input, distinguish timeouts from validation errors, prevent unsafe repeated submissions, and show whether data is saved, queued, syncing or confirmed.
+
+## When to use it
+
+Plan for unreliable connections whenever people depend on the application to complete work, especially on mobile devices or where connectivity is inconsistent.
+
+A full offline mode is not always necessary. For a read-only page, a clear retry action may be enough. For a long form or field workflow, preserving a draft can be more important than adding a complex offline queue.
+
+## Model the request states
+
+A request should not be represented by one vague loading boolean.
+
+- Idle: no request is running.
+- Pending: a request is in progress.
+- Succeeded: the server confirmed the change.
+- Failed: the server rejected the request or the client could not confirm the outcome.
+- Offline or queued: the application retained work locally but has not confirmed server persistence.
+
+A timeout does not always mean the server did nothing. The server may have completed the operation while the response was lost. For a non-idempotent action, reconcile the outcome before retrying.
+
+## A practical retry rule
+
+Retry automatically only when the operation is safe to repeat. For writes, use an idempotency key or server-side operation identifier. Use bounded retries with backoff and jitter rather than retrying continuously.
+
+## Optimistic updates and rollback
+
+Optimistic UI can make an interface feel immediate, but it must be reversible. This local-only example changes the displayed state first, then demonstrates a rollback if the simulated server rejects the change.
+
+<Demo type="optimistic-ui" />
+
+## Before and after
+
+<BeforeAfter before="setStatus('complete'); await saveStatus('complete');" after="const previous = status; setStatus('complete'); try { await saveStatus('complete'); } catch { setStatus(previous); showMessage('Not saved.'); }" />
+
+The second version makes the optimistic change reversible. A production implementation also needs to handle stale responses and concurrent edits.
+
+## Common mistakes
+
+- Clearing a form after a failed request.
+- Retrying a write without knowing whether the first attempt completed.
+- Treating browser online status as proof that the server is reachable.
+- Showing success before the server confirms persistence.
+- Retrying forever without a limit or a way to cancel.
+- Keeping offline changes only in memory when they must survive a page reload.
+
+## Practical checklist
+
+<Checklist>
+<li>Loading, success, failure and offline states are visible.</li>
+<li>User input survives failed submissions.</li>
+<li>Timeouts are treated as uncertain outcomes for write operations.</li>
+<li>Retries are bounded and safe for the operation.</li>
+<li>Repeated writes are protected by server-side idempotency.</li>
+<li>Optimistic changes can be rolled back.</li>
+<li>The user can tell whether a change is saved, queued or pending.</li>
+</Checklist>
+
+## From my builds
+
+TODO(author): Add an owner-approved example of a real connectivity constraint and the recovery behaviour you implemented. Do not include private user records, real endpoints or unverified performance claims.

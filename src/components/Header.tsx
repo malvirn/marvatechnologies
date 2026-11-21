@@ -58,10 +58,13 @@ export default function Header() {
     };
   }, [open]);
 
-  const active = links.find(link => link.href === pathname)?.href ?? "/";
+  const active = links.find(link => link.href === pathname)?.href
+    ?? (pathname.startsWith("/insights/") ? "/insights" : "/");
 
   return (
-    <header ref={headerRef} className={`site-header ${scrolled ? "scrolled" : ""}`}>
+    <>
+      {(pathname === "/insights" || pathname.startsWith("/insights/")) && <a className="bn-skip-link" href="#main-content">Skip to content</a>}
+      <header ref={headerRef} className={`site-header ${scrolled ? "scrolled" : ""}`}>
       <div className="header-inner">
         <Link href="/" className="brand-lockup" aria-label="Marva Technologies home">
           <span className="brand-emblem" aria-hidden="true"><BrandMark /></span>
@@ -101,5 +104,6 @@ export default function Header() {
         <Link className="mobile-menu-cta" href="/contact" onClick={() => setOpen(false)}>Start a conversation <span aria-hidden="true">↗</span></Link>
       </div>
     </header>
+    </>
   );
 }
