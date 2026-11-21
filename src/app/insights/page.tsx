@@ -8,6 +8,8 @@ import BuildNotesExplorer from "@/components/insights/BuildNotesExplorer";
 import { getPublishedLessons } from "@/lib/insights-content.mjs";
 import { normalizeSiteUrl, buildCollectionJsonLd, serializeJsonLd } from "@/lib/insights-seo.mjs";
 
+type SearchLesson = { slug: string; title: string; summary: string; track: string; level: string; tags: string[]; readingTime: number; featured?: boolean; publishedAt: string };
+
 const SITE_URL = normalizeSiteUrl();
 
 export const metadata: Metadata = {
@@ -30,8 +32,10 @@ export const metadata: Metadata = {
 
 export default function Insights() {
   const lessons = getPublishedLessons();
-  const searchLessons = lessons.map(({ slug, title, summary, track, level, tags, readingTime, featured, publishedAt }) => ({
-    slug, title, summary, track, level, tags, readingTime, featured, publishedAt
+  const searchLessons = lessons.map((lesson: SearchLesson) => ({
+    slug: lesson.slug, title: lesson.title, summary: lesson.summary, track: lesson.track,
+    level: lesson.level, tags: lesson.tags, readingTime: lesson.readingTime,
+    featured: lesson.featured, publishedAt: lesson.publishedAt
   }));
 
   const collectionJsonLd = buildCollectionJsonLd(SITE_URL);
