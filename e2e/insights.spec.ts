@@ -5,7 +5,7 @@ test("hub loads and keeps combined filters in the URL after reload", async ({ pa
   await expect(page.getByRole("heading", { name: /Build Notes/ })).toBeVisible();
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   await expect(page.getByRole("searchbox", { name: /Search practical engineering notes/ })).toBeVisible();
-  await expect(page.locator(".bn-result-count")).toHaveText("0 notes");
+  await expect(page.locator(".bn-explorer")).toHaveAttribute("data-hydrated", "true");
   await page.getByRole("searchbox").fill("no-result-expected");
   await expect(page).toHaveURL(/q=no-result-expected/);
   await expect(page.getByRole("heading", { name: /No notes match those filters/ })).toBeVisible();
