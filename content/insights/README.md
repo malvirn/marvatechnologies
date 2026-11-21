@@ -61,3 +61,14 @@ Three self-contained demos are available:
 Demos use local browser state and timers only. They do not call APIs, use real payment flows, persist data or require environment variables. The examples are teaching aids, not production-ready request or ledger implementations.
 
 No additional dependencies were introduced in Phase 3.
+
+The six draft slugs are:
+
+1. `debounced-search-url-state`
+2. `preventing-duplicate-submissions`
+3. `building-unreliable-networks`
+4. `database-transactions-ledger-consistency`
+5. `audit-before-you-modify`
+6. `plan-before-you-code`
+
+Each draft includes an owner TODO for the real-build evidence that must be supplied or reviewed before publication.
