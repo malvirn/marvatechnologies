@@ -6,14 +6,16 @@ import Principles from "@/components/Principles";
 import CodeTyper from "@/components/CodeTyper";
 import { getPublishedLessons } from "@/lib/insights-content.mjs";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://marvatechnologies.pages.dev";
+
 export const metadata: Metadata = {
   title: "Build Notes | Marva Technologies",
   description: "Practical software engineering lessons from planning, building and maintaining real systems.",
-  alternates: { canonical: "https://marvatechnologies.pages.dev/insights" },
+  alternates: { canonical: SITE_URL + "/insights" },
   openGraph: {
     title: "Build Notes | Marva Technologies",
     description: "Practical software engineering lessons from planning, building and maintaining real systems.",
-    url: "https://marvatechnologies.pages.dev/insights",
+    url: SITE_URL + "/insights",
     siteName: "Marva Technologies"
   },
   twitter: { card: "summary", title: "Build Notes | Marva Technologies", description: "Practical software engineering lessons from planning, building and maintaining real systems." }
