@@ -55,3 +55,11 @@ test("search finds an owner-approved lesson when one is configured", async ({ pa
   await page.getByRole("searchbox").fill(process.env.E2E_LESSON_TITLE!);
   await expect(page.getByRole("link", { name: process.env.E2E_LESSON_TITLE!, exact: false }).first()).toBeVisible();
 });
+
+test("existing theme toggle works on the new Insights route", async ({ page }) => {
+  await page.goto("/insights");
+  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+});
