@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { isValidElement, type ReactNode } from "react";
 import CopyButton from "@/components/insights/CopyButton";
 
 function plainText(node: ReactNode): string {
