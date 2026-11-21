@@ -1,7 +1,6 @@
 import { ImageResponse } from "next/og";
 import { publishedOgLessons } from "@/generated/insights-og-data.mjs";
 
-export const runtime = "edge";
 export const alt = "Build Notes lesson by Marva Technologies";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
