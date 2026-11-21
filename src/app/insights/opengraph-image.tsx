@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 
+export const dynamic = "force-static";
+
 export const runtime = "edge";
 export const alt = "Build Notes by Marva Technologies";
 export const size = { width: 1200, height: 630 };
