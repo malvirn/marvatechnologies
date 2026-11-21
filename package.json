@@ -8,9 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --test",
-    "test:e2e": "playwright test",
-    "predev": "node scripts/generate-insights-og-data.mjs",
-    "prebuild": "node scripts/generate-insights-og-data.mjs"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "framer-motion": "^12.23.12",
