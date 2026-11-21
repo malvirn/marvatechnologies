@@ -53,15 +53,12 @@ Do not debounce simple local state updates that are already cheap. The text show
 The helper keeps one timer. Every new call clears the previous timer, so only the latest value runs after the pause.
 
 ```ts
-export function debounce<T extends (...args: unknown[]) => void>(
-  callback: T,
-  delay = 250
-) {
+export function debounce(callback: (value: string) => void, delay = 250) {
   let timer: ReturnType<typeof setTimeout> | undefined;
 
-  return (...args: Parameters<T>) => {
+  return (value: string) => {
     if (timer) clearTimeout(timer);
-    timer = setTimeout(() => callback(...args), delay);
+    timer = setTimeout(() => callback(value), delay);
   };
 }
 ```
