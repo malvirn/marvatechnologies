@@ -35,9 +35,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       siteName: "Marva Technologies",
       publishedTime: lesson.publishedAt,
       modifiedTime: lesson.updatedAt,
-      authors: ["Malvirn Gomo"]
+      authors: ["Malvirn Gomo"],
+      images: [{ url: url + "/opengraph-image.png", width: 1200, height: 630, alt: lesson.title }]
     },
-    twitter: { card: "summary_large_image", title: lesson.title, description: lesson.summary, images: [SITE_URL + "/insights/opengraph-image"] }
+    twitter: { card: "summary_large_image", title: lesson.title, description: lesson.summary, images: [url + "/opengraph-image.png"] }
   };
 }
 
