@@ -92,7 +92,7 @@ export function buildArticleJsonLd(lesson, siteUrl = normalizeSiteUrl()) {
     author: { "@type": "Person", name: "Malvirn Gomo" },
     publisher: { "@type": "Organization", name: "Marva Technologies", url: base },
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    image: url + "/opengraph-image.png",
+    image: url + "/opengraph-image",
     articleSection: lesson.track,
     keywords: lesson.tags
   };
