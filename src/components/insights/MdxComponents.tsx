@@ -48,8 +48,8 @@ export function Checklist({ children }: { children: ReactNode }) {
 }
 
 function SafeAnchor({ href, rel, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
-  const isExternal = typeof href === "string" && /^https?:\\/\\//i.test(href);
-  const safeRel = isExternal ? Array.from(new Set([...(rel?.split(/\\s+/).filter(Boolean) ?? []), "noopener", "noreferrer"])).join(" ") : rel;
+  const isExternal = typeof href === "string" && /^https?:\/\//i.test(href);
+  const safeRel = isExternal ? Array.from(new Set([...(rel?.split(/\s+/).filter(Boolean) ?? []), "noopener", "noreferrer"])).join(" ") : rel;
   return <a href={href} rel={safeRel} {...props} />;
 }
 
