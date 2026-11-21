@@ -24,7 +24,7 @@ function writeFilters(filters: { query: string; track: string; level: string }) 
     if (value) url.searchParams.set(key, value);
     else url.searchParams.delete(key);
   });
-  window.history.replaceState(null, "", url);
+  window.history.replaceState(window.history.state, "", url.toString());
 }
 
 export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
@@ -54,8 +54,8 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
       setLevel(LEVELS.includes(filters.level) ? filters.level : "");
     };
     const onKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      const typing = target && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
+      const active = document.activeElement as HTMLElement | null;
+      const typing = active && (active.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName));
       if (event.key === "/" && !typing && !event.metaKey && !event.ctrlKey && !event.altKey) {
         event.preventDefault();
         inputRef.current?.focus();
