@@ -74,6 +74,7 @@ for (const route of ["/", "/about", "/services", "/contact"]) {
 
 test("owner-approved teaching lesson renders comparison tabs and copyable prompt", async ({ page }) => {
   test.skip(!process.env.E2E_TEACHING_LESSON_SLUG, "Set E2E_TEACHING_LESSON_SLUG to the approved audit-before-you-modify lesson.");
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/insights/" + process.env.E2E_TEACHING_LESSON_SLUG);
   const comparison = page.locator(".bn-before-after").first();
   await expect(comparison).toBeVisible();
