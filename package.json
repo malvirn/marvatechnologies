@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --test",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "serve:static": "node scripts/serve-static.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.23.12",

@@ -5,6 +5,7 @@ test("hub loads and keeps combined filters in the URL after reload", async ({ pa
   await expect(page.getByRole("heading", { name: /Build Notes/ })).toBeVisible();
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   await expect(page.getByRole("searchbox", { name: /Search practical engineering notes/ })).toBeVisible();
+  await expect(page.locator(".bn-explorer")).toHaveAttribute("data-hydrated", "true");
   await page.getByRole("searchbox").fill("no-result-expected");
   await expect(page).toHaveURL(/q=no-result-expected/);
   await expect(page.getByRole("heading", { name: /No notes match those filters/ })).toBeVisible();
@@ -13,6 +14,7 @@ test("hub loads and keeps combined filters in the URL after reload", async ({ pa
   await expect.poll(() => new URL(page.url()).searchParams.get("track")).toBe("Frontend Engineering");
   await expect.poll(() => new URL(page.url()).searchParams.get("level")).toBe("Foundation");
   await page.reload();
+  await expect(page.locator(".bn-explorer")).toHaveAttribute("data-hydrated", "true");
   await expect(page.getByLabel("Filter by track")).toHaveValue("Frontend Engineering");
   await expect(page.getByLabel("Filter by level")).toHaveValue("Foundation");
   await expect(page.getByRole("searchbox")).toHaveValue("no-result-expected");
@@ -20,6 +22,8 @@ test("hub loads and keeps combined filters in the URL after reload", async ({ pa
 
 test("slash focuses search and escape clears it", async ({ page }) => {
   await page.goto("/insights");
+  await expect(page.locator(".bn-explorer")).toHaveAttribute("data-hydrated", "true");
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   await page.keyboard.press("/");
   await expect(page.getByRole("searchbox")).toBeFocused();
   await page.getByRole("searchbox").fill("something");
@@ -36,7 +40,7 @@ test("published lesson renders its table of contents and reading progress", asyn
   await expect(page.locator(".bn-article-footer")).toBeVisible();
 });
 
-test("unknown lesson slugs return a 404", async ({ page }) => {
+test("unknown lesson slugs return a static 404", async ({ page }) => {
   const response = await page.goto("/insights/this-lesson-does-not-exist");
   expect(response?.status()).toBe(404);
 });
@@ -59,6 +63,7 @@ test("search finds an owner-approved lesson when one is configured", async ({ pa
 
 test("existing theme toggle works on the new Insights route", async ({ page }) => {
   await page.goto("/insights");
+  await expect(page.locator(".bn-explorer")).toHaveAttribute("data-hydrated", "true");
   await page.getByRole("button", { name: "Switch to light theme" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await page.getByRole("button", { name: "Switch to dark theme" }).click();
@@ -99,8 +104,10 @@ test("Build Notes publishes a valid RSS feed containing no draft lessons", async
   expect(response.headers()["content-type"]).toContain("application/rss+xml");
   const xml = await response.text();
   expect(xml).toContain("<rss version=\"2.0\"");
+  const publishedSlug = process.env.E2E_LESSON_SLUG;
   for (const slug of ["debounced-search-url-state", "preventing-duplicate-submissions", "building-unreliable-networks", "database-transactions-ledger-consistency", "audit-before-you-modify", "plan-before-you-code"]) {
-    expect(xml).not.toContain(slug);
+    if (slug === publishedSlug) expect(xml).toContain(slug);
+    else expect(xml).not.toContain(slug);
   }
 });
 
@@ -153,7 +160,7 @@ test("published lesson exposes Article and BreadcrumbList JSON-LD and its own so
   const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
   expect(scripts.join(" ")).toContain("Article");
   expect(scripts.join(" ")).toContain("BreadcrumbList");
-  const response = await request.get("/insights/opengraph-image");
+  const response = await request.get("/insights/" + slug + "/opengraph-image");
   expect(response.ok()).toBeTruthy();
   expect(response.headers()["content-type"]).toContain("image/png");
 });
