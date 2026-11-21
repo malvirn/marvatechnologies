@@ -6,7 +6,7 @@ import Principles from "@/components/Principles";
 import CodeTyper from "@/components/CodeTyper";
 import { getPublishedLessons } from "@/lib/insights-content.mjs";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://marvatechnologies.pages.dev";
+const SITE_URL = process.env.SITE_URL || "https://marvatechnologies.pages.dev";
 
 export const metadata: Metadata = {
   title: "Build Notes | Marva Technologies",
