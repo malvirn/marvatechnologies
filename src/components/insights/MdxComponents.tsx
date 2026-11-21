@@ -1,6 +1,9 @@
 import * as React from "react";
 import type { ReactNode } from "react";
 import CopyButton from "@/components/insights/CopyButton";
+import BeforeAfter from "@/components/insights/BeforeAfter";
+import PromptBlock from "@/components/insights/PromptBlock";
+import Demo from "@/components/insights/Demo";
 
 type CalloutVariant = "why" | "when" | "mistake" | "tip";
 
@@ -44,4 +47,4 @@ export function Checklist({ children }: { children: ReactNode }) {
   return <div className="bn-checklist"><ul>{children}</ul></div>;
 }
 
-export const mdxComponents = { Callout, CodeBlock, Steps, Checklist, pre: CodeBlock };
+export const mdxComponents = { Callout, CodeBlock, Steps, Checklist, BeforeAfter, PromptBlock, Demo, pre: CodeBlock };
