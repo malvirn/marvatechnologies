@@ -58,7 +58,6 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
 
   return (
     <>
-      <a className="bn-skip-link" href="#main-content">Skip to content</a>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }} />
       <ReadingProgress />
