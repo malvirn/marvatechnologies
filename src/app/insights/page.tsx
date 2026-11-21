@@ -35,8 +35,13 @@ export default function Insights() {
     slug, title, summary, track, level, tags, readingTime, featured, publishedAt
   }));
 
+  const collectionJsonLd = buildCollectionJsonLd(SITE_URL);
+
   return (
-    <main className="in-page bn-page">
+    <>
+      <a className="bn-skip-link" href="#main-content">Skip to content</a>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(collectionJsonLd) }} />
+      <main id="main-content" className="in-page bn-page">
       <section className="shell page-hero in-hero bn-hero">
         <div className="in-orb in-orb-a" aria-hidden="true" />
         <div className="in-orb in-orb-b" aria-hidden="true" />
@@ -69,5 +74,6 @@ export default function Insights() {
         </div></Reveal>
       </section>
     </main>
+    </>
   );
 }
