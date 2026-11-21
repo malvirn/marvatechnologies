@@ -58,7 +58,8 @@ export default function Header() {
     };
   }, [open]);
 
-  const active = links.find(link => link.href === pathname)?.href ?? "/";
+  const active = links.find(link => link.href === pathname)?.href
+    ?? (pathname.startsWith("/insights/") ? "/insights" : "/");
 
   return (
     <header ref={headerRef} className={`site-header ${scrolled ? "scrolled" : ""}`}>
