@@ -1,0 +1,132 @@
+---
+title: "Debounced search that stays in the URL"
+slug: "debounced-search-url-state"
+summary: "Keep search responsive without sending work on every keystroke, and make the current search shareable with URL state."
+track: "Frontend Engineering"
+level: "Foundation"
+tags:
+  - Building software
+  - Frontend
+  - Search
+  - URL state
+publishedAt: "2026-11-21T00:00:00.000Z"
+updatedAt: "2026-11-21T00:00:00.000Z"
+lastReviewed: "2026-11-21T00:00:00.000Z"
+status: "draft"
+related: []
+prerequisites: []
+featured: true
+hasDemo: false
+---
+
+# TL;DR
+
+A search field should feel immediate, but the work behind it does not need to run on every keystroke. Debouncing waits for a short pause before running the expensive part. Keeping the query in the URL makes the current view reloadable, bookmarkable and shareable.
+
+## The real scenario
+
+Imagine a page that filters a list of opportunities, products or support records. A user types brake pads. Without a delay, the application may run a filter or request for each partial value as the user types.
+
+That creates work the user did not ask to see. If the search also needs to survive refreshes, the query belongs in the URL.
+
+## Why it matters
+
+There are two separate responsibilities:
+
+- The input value should update immediately so typing never feels delayed.
+- The search operation should wait until the user pauses.
+
+The URL is a third responsibility. It represents the current view, not the timing mechanism.
+
+<Callout variant="why">
+Debouncing reduces repeated work. URL state makes the result reproducible. They solve different problems, so keep them separate.
+</Callout>
+
+## When to use it
+
+Use a debounce when each change triggers work that becomes wasteful when repeated quickly. Examples include remote search, filtering a large in-memory list, expensive validation, or autosave.
+
+Do not debounce simple local state updates that are already cheap. The text shown inside the input should not wait for the debounce timer.
+
+## A small debounce helper
+
+The helper keeps one timer. Every new call clears the previous timer, so only the latest value runs after the pause.
+
+```ts
+export function debounce<T extends (...args: unknown[]) => void>(
+  callback: T,
+  delay = 250
+) {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  return (...args: Parameters<T>) => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => callback(...args), delay);
+  };
+}
+```
+
+For a component, remember to clean up pending work when it unmounts. A timer that outlives the component can update a page the user has already left.
+
+## Sync the committed query to the URL
+
+Use replaceState for normal typing. It updates the address without creating a browser-history entry for every character.
+
+```ts
+function writeQueryToUrl(value: string) {
+  const url = new URL(window.location.href);
+  const query = value.trim();
+
+  if (query) {
+    url.searchParams.set("q", query);
+  } else {
+    url.searchParams.delete("q");
+  }
+
+  window.history.replaceState({}, "", url);
+}
+```
+
+Read the initial value from window.location.search after the component mounts, or pass it from a server-rendered page. When the user presses Enter or chooses a result, you may decide to use pushState because that action represents a meaningful navigation step.
+
+## Put the pieces together
+
+<Steps>
+<li>Keep the raw input value in component state and update it on every keystroke.</li>
+<li>Pass the value to a debounced function that performs filtering or starts the request.</li>
+<li>When the debounce commits a value, update the URL with replaceState.</li>
+<li>On page load, initialise the input from the q query parameter.</li>
+<li>Listen for browser back and forward navigation if other controls also change the query string.</li>
+</Steps>
+
+## Common mistakes
+
+- Debouncing the input state itself. This makes the field feel sluggish.
+- Creating a new debounce timer on every render without retaining or cleaning it up.
+- Writing every keystroke with pushState, which fills browser history with tiny changes.
+- Updating the URL but never reading it on initial load.
+- Forgetting that URL query parameters are user-controlled input. Validate and normalise them before using them in requests.
+
+<Callout variant="mistake">
+A debounce is not request cancellation. If an earlier network request has already started, use an AbortController or request identity check to stop stale results from replacing newer ones.
+</Callout>
+
+## A practical checklist
+
+<Checklist>
+<li>The input responds immediately.</li>
+<li>Only the latest committed value triggers the expensive operation.</li>
+<li>The URL reflects the committed query.</li>
+<li>Refreshing the page restores the search.</li>
+<li>Clearing the input removes the query parameter.</li>
+<li>Pending timers are cleaned up when the component unmounts.</li>
+<li>Old network responses cannot overwrite newer results.</li>
+</Checklist>
+
+## From my builds
+
+TODO(author): Add a real example from one of your projects. Describe the original behaviour, what triggered too many updates, the change you made and what you verified. Do not add private customer information, credentials or live endpoints.
+
+## Further reading
+
+The next useful topic is preventing duplicate requests and double form submissions. Debouncing can reduce how often work starts, but it does not guarantee that an action only happens once.
