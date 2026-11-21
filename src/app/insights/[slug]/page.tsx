@@ -9,7 +9,7 @@ import { mdxComponents } from "@/components/insights/MdxComponents";
 import { buildArticleJsonLd, buildBreadcrumbJsonLd, serializeJsonLd } from "@/lib/insights-seo.mjs";
 import { LessonNavigation, LessonPager, ReadingProgress } from "@/components/insights/LessonNavigation";
 
-const SITE_URL = process.env.SITE_URL || "https://marvatechnologies.pages.dev";
+const SITE_URL = normalizeSiteUrl();
 export const dynamicParams = false;
 
 export function generateStaticParams() {
