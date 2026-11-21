@@ -87,3 +87,5 @@ Each draft includes an owner TODO for the real-build evidence that must be suppl
 - No new npm dependency or database service was added.
 
 The repository did not contain a package lock file at the start of Phase 4. The CI workflow runs `npm audit --audit-level=high` against the dependency tree installed for that run, but transitive versions are not reproducibly pinned until a lock file is committed. Do not treat the audit as passed until the workflow has completed successfully.
+
+Lesson MDX headings begin at level 2 because the page template owns the single level-1 title. External HTTP(S) links rendered from MDX receive `rel="noopener noreferrer"`.
