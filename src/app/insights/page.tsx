@@ -6,9 +6,10 @@ import Principles from "@/components/Principles";
 import CodeTyper from "@/components/CodeTyper";
 import BuildNotesExplorer from "@/components/insights/BuildNotesExplorer";
 import { getPublishedLessons } from "@/lib/insights-content.mjs";
+import { normalizeSiteUrl } from "@/lib/insights-seo.mjs";
 import { buildCollectionJsonLd, serializeJsonLd } from "@/lib/insights-seo.mjs";
 
-const SITE_URL = process.env.SITE_URL || "https://marvatechnologies.pages.dev";
+const SITE_URL = normalizeSiteUrl();
 
 export const metadata: Metadata = {
   title: "Build Notes | Marva Technologies",
