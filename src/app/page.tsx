@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import Hero from "@/components/Hero";
@@ -5,6 +6,30 @@ import Founder from "@/components/Founder";
 import WorkShowcase from "@/components/WorkShowcase";
 import ContactBand from "@/components/ContactBand";
 import TechShowcase from "@/components/TechShowcase";
+import { normalizeSiteUrl } from "@/lib/insights-seo.mjs";
+
+const pageTitle = "Marva Technologies | Practical Software & Digital Solutions";
+const pageDescription = "Explore Marva Technologies, where practical software, thoughtful engineering and modern web solutions turn useful ideas into products for people and businesses.";
+
+export const metadata: Metadata = {
+  title: pageTitle,
+  description: pageDescription,
+  alternates: { canonical: normalizeSiteUrl() + "/" },
+  openGraph: {
+    type: "website",
+    url: normalizeSiteUrl() + "/",
+    title: pageTitle,
+    description: pageDescription,
+    siteName: "Marva Technologies",
+    images: [{ url: "/branding/marva-social.png", width: 1200, height: 630, alt: "Marva Technologies" }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageTitle,
+    description: pageDescription,
+    images: ["/branding/marva-social.png"]
+  }
+};
 
 export default function Home(){return <main>
 <Hero />
