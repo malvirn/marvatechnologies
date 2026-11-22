@@ -11,7 +11,8 @@ export const metadata: Metadata = {
   description: "Digital solutions, thoughtful engineering and practical software by Marva Technologies.",
   metadataBase: new URL(process.env.SITE_URL || "https://marvatechnologies.pages.dev"),
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
-  openGraph: { title: "Marva Technologies", description: "Technology. Innovation. Impact.", images: ["/branding/marva-logo.svg"] }
+  openGraph: { title: "Marva Technologies", description: "Technology. Innovation. Impact.", images: [{ url: "/branding/marva-social.png", width: 1200, height: 630, alt: "Marva Technologies" }] },
+  twitter: { card: "summary_large_image", title: "Marva Technologies", description: "Technology. Innovation. Impact.", images: ["/branding/marva-social.png"] }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
