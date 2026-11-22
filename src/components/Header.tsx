@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { House, Layers, Lightbulb, Mail, UserRound, ArrowUpRight } from "lucide-react";
+import { House, Layers, Lightbulb, Mail, PenLine, UserRound, ArrowUpRight } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -21,6 +21,7 @@ const mobileLinks = [
   { label: "About", href: "/about", Icon: UserRound },
   { label: "Services", href: "/services", Icon: Layers },
   { label: "Insights", href: "/insights", Icon: Lightbulb },
+  { label: "Add note", href: "/add-note", Icon: PenLine },
   { label: "Contact", href: "/contact", Icon: Mail },
 ];
 
@@ -58,7 +59,7 @@ export default function Header() {
     };
   }, [open]);
 
-  const active = links.find(link => link.href === pathname)?.href
+  const active = (pathname === "/add-note" ? "/add-note" : undefined) ?? links.find(link => link.href === pathname)?.href
     ?? (pathname.startsWith("/insights/") ? "/insights" : "/");
 
   return (
