@@ -1,5 +1,30 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { normalizeSiteUrl } from "@/lib/insights-seo.mjs";
+
+const pageTitle = "Software Development Services | Marva Technologies";
+const pageDescription = "Discover web development, business software, database solutions and product prototyping from Marva Technologies, built for practical business needs today.";
+
+export const metadata: Metadata = {
+  title: pageTitle,
+  description: pageDescription,
+  alternates: { canonical: normalizeSiteUrl() + "/services" },
+  openGraph: {
+    type: "website",
+    url: normalizeSiteUrl() + "/services",
+    title: pageTitle,
+    description: pageDescription,
+    siteName: "Marva Technologies",
+    images: [{ url: "/branding/marva-social.png", width: 1200, height: 630, alt: "Marva Technologies" }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageTitle,
+    description: pageDescription,
+    images: ["/branding/marva-social.png"]
+  }
+};
 
 const items=[["Web development","Responsive websites and web applications built around clear goals and user needs."],["Business software","Custom tools for organising workflows, records and day-to-day operations."],["Database solutions","Structured data, backend foundations and integrations for reliable applications."],["Product prototyping","Turning early ideas into practical prototypes that can be tested and improved."]];
 
