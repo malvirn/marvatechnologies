@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Header from "@/components/Header";
 import FloatingMessage from "@/components/FloatingMessage";
 import SiteFooter from "@/components/SiteFooter";
+import PublicChrome from "@/components/PublicChrome";
 import "./globals.css";
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0A0A0A" };
@@ -22,10 +23,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <script dangerouslySetInnerHTML={{ __html: `try{var t=localStorage.getItem("marva-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;else document.documentElement.dataset.theme="dark";if(t==="light"){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#F6F4EF")}}catch(e){document.documentElement.dataset.theme="dark"}` }} />
     </head>
     <body>
-      <Header />
+      <PublicChrome><Header /></PublicChrome>
       {children}
-      <SiteFooter />
-      <FloatingMessage />
+      <PublicChrome><SiteFooter /><FloatingMessage /></PublicChrome>
     </body>
   </html>;
 }

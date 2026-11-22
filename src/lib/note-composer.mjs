@@ -63,7 +63,30 @@ export function findMdxRisks(body) {
   return risks;
 }
 
-export function validateNote(input, existingSlugs = []) {
+// Build a 20-160 character summary from the first sentences of the note body.
+export function deriveSummary(body) {
+  const text = String(body || "")
+    .replace(/```[\s\S]*?```/g, " ").replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/<[^>]+>/g, " ")
+    .replace(/^#{1,6}\s+.*$/gm, " ").replace(/[`*_>#-]/g, " ").replace(/\s+/g, " ").trim();
+  if (text.length <= 160) return text;
+  const cut = text.slice(0, 157);
+  const lastSpace = cut.lastIndexOf(" ");
+  return (lastSpace > 80 ? cut.slice(0, lastSpace) : cut).replace(/[ ,;:.-]+$/, "") + "…";
+}
+
+// Fill the optional fields so the form only needs a title, a category and the note itself.
+export function resolveNote(input) {
+  return {
+    ...input,
+    summary: String(input.summary || "").trim() || deriveSummary(input.body),
+    level: input.level || "Foundation",
+    tags: String(input.tags || "").trim() || input.track || ""
+  };
+}
+
+export function validateNote(rawInput, existingSlugs = []) {
+  const input = resolveNote(rawInput);
   const errors = {};
   const title = String(input.title || "").trim();
   const summary = String(input.summary || "").trim();
@@ -71,18 +94,17 @@ export function validateNote(input, existingSlugs = []) {
   const slug = slugify(title);
   if (!errors.title && !slug) errors.title = "Title must contain letters or numbers.";
   if (slug && existingSlugs.includes(slug)) errors.title = "A published note already uses the slug \"" + slug + "\". Change the title.";
-  if (summary.length < 20) errors.summary = "Summary needs at least 20 characters.";
+  if (summary.length < 20) errors.summary = "Write a little more in the note, or add a summary under More options.";
   if (summary.length > 160) errors.summary = "Summary is " + summary.length + " characters. The limit is 160.";
   if (!COMPOSER_TRACKS.includes(input.track)) errors.track = "Choose a track.";
   if (!COMPOSER_LEVELS.includes(input.level)) errors.level = "Choose a level.";
   if (String(input.body || "").trim().length < 40) errors.body = "Write the note body (at least a few sentences).";
-  const missingAlt = (input.images || []).findIndex((image) => !String(image.alt || "").trim());
-  if (missingAlt >= 0) errors.images = "Every picture needs a short description (alt text).";
   const risks = findMdxRisks(input.body);
   return { errors, warnings: risks, slug, valid: Object.keys(errors).length === 0 };
 }
 
-export function buildNoteFile(input, now = new Date()) {
+export function buildNoteFile(rawInput, now = new Date()) {
+  const input = resolveNote(rawInput);
   const slug = slugify(input.title);
   const iso = now.toISOString();
   const lines = [

@@ -165,13 +165,12 @@ test("published lesson exposes Article and BreadcrumbList JSON-LD and its own so
   expect(response.headers()["content-type"]).toContain("image/png");
 });
 
-test("the note composer lives on its own noindex page, not in the Insights hub", async ({ page }) => {
+test("the note studio is a separate noindex page with its own sidebar and a login", async ({ page }) => {
   await page.goto("/insights");
-  await page.getByLabel("Search practical engineering notes").fill("/addnewnotes");
-  await expect(page.getByRole("heading", { name: "Add a new note" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Add note" })).toHaveCount(0);
   await page.goto("/add-note");
-  await expect(page.getByRole("heading", { name: "Add a new note" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Studio navigation" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Contact" })).toHaveCount(0);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
-  await page.getByLabel("Title").fill("Idempotent webhooks and retries");
-  await expect(page.getByText("Slug: idempotent-webhooks-and-retries")).toBeVisible();
 });

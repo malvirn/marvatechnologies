@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { slugify, validateNote, buildNoteFile, findMdxRisks, imageMarkdown } from "../src/lib/note-composer.mjs";
+import { deriveSummary, resolveNote, slugify, validateNote, buildNoteFile, findMdxRisks, imageMarkdown } from "../src/lib/note-composer.mjs";
 import { parseLessonSource } from "../src/lib/insights-content.mjs";
 
 const base = {
@@ -35,7 +35,6 @@ test("validation reports the same limits the build enforces", () => {
   assert.ok(bad.errors.title && bad.errors.summary && bad.errors.track && bad.errors.body);
   assert.equal(validateNote(base, ["idempotent-webhooks-and-retries"]).valid, false);
   assert.equal(validateNote(base, []).valid, true);
-  assert.equal(validateNote({ ...base, images: [{ alt: " " }] }, []).valid, false);
 });
 
 test("MDX risks flag braces and unknown tags outside code only", () => {
@@ -47,4 +46,24 @@ test("MDX risks flag braces and unknown tags outside code only", () => {
 
 test("image markdown strips characters that would break the alt text", () => {
   assert.equal(imageMarkdown("A [bad]\nalt", "/insights/images/x/a.jpg"), "\n\n![A  bad  alt](/insights/images/x/a.jpg)\n\n");
+});
+
+test("optional fields are filled in so only title, category and note are required", () => {
+  const minimal = { title: "Retry with backoff", track: "Backend Engineering", status: "published", body: "## TL;DR\n\nRetry failed calls, but wait longer each time so you never hammer a struggling server.\n", images: [] };
+  const resolved = resolveNote(minimal);
+  assert.equal(resolved.level, "Foundation");
+  assert.equal(resolved.tags, "Backend Engineering");
+  assert.ok(resolved.summary.length >= 20 && resolved.summary.length <= 160);
+  assert.equal(validateNote(minimal, []).valid, true);
+  const file = buildNoteFile(minimal);
+  assert.equal(parseLessonSource(file.mdx, file.filename).status, "published");
+});
+
+test("deriveSummary strips markdown, code and images and stays within 160 characters", () => {
+  const body = "## Heading\n\n![pic](/x.jpg)\n\n```js\nconst a = 1;\n```\n\n" + "Word ".repeat(80);
+  const summary = deriveSummary(body);
+  assert.ok(summary.length <= 160);
+  assert.ok(!summary.includes("const a"));
+  assert.ok(!summary.includes("Heading"));
+  assert.ok(summary.endsWith("…"));
 });
