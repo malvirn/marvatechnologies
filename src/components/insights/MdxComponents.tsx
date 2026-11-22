@@ -53,4 +53,9 @@ function SafeAnchor({ href, rel, ...props }: React.AnchorHTMLAttributes<HTMLAnch
   return <a href={href} rel={safeRel} {...props} />;
 }
 
-export const mdxComponents = { Callout, CodeBlock, Steps, Checklist, BeforeAfter, PromptBlock, Demo, a: SafeAnchor, pre: CodeBlock };
+function NoteImage({ src, alt }: React.ImgHTMLAttributes<HTMLImageElement>) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img className="bn-figure" src={typeof src === "string" ? src : undefined} alt={alt ?? ""} loading="lazy" decoding="async" />;
+}
+
+export const mdxComponents = { Callout, img: NoteImage, CodeBlock, Steps, Checklist, BeforeAfter, PromptBlock, Demo, a: SafeAnchor, pre: CodeBlock };

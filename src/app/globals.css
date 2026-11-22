@@ -1584,3 +1584,35 @@ a.chat-chip{display:inline-block}
  .jn-bob,.jn-halo::before,.jn-halo-r1,.jn-halo-r2,.jn-halo-spin,.jn-ring,.jn-sparks i,.jn-slide.is-phone::after,.jn-progress{animation:none!important}
  .jn-ring,.jn-sparks,.jn-progress{display:none}
 }
+
+/* Build Notes: owner-only note composer + note images */
+.bn-figure{display:block;max-width:100%;height:auto;margin:1.5rem 0;border-radius:14px;border:1px solid var(--border)}
+.bn-composer{width:min(720px,100vw);max-width:100vw;max-height:100dvh;height:100dvh;margin:0 0 0 auto;padding:0;border:0;border-left:1px solid var(--border);background:var(--background);color:var(--text);overflow:hidden}
+.bn-composer[open]{display:flex;flex-direction:column}
+.bn-composer::backdrop{background:rgba(0,0,0,.6)}
+.bn-composer-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid var(--border)}
+.bn-composer-head h2{margin:2px 0 0;font:600 1.25rem var(--font-heading)}
+.bn-composer-eyebrow{font:.7rem/1 ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.bn-composer-close,.bn-composer-actions button,.bn-composer-pick,.bn-composer-pics button{min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 16px;border-radius:999px;border:1px solid var(--border);background:var(--soft);color:var(--text);font:inherit;cursor:pointer}
+.bn-composer-body{flex:1;overflow-y:auto;padding:18px 20px;display:grid;gap:16px;align-content:start}
+.bn-field{display:grid;gap:6px;border:0;padding:0;margin:0;min-width:0}
+.bn-field>span,.bn-field>legend{font-size:.82rem;color:var(--muted)}
+.bn-field input:not([type=radio]):not([type=password]),.bn-field input[type=password],.bn-field select,.bn-field textarea{width:100%;min-height:44px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit}
+.bn-field textarea{resize:vertical;line-height:1.55}
+.bn-field small{color:var(--muted);font-size:.78rem}
+.bn-field em{color:#ff8a80;font-style:normal;font-size:.82rem}
+.bn-field-row{display:grid;gap:16px;grid-template-columns:1fr}
+@media (min-width:600px){.bn-field-row{grid-template-columns:1fr 1fr}}
+.bn-composer-warn{margin:0;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,190,90,.4);color:#ffcf8a;font-size:.85rem}
+.bn-composer-pics{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.bn-composer-pics li{display:grid;grid-template-columns:56px 1fr auto auto;gap:8px;align-items:center}
+.bn-composer-pics img{width:56px;height:56px;object-fit:cover;border-radius:10px}
+.bn-composer-status label{display:flex;gap:10px;align-items:center;min-height:44px}
+.bn-composer-gh{border:1px solid var(--border);border-radius:14px;padding:12px 14px;display:grid;gap:12px}
+.bn-composer-gh summary{cursor:pointer;min-height:32px}
+.bn-composer-status-msg{min-height:1.4em;margin:0;font-size:.9rem}
+.bn-composer-status-msg[data-kind=ok]{color:#8fe3a8}.bn-composer-status-msg[data-kind=error]{color:#ff8a80}
+.bn-composer-actions{display:flex;gap:10px;flex-wrap:wrap;padding:14px 20px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);background:var(--background)}
+.bn-composer-actions button:disabled{opacity:.5;cursor:not-allowed}
+.bn-composer-actions .bn-composer-primary{margin-left:auto;background:var(--accent);color:#0A0A0A;border-color:var(--accent);font-weight:600}
+.bn-composer :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
