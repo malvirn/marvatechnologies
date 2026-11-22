@@ -82,20 +82,21 @@ test("returns previous and next lessons from the same track only", () => {
 });
 
 
-test("contains the complete six-lesson launch set and keeps every lesson as a draft", () => {
-  const lessons = getAllLessons();
-  assert.equal(lessons.length, 6);
-  assert.deepEqual(lessons.map((lesson) => lesson.slug).sort(), [
+test("contains the six-lesson launch set as drafts; notes added later are allowed", () => {
+  const launch = [
     "audit-before-you-modify",
     "building-unreliable-networks",
     "database-transactions-ledger-consistency",
     "debounced-search-url-state",
     "plan-before-you-code",
     "preventing-duplicate-submissions"
-  ]);
-  assert.ok(lessons.every((lesson) => lesson.status === "draft"));
-  assert.ok(lessons.every((lesson) => lesson.content.includes("TODO(author)")));
-  assert.equal(lessons.filter((lesson) => lesson.hasDemo).length, 3);
+  ];
+  const lessons = getAllLessons();
+  const launchLessons = lessons.filter((lesson) => launch.includes(lesson.slug));
+  assert.deepEqual(launchLessons.map((lesson) => lesson.slug).sort(), launch);
+  assert.ok(launchLessons.every((lesson) => lesson.status === "draft"));
+  assert.ok(launchLessons.every((lesson) => lesson.content.includes("TODO(author)")));
+  assert.equal(launchLessons.filter((lesson) => lesson.hasDemo).length, 3);
 });
 
 test("the three declared lazy demos match the launch lesson content", () => {

@@ -165,16 +165,13 @@ test("published lesson exposes Article and BreadcrumbList JSON-LD and its own so
   expect(response.headers()["content-type"]).toContain("image/png");
 });
 
-test("typing /addnewnotes opens the owner note composer and clears the search", async ({ page }) => {
+test("the note composer lives on its own noindex page, not in the Insights hub", async ({ page }) => {
   await page.goto("/insights");
   await page.getByLabel("Search practical engineering notes").fill("/addnewnotes");
-  const dialog = page.getByRole("dialog", { name: "Add a new note" });
-  await expect(dialog).toBeVisible();
-  await expect(page.getByLabel("Search practical engineering notes")).toHaveValue("");
-  await dialog.getByLabel("Title").fill("Idempotent webhooks and retries");
-  await expect(dialog.getByText("Slug: idempotent-webhooks-and-retries")).toBeVisible();
-  await dialog.getByRole("button", { name: "Copy" }).click();
-  await expect(dialog.getByRole("alert").first()).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(dialog).toBeHidden();
+  await expect(page.getByRole("heading", { name: "Add a new note" })).toHaveCount(0);
+  await page.goto("/add-note");
+  await expect(page.getByRole("heading", { name: "Add a new note" })).toBeVisible();
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  await page.getByLabel("Title").fill("Idempotent webhooks and retries");
+  await expect(page.getByText("Slug: idempotent-webhooks-and-retries")).toBeVisible();
 });

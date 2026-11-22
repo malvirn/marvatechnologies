@@ -3,11 +3,8 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Clock3, Search, X } from "lucide-react";
-import dynamic from "next/dynamic";
 import { buildSearchIndex, searchLessons } from "@/lib/insights-search.mjs";
-import { isComposerCommand } from "@/lib/note-composer.mjs";
 
-const NoteComposer = dynamic(() => import("@/components/insights/NoteComposer"), { ssr: false });
 
 type Lesson = {
   slug: string; title: string; summary: string; track: string; level: string;
@@ -39,7 +36,6 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
   const [track, setTrack] = useState("");
   const [level, setLevel] = useState("");
   const [hydrated, setHydrated] = useState(false);
-  const [composerOpen, setComposerOpen] = useState(false);
   const filtersRef = useRef({ track, level });
   filtersRef.current = { track, level };
   const updateUrl = useCallback((next: { query: string; track: string; level: string }) => writeFilters(next), []);
@@ -84,14 +80,6 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
   }, [updateUrl]);
 
   const handleQuery = (value: string) => {
-    if (isComposerCommand(value)) {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      setQuery("");
-      setCommittedQuery("");
-      updateUrl({ query: "", track: filtersRef.current.track, level: filtersRef.current.level });
-      setComposerOpen(true);
-      return;
-    }
     setQuery(value);
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
@@ -165,7 +153,6 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
           {hasFilters && <button type="button" className="bn-clear-empty" onClick={clearFilters}>Clear filters <ArrowUpRight size={15} /></button>}
         </div>
       )}
-      {composerOpen && <NoteComposer existingSlugs={lessons.map((lesson) => lesson.slug)} onClose={() => { setComposerOpen(false); inputRef.current?.focus(); }} />}
     </div>
   );
 }

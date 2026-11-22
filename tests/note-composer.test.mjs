@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { isComposerCommand, slugify, validateNote, buildNoteFile, findMdxRisks, imageMarkdown } from "../src/lib/note-composer.mjs";
+import { slugify, validateNote, buildNoteFile, findMdxRisks, imageMarkdown } from "../src/lib/note-composer.mjs";
 import { parseLessonSource } from "../src/lib/insights-content.mjs";
 
 const base = {
@@ -8,13 +8,6 @@ const base = {
   track: "Backend Engineering", level: "Intermediate", tags: "Webhooks, Payments, webhooks", builtFrom: "", status: "draft",
   body: "## TL;DR\n\nStore the event id before you act on it, and ignore repeats of the same id.\n", images: []
 };
-
-test("command is recognised case-insensitively and exactly", () => {
-  assert.equal(isComposerCommand("/addnewnotes"), true);
-  assert.equal(isComposerCommand("  /AddNewNotes "), true);
-  assert.equal(isComposerCommand("/addnew"), false);
-  assert.equal(isComposerCommand("debounce"), false);
-});
 
 test("slugify produces schema-safe slugs", () => {
   assert.equal(slugify("Idempotent webhooks & retries"), "idempotent-webhooks-and-retries");

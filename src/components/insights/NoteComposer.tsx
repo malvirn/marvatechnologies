@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Copy, Download, ImagePlus, Rocket, X } from "lucide-react";
 import {
@@ -57,7 +58,7 @@ async function putFile(opts: { token: string; repo: string; branch: string; path
   if (!response.ok) throw new Error("GitHub could not save " + opts.path + " (" + response.status + ").");
 }
 
-export default function NoteComposer({ existingSlugs, onClose }: { existingSlugs: string[]; onClose: () => void }) {
+export default function NoteComposer({ existingSlugs, onClose, asPage = false }: { existingSlugs: string[]; onClose?: () => void; asPage?: boolean }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const bodyRef = useRef<HTMLTextAreaElement>(null);
   const [form, setForm] = useState<Form>(emptyForm);
@@ -73,8 +74,8 @@ export default function NoteComposer({ existingSlugs, onClose }: { existingSlugs
     const draft = load<Form>(window.localStorage, DRAFT_KEY);
     if (draft) setForm({ ...emptyForm, ...draft, status: "draft" });
     setToken(load<string>(window.sessionStorage, TOKEN_KEY) ?? "");
-    dialogRef.current?.showModal();
-  }, []);
+    if (!asPage) dialogRef.current?.showModal();
+  }, [asPage]);
   useEffect(() => { if (form.title || form.summary) save(window.localStorage, DRAFT_KEY, form); }, [form]);
   useEffect(() => () => pictures.forEach((p) => URL.revokeObjectURL(p.preview)), []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -146,13 +147,13 @@ export default function NoteComposer({ existingSlugs, onClose }: { existingSlugs
     setBusy(false);
   }
 
-  const close = () => { dialogRef.current?.close(); onClose(); };
+  const close = () => { dialogRef.current?.close(); onClose?.(); };
 
-  return (
-    <dialog ref={dialogRef} className="bn-composer" aria-labelledby="bn-composer-title" onCancel={(e) => { e.preventDefault(); close(); }}>
+  const inner = (
+    <>
       <div className="bn-composer-head">
         <div><span className="bn-composer-eyebrow">Owner tool</span><h2 id="bn-composer-title">Add a new note</h2></div>
-        <button type="button" className="bn-composer-close" onClick={close} aria-label="Close note composer"><X size={18} /></button>
+        {asPage ? <Link className="bn-composer-close" href="/insights">Build Notes</Link> : <button type="button" className="bn-composer-close" onClick={close} aria-label="Close note composer"><X size={18} /></button>}
       </div>
       <div className="bn-composer-body">
         <label className="bn-field"><span>Title</span>
@@ -210,6 +211,13 @@ export default function NoteComposer({ existingSlugs, onClose }: { existingSlugs
         <button type="button" onClick={downloadAll} disabled={busy}><Download size={15} /> Download</button>
         <button type="button" className="bn-composer-primary" onClick={publish} disabled={busy || blockedByRisk}>{busy ? "Working…" : <><Rocket size={15} /> Save to GitHub</>}</button>
       </div>
+    </>
+  );
+
+  if (asPage) return <section className="bn-composer bn-composer-page" aria-labelledby="bn-composer-title">{inner}</section>;
+  return (
+    <dialog ref={dialogRef} className="bn-composer" aria-labelledby="bn-composer-title" onCancel={(e) => { e.preventDefault(); close(); }}>
+      {inner}
     </dialog>
   );
 }

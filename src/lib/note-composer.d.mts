@@ -5,8 +5,6 @@ export type ComposerInput = {
 };
 export const COMPOSER_TRACKS: string[];
 export const COMPOSER_LEVELS: string[];
-export const COMPOSER_COMMANDS: string[];
-export function isComposerCommand(value: string): boolean;
 export function slugify(title: string): string;
 export function parseTags(value: string): string[];
 export function imageExtension(mime: string): string;
