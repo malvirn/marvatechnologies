@@ -1,0 +1,117 @@
+---
+title: "Building for unreliable networks: retries, a circuit breaker and an offline cache"
+slug: "unreliable-networks-circuit-breaker-offline-cache"
+summary: "How Centric keeps working when the connection drops: safe retries, a circuit breaker, read-only mode and a per-user offline cache."
+track: "System Design"
+level: "Intermediate"
+tags:
+  - "Reliability"
+  - "Offline"
+  - "Building in Zimbabwe"
+  - "Supabase"
+publishedAt: "2026-11-23T08:00:00.000Z"
+updatedAt: "2026-11-23T08:00:00.000Z"
+lastReviewed: "2026-11-23T08:00:00.000Z"
+status: "published"
+related:
+  - "atomic-money-operations"
+  - "idempotency-keys-safe-retries"
+prerequisites: []
+builtFrom: "Centric Auto Mobile"
+featured: true
+hasDemo: false
+---
+
+## TL;DR
+
+Do not let every screen decide for itself what to do when the network fails. Put one layer between your app and the server that retries reads, stops hammering a struggling server, serves saved data, and refuses writes it cannot confirm.
+
+## The real scenario
+
+Centric is a workshop and parts system used on shop-floor devices where the connection comes and goes. A staff member opens a job card, the signal drops, and the next request hangs or fails.
+
+Without a plan, each page invents its own behaviour: a spinner that never ends, a raw error, or worse, a second attempt at a payment that may already have gone through.
+
+## Why it matters
+
+Failure is a normal state, not an exception. Three things go wrong when it is handled screen by screen:
+
+- Users cannot tell whether their action was saved.
+- A struggling server gets hit harder by every retry from every open tab.
+- A retried write can be applied twice.
+
+## When to use it (and when not to)
+
+Use a central connection layer when many screens talk to the same backend and your users really do lose connectivity. Do not add it to an app that only ever runs on a stable office network, and do not build offline editing with sync and conflict resolution unless users truly need it. That is a much larger problem.
+
+## How it works in Centric
+
+All requests to the Supabase origin pass through one wrapper around `fetch`. It has a small state machine with three states:
+
+- **closed**: everything is normal.
+- **open**: three consecutive failures have happened. Requests stop going out and the app shows an offline banner.
+- **half-open**: a single health check is allowed through to see whether the server is back.
+
+The retry rules are deliberately narrow:
+
+```js
+// Only retry requests that are safe to repeat.
+const canRetry = method === "GET" || method === "HEAD";
+
+// Exponential backoff with jitter, capped at one minute.
+const delay = Math.min(60000, 2000 * 2 ** attempt);
+const wait = Math.round(delay * (0.8 + Math.random() * 0.4));
+```
+
+Jitter matters. Without it, every device that lost the connection at the same moment retries at the same moment.
+
+Reads are cached in IndexedDB, keyed by the signed-in user so one person never sees another person's saved data. The cache is small and expires:
+
+```js
+const MAX_CACHE_ENTRIES = 1200;
+const MAX_CACHE_AGE_MS = 6 * 60 * 60 * 1000; // six hours
+const cacheKey = userId + ":" + method + ":" + url;
+```
+
+Writes are never retried automatically and never cached. While the breaker is open the app is read-only, and any code that saves data first calls a guard:
+
+```js
+export function assertWritable() {
+  if (isReadOnly()) {
+    throw new Error("This system is in read-only mode. Reconnect before making changes.");
+  }
+}
+```
+
+The banner is a polite live region, so assistive technology announces the change without interrupting the user.
+
+## Common mistakes
+
+- Trusting `navigator.onLine`. It only says a network interface exists, not that your server is reachable. Use a real health check.
+- Retrying writes. Unless the server can recognise a repeat (see the idempotency note), a retry can create a duplicate.
+- Retrying without backoff and jitter.
+- Caching without keying by user, or without an expiry.
+- Hiding the offline state. Users make worse decisions when they do not know the data is old.
+
+## Practical checklist
+
+<Checklist>
+<li>One place decides how failures are handled, not every screen.</li>
+<li>Only safe, repeatable requests are retried, with a limit, backoff and jitter.</li>
+<li>After repeated failures the app stops sending requests and probes occasionally.</li>
+<li>Saved data is keyed by user and expires.</li>
+<li>Writes are blocked, with a clear message, while the connection is down.</li>
+<li>The offline state is visible and announced to assistive technology.</li>
+</Checklist>
+
+## From my builds
+
+In Centric the wrapper lives in one file, `connectionManager.js`, and patches `fetch` only for the Supabase origin so unrelated requests are left alone. The design choice worth copying is failing closed for writes: staff see saved data but cannot change anything until the connection is confirmed.
+
+What it does not do: it does not queue edits made offline and replay them later. If staff need to record work with no signal at all, that needs a separate design with conflict handling, and it has not been built.
+
+## Try it with your AI assistant
+
+<PromptBlock label="Audit my network handling">
+Audit how my app handles network failures. Do not change any code yet. List every place that calls the backend and tell me, for each, what happens on a timeout, a 500 error and no connection. Flag any write that is retried automatically. Then propose one central wrapper with bounded retries for safe requests only, a circuit breaker, a per-user read cache with an expiry, and a read-only mode that blocks writes. Explain how I would test each state.
+</PromptBlock>

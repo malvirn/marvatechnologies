@@ -1,0 +1,129 @@
+---
+title: "Why money operations must be atomic"
+slug: "atomic-money-operations"
+summary: "Why saving a payment in several client-side steps is risky, and how one database function with validation keeps the books consistent."
+track: "Backend Engineering"
+level: "Intermediate"
+tags:
+  - "Database transactions"
+  - "Ledger"
+  - "Supabase"
+  - "Payments"
+publishedAt: "2026-11-23T08:00:00.000Z"
+updatedAt: "2026-11-23T08:00:00.000Z"
+lastReviewed: "2026-11-23T08:00:00.000Z"
+status: "published"
+related:
+  - "idempotency-keys-safe-retries"
+  - "void-dont-delete"
+prerequisites: []
+builtFrom: "Centric Auto Mobile"
+featured: false
+hasDemo: false
+---
+
+## TL;DR
+
+If saving something needs more than one write, do not make several calls from the browser. Send the whole operation to one database function, validate everything inside it, and let the database roll back if any part fails.
+
+## The real scenario
+
+Centric keeps a double-entry ledger. Logging a petty cash expense means creating a journal entry and then two lines for it: a debit to the expense account and a credit to petty cash.
+
+Done from the browser, that is two requests. If the second one fails, you are left with an entry that has no lines.
+
+## Why it matters
+
+In accounting, half-finished data is worse than no data. A partial write can leave totals wrong without any error anyone sees, and fixing it later means hunting through history.
+
+## When to use it (and when not to)
+
+Use a single transaction whenever several rows must exist together or not at all: payments, stock changes, journals, order checkout. Do not bother for a single independent row, such as saving a note.
+
+## Before: two steps from the browser
+
+This is how one flow in Centric still works, and it shows the problem well:
+
+```js
+const { data: entry } = await supabase.from("journal_entries").insert([header]).select().single();
+
+const { error: linesError } = await supabase.from("journal_lines").insert(lines);
+if (linesError) {
+  // Try to clean up. If this fails too, someone must fix it by hand.
+  await supabase.from("journal_entries").delete().eq("id", entry.id);
+}
+```
+
+The cleanup is a second write that can fail for the same reason the first one did. The code even has a message for that case: contact an administrator.
+
+## After: one function, one transaction
+
+Centric's manual journal posting sends the lines as JSON to one function. A function runs inside a single transaction, so any error rolls everything back.
+
+```sql
+create or replace function public.post_manual_journal_entry(
+  p_entry_date date, p_reference text, p_description text, p_lines jsonb
+) returns uuid
+language plpgsql
+security invoker
+set search_path = 'pg_catalog', 'public'
+as $$
+declare entry_id uuid; debit_total numeric(14,2) := 0; credit_total numeric(14,2) := 0;
+begin
+  if auth.uid() is null or public.current_access_level() < 2 then
+    raise exception 'Only authorised accounting users can post journal entries';
+  end if;
+  if jsonb_array_length(p_lines) < 2 then
+    raise exception 'A journal entry requires at least two lines';
+  end if;
+
+  -- loop over the lines: each has a positive debit OR a positive credit, never both,
+  -- and an active account. Add them up at two decimal places.
+
+  if debit_total <= 0 or debit_total <> credit_total then
+    raise exception 'Journal entry is not balanced';
+  end if;
+
+  insert into public.journal_entries (...) values (...) returning id into entry_id;
+  insert into public.journal_lines (...) select ... from jsonb_array_elements(p_lines);
+  return entry_id;
+end;
+$$;
+
+revoke all on function public.post_manual_journal_entry(date,text,text,jsonb) from public, anon;
+grant execute on function public.post_manual_journal_entry(date,text,text,jsonb) to authenticated;
+```
+
+Three details are worth copying:
+
+- **The rules live next to the data.** The balance check happens in the database, so no client, old or new, can post an unbalanced entry.
+- **Money is rounded to two decimals inside the function**, so floating point errors in the browser cannot make debits and credits disagree by a cent.
+- **Permissions are explicit.** Anonymous users cannot call it, and the function checks the caller's access level itself.
+
+## Common mistakes
+
+- Treating a cleanup delete as a transaction.
+- Validating only in the browser. Anyone can call your API directly.
+- Using floating point numbers for money.
+- Granting execute permission to everyone by default.
+- Returning success before the final write is confirmed.
+
+## Practical checklist
+
+<Checklist>
+<li>Every multi-row money operation is one database function.</li>
+<li>Totals are validated at fixed precision inside the function.</li>
+<li>The function checks who is calling it.</li>
+<li>Anonymous access is revoked.</li>
+<li>A failure leaves no partial rows, and there is a test for it.</li>
+</Checklist>
+
+## From my builds
+
+In Centric the manual journal and several cash book operations already go through database functions. The petty cash expense form, shown in the Before example, still uses the two-step pattern with a cleanup. It is the natural next candidate to move into a function. It is shown here because real codebases improve one flow at a time.
+
+## Try it with your AI assistant
+
+<PromptBlock label="Find non-atomic writes">
+Audit my code first and do not change anything. Find every place where one user action makes more than one write to the database from the client. For each, describe what state the data is left in if the second write fails. Then propose a single database function for the worst case that validates inputs, checks the caller's permissions, does all the writes in one transaction, and rounds money to two decimals. Include a test that forces the second write to fail.
+</PromptBlock>

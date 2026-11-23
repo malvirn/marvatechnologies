@@ -1,0 +1,110 @@
+---
+title: "One source of truth for business rules: the VAT setting"
+slug: "single-source-of-truth-business-rules"
+summary: "Why a rule like the VAT rate should live in one place that the database enforces, instead of being copied into every screen."
+track: "System Design"
+level: "Foundation"
+tags:
+  - "System design"
+  - "Business rules"
+  - "Tax"
+  - "Supabase"
+publishedAt: "2026-11-23T08:00:00.000Z"
+updatedAt: "2026-11-23T08:00:00.000Z"
+lastReviewed: "2026-11-23T08:00:00.000Z"
+status: "published"
+related:
+  - "atomic-money-operations"
+  - "void-dont-delete"
+prerequisites: []
+builtFrom: "Centric Auto Mobile"
+featured: false
+hasDemo: false
+---
+
+## TL;DR
+
+If a business rule appears in more than one place, it will eventually disagree with itself. Store it once, read it everywhere, and make the database reject values that do not match.
+
+## The real scenario
+
+Centric has quotations, job cards, invoices, receipts and a shop with stock. Each of them needs to know whether the business charges VAT and at what rate.
+
+The easy route is a rate typed into each screen: a dropdown in the shop, a default in a form, a constant in a script. Then the rate changes, or the business is not VAT registered, and half the screens are wrong.
+
+## Why it matters
+
+Wrong tax on an invoice is not a cosmetic bug. It affects what customers pay and what the business reports. The more places that hold the rule, the more places can be wrong.
+
+## When to use it (and when not to)
+
+Use a central setting for rules that apply across the whole business: tax, currency, rounding, opening hours. Do not centralise values that really differ per record, such as a negotiated price on one quotation.
+
+## How it works in Centric
+
+**One settings row.** A single row in a business settings table holds whether the business is VAT registered and the rate:
+
+```js
+export async function loadBusinessTaxProfile(supabase) {
+  const { data, error } = await supabase
+    .from("business_settings")
+    .select("vat_registered,vat_rate")
+    .eq("id", 1)
+    .maybeSingle();
+
+  if (error) throw new Error("Could not load business VAT settings: " + error.message);
+  return normalizeBusinessTaxProfile(data);
+}
+```
+
+**Defensive reading.** A small function turns whatever comes back into a safe value, falling back to a default if the row is missing or the rate is out of range:
+
+```js
+const rawRate = Number(row?.vat_rate ?? DEFAULT_BUSINESS_VAT_RATE);
+const vatRate = Number.isFinite(rawRate) && rawRate >= 0 && rawRate <= 100
+  ? rawRate
+  : DEFAULT_BUSINESS_VAT_RATE;
+```
+
+**Safe defaults in the database.** New quotations and invoices default to a rate of zero, so a business that is not registered never has VAT added silently.
+
+**The database checks the client.** When stock is received, the function works out the expected rate from the settings and rejects a mismatch, so a stale or edited screen cannot slip in a different rate:
+
+```sql
+expected_vat_rate := case when vat_registered_value then business_vat_rate else 0 end;
+if round(coalesce(p_vat_rate, 0), 2) <> expected_vat_rate then
+  raise exception 'Purchase tax rate must match the business VAT registration settings';
+end if;
+```
+
+**Control who can change it.** The VAT settings screen is limited to super admins, and the hard-coded VAT options that used to be in the shop were removed.
+
+**Tests.** The normalising function has automated tests for a missing row, a registered business and an unregistered one.
+
+## Common mistakes
+
+- Copying the same constant into several files.
+- Trusting the rate the browser sends.
+- Letting any staff member edit a business-wide rule.
+- Changing a rule without a safe default for old or missing data.
+- Not documenting the order migrations must be applied in. The Centric README does.
+
+## Practical checklist
+
+<Checklist>
+<li>Each business rule has exactly one home.</li>
+<li>Every screen reads it from there.</li>
+<li>The database recomputes the expected value and rejects mismatches.</li>
+<li>Missing or invalid data falls back to a safe default.</li>
+<li>Only the right role can change it, and there are tests.</li>
+</Checklist>
+
+## From my builds
+
+In Centric this was done step by step: hard-coded VAT options were removed from the shop, job cards and receipts were changed to read the central setting, and the database check was added after. A cleaner order, when starting fresh, is to create the settings row and the database check before any screen needs the rate.
+
+## Try it with your AI assistant
+
+<PromptBlock label="Find duplicated business rules">
+Audit my codebase first and do not change anything. Search for business rules that are written in more than one place, such as tax rates, currency, rounding, discounts or limits. For each one, list every file and database function that contains it. Then propose a single settings table row, a small function to read it safely with a fallback, a database check that rejects values that do not match, who is allowed to change it, and the tests I need. Suggest the order to roll it out without breaking existing records.
+</PromptBlock>

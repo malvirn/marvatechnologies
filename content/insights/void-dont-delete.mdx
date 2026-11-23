@@ -1,0 +1,106 @@
+---
+title: "Void, don't delete: keeping accounting history honest"
+slug: "void-dont-delete"
+summary: "Why financial records should be voided with a reason and a reversal instead of deleted, and how soft deletes keep history intact."
+track: "Backend Engineering"
+level: "Intermediate"
+tags:
+  - "Ledger"
+  - "Audit trail"
+  - "Data integrity"
+  - "Supabase"
+publishedAt: "2026-11-23T08:00:00.000Z"
+updatedAt: "2026-11-23T08:00:00.000Z"
+lastReviewed: "2026-11-23T08:00:00.000Z"
+status: "published"
+related:
+  - "atomic-money-operations"
+  - "single-source-of-truth-business-rules"
+prerequisites: []
+builtFrom: "Centric Auto Mobile"
+featured: false
+hasDemo: false
+---
+
+## TL;DR
+
+When a financial record was wrong, do not delete it. Mark it voided, record who did it and why, and post a reversing entry. Do the same for people and customers: archive them rather than erase them.
+
+## The real scenario
+
+A receipt was entered against the wrong invoice. The tempting fix is to delete the row. But that payment may already have changed the invoice balance, appeared on a customer statement and been posted to the ledger.
+
+Deleting it makes the receipt disappear while everything it touched stays changed.
+
+## Why it matters
+
+An accounting system has to explain itself. A year later someone will ask what happened to a payment, and "the row is gone" is not an answer. Voiding keeps the story: what was recorded, who reversed it, when and why.
+
+## When to use it (and when not to)
+
+Use voiding for anything that affects money, stock or legal records. Hard deletes are fine for genuinely disposable data, such as a draft that was never submitted or a temporary token.
+
+## How it works in Centric
+
+**Extra columns, not missing rows.** A voidable record gets fields for the void instead of being removed:
+
+```sql
+alter table public.invoice_payments
+  add column if not exists voided_at timestamptz,
+  add column if not exists voided_by uuid references auth.users(id),
+  add column if not exists void_reason text,
+  add column if not exists reversal_journal_entry_id uuid references public.journal_entries(id);
+```
+
+**One function does the whole void.** It checks the caller is at accounting level, insists on a reason, and locks the payment and the invoice row while it works so nothing changes underneath it:
+
+```sql
+select * into payment_row from public.invoice_payments
+where id = p_invoice_payment_id
+for update;
+
+if payment_row.voided_at is not null then
+  raise exception 'This receipt has already been voided';
+end if;
+```
+
+It also refuses to void a payment that created overpayment credit until that credit has been resolved, so one correction cannot silently break another record.
+
+**Everything else must ignore voided rows.** This is the part people forget. Sums, statements and balances filter on `voided_at is null`:
+
+```sql
+select coalesce(sum(amount), 0)
+from public.repair_job_payments
+where repair_job_id = p_target_id and voided_at is null;
+```
+
+**People are archived, not erased.** Customers carry a `deleted_at` timestamp and can be restored from an archived list, and their jobs and account entries are kept.
+
+## Common mistakes
+
+- Deleting a row that other records depend on.
+- Voiding the record but forgetting to reverse its ledger entry.
+- Not filtering voided rows out of totals and statements.
+- Allowing anyone to void. It needs a role check and a reason.
+- Allowing a double void.
+
+## Practical checklist
+
+<Checklist>
+<li>Money records are never hard-deleted.</li>
+<li>A void stores who, when and why, and links to its reversal.</li>
+<li>Voiding is one transaction with the affected rows locked.</li>
+<li>Every total and statement excludes voided rows.</li>
+<li>Voiding is limited by role and needs a written reason.</li>
+<li>Customers and users are archived, with a way to restore them.</li>
+</Checklist>
+
+## From my builds
+
+In Centric, voiding exists for invoice payment receipts and related customer credit refunds, with later migrations updating statements and sync logic to ignore voided payments. Each time voiding was added to a new record type, the totals and statements had to be changed too. That is the cost of this pattern, and it is what keeps the history trustworthy.
+
+## Try it with your AI assistant
+
+<PromptBlock label="Replace deletes with voids">
+Audit my code first and do not change anything. List every delete of a record that affects money, stock or customer history. For each one, list every query, total, statement or report that reads that table. Then propose a void design: new columns for voided_at, voided_by and a reason, one transaction that voids the record and posts a reversal, a role check, and a change to every query that must now exclude voided rows. Include a test that proves a voided payment no longer affects a balance.
+</PromptBlock>

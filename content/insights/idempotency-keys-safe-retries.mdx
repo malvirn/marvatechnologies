@@ -1,0 +1,107 @@
+---
+title: "Making payments safe to retry with idempotency keys"
+slug: "idempotency-keys-safe-retries"
+summary: "How an idempotency key, a lock and a unique constraint stop a double tap or a retry from recording the same payment twice."
+track: "Backend Engineering"
+level: "Advanced"
+tags:
+  - "Idempotency"
+  - "Payments"
+  - "Concurrency"
+  - "Supabase"
+publishedAt: "2026-11-23T08:00:00.000Z"
+updatedAt: "2026-11-23T08:00:00.000Z"
+lastReviewed: "2026-11-23T08:00:00.000Z"
+status: "published"
+related:
+  - "atomic-money-operations"
+  - "unreliable-networks-circuit-breaker-offline-cache"
+prerequisites: []
+builtFrom: "Centric Auto Mobile"
+featured: false
+hasDemo: false
+---
+
+## TL;DR
+
+Give every payment request a unique key generated once on the client. The server records the key with the result. If the same key arrives again, it returns the saved result instead of doing the work twice.
+
+## The real scenario
+
+A staff member records a deposit, the screen freezes, and they tap the button again. Or the phone sends the request, loses signal before the reply arrives, and retries.
+
+From the server's point of view both requests look like two valid deposits.
+
+## Why it matters
+
+The client can never know whether a request that timed out was processed. Retrying is the right instinct, but only if repeating the request is harmless. Money operations are only safe to retry when the server can recognise a repeat.
+
+## When to use it (and when not to)
+
+Use idempotency keys for anything that creates money movements: payments, deposits, refunds, voucher redemptions. You do not need them for reads or for operations that are naturally repeatable, such as setting a value to a fixed state.
+
+## How it works in Centric
+
+There are four pieces.
+
+**1. The key is generated once per intended action.** In the voucher screen the key is created with `crypto.randomUUID()` and only replaced when the details of the request change:
+
+```js
+const signature = [code, targetType, targetId, amount].join("|");
+if (redemptionRequest.signature !== signature) {
+  redemptionRequest = { signature, key: crypto.randomUUID() };
+}
+// A retry of the same request reuses the same key.
+```
+
+**2. The key is stored with a unique constraint.** The table that records the result has the key as a column, so the database itself refuses a duplicate:
+
+```sql
+idempotency_key uuid not null unique
+```
+
+**3. A lock serialises requests with the same key.** Two requests arriving at the same moment would both see "no row yet". A transaction-level advisory lock makes the second wait for the first:
+
+```sql
+perform pg_advisory_xact_lock(hashtextextended(p_idempotency_key::text, 0));
+
+select * into existing_row from public.credit_voucher_redemptions
+where idempotency_key = p_idempotency_key;
+
+if found then
+  return jsonb_build_object('id', existing_row.id, 'replayed', true);
+end if;
+```
+
+**4. A reused key with different details is rejected.** For deposits, if the key exists but the amount, method or date differs, the function raises an error instead of quietly returning an old result. That catches a bug where a key is reused by mistake.
+
+The rows being changed, such as the voucher and the job card, are also locked with `for update` so two different requests cannot spend the same balance.
+
+## Common mistakes
+
+- Generating a new key on every attempt, which defeats the purpose.
+- Checking for an existing key without a lock or a unique constraint. Two simultaneous requests both pass the check.
+- Returning an error for a replay instead of the original result. The client then thinks the payment failed.
+- Not comparing the payload when the key already exists.
+- Keeping keys forever without thinking about storage. They are small, but decide how long you need them.
+
+## Practical checklist
+
+<Checklist>
+<li>The client creates one key per intended action and reuses it on retry.</li>
+<li>The key is stored with a unique constraint.</li>
+<li>A lock stops concurrent requests with the same key.</li>
+<li>A replay returns the original result and is marked as a replay.</li>
+<li>A reused key with a different payload is rejected.</li>
+<li>Balances being spent are locked while they are checked.</li>
+</Checklist>
+
+## From my builds
+
+Centric uses this pattern for quotation deposits, customer credit and voucher redemption. The unique constraint is the last safety net even if the lock logic had a bug. A sensible next step is a clear retention rule for old keys.
+
+## Try it with your AI assistant
+
+<PromptBlock label="Make my payment endpoint idempotent">
+Audit my payment or deposit flow first and do not change any code. Tell me what happens if the same request is sent twice, both one after another and at exactly the same time. Then design idempotency: how the client generates and reuses a key, how the database stores it with a unique constraint, how a lock prevents a race, what is returned on a replay, and what happens if the key is reused with a different amount. Give me tests for the double tap and the simultaneous request.
+</PromptBlock>
