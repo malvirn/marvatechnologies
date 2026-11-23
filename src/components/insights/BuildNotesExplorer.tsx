@@ -140,13 +140,13 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
 
       {featured ? (
         <>
-          <Link className="bn-featured" href={"/insights/" + featured.slug}>
+          <Link className="bn-featured" href={"/notes/" + featured.slug}>
             <div className="bn-featured-top"><span>{featured.featured ? "Featured note" : "Best match"}</span><span>{featured.track}</span></div>
             <div className="bn-featured-main"><div><h3>{featured.title}</h3><p>{featured.summary}</p></div><span className="bn-read-link">Read note <ArrowUpRight size={17} /></span></div>
             <div className="bn-meta"><span>{featured.level}</span><span><Clock3 size={14} /> {featured.readingTime} min read</span><span>{featured.tags.slice(0, 2).join(" · ")}</span></div>
           </Link>
           {remaining.length > 0 && <div className="bn-list" aria-label="Other matching notes">
-            {remaining.map((lesson, itemIndex) => <Link className="bn-list-item" href={"/insights/" + lesson.slug} key={lesson.slug}>
+            {remaining.map((lesson, itemIndex) => <Link className="bn-list-item" href={"/notes/" + lesson.slug} key={lesson.slug}>
               <span className="bn-list-number">{String(itemIndex + 2).padStart(2, "0")}</span>
               <span className="bn-list-copy"><strong>{lesson.title}</strong><small>{lesson.summary}</small></span>
               <span className="bn-list-meta">{lesson.track} · {lesson.level} · {lesson.readingTime} min</span><ArrowUpRight size={17} aria-hidden="true" />

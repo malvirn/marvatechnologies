@@ -4,3 +4,5 @@
 /opportunities/ /contact 301
 /projects /about 301
 /projects/ /about 301
+/insights/images/* /notes/images/:splat 301
+/insights/:slug /notes/:slug 301

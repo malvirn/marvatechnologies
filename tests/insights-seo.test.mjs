@@ -58,7 +58,8 @@ test("sitemap includes static pages and only published lesson URLs", () => {
   const entries = getSitemapEntries([published, draft], "https://example.test");
   const urls = entries.map((entry) => entry.url);
   assert.ok(urls.includes("https://example.test/insights"));
-  assert.ok(urls.includes("https://example.test/insights/reliable-requests-safe-retries"));
+  assert.ok(urls.includes("https://example.test/notes"));
+  assert.ok(urls.includes("https://example.test/notes/reliable-requests-safe-retries"));
   assert.ok(!urls.some((url) => url.includes("private-draft")));
 });
 
@@ -70,7 +71,7 @@ test("Article and BreadcrumbList JSON-LD use published lesson metadata", () => {
   assert.equal(article.datePublished, published.publishedAt);
   assert.equal(breadcrumb["@type"], "BreadcrumbList");
   assert.equal(breadcrumb.itemListElement.length, 4);
-  assert.equal(buildCollectionJsonLd("https://example.test").url, "https://example.test/insights");
+  assert.equal(buildCollectionJsonLd("https://example.test").url, "https://example.test/notes");
 });
 
 test("JSON-LD serialization escapes markup characters", () => {

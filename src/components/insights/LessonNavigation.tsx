@@ -51,7 +51,7 @@ export function ReadingProgress() {
 export function LessonPager({ previous, next }: { previous: { slug: string; title: string } | null; next: { slug: string; title: string } | null }) {
   if (!previous && !next) return null;
   return <nav className="bn-pager" aria-label="Lesson navigation">
-    {previous ? <Link href={"/insights/" + previous.slug} className="bn-pager-link"><small>Previous note</small><strong>← {previous.title}</strong></Link> : <span />}
-    {next ? <Link href={"/insights/" + next.slug} className="bn-pager-link bn-pager-next"><small>Next note</small><strong>{next.title} →</strong></Link> : <span />}
+    {previous ? <Link href={"/notes/" + previous.slug} className="bn-pager-link"><small>Previous note</small><strong>← {previous.title}</strong></Link> : <span />}
+    {next ? <Link href={"/notes/" + next.slug} className="bn-pager-link bn-pager-next"><small>Next note</small><strong>{next.title} →</strong></Link> : <span />}
   </nav>;
 }

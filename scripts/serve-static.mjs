@@ -71,7 +71,7 @@ const server = http.createServer((request, response) => {
   }
 
   const basename = path.basename(file);
-  const contentType = basename === "opengraph-image" ? "image/png" : pathname === "/insights/rss.xml" ? "application/rss+xml; charset=utf-8" : (types[path.extname(file).toLowerCase()] || "application/octet-stream");
+  const contentType = basename === "opengraph-image" ? "image/png" : pathname === "/notes/rss.xml" ? "application/rss+xml; charset=utf-8" : (types[path.extname(file).toLowerCase()] || "application/octet-stream");
   response.writeHead(200, {
     "Content-Type": contentType,
     "Content-Length": fs.statSync(file).size,

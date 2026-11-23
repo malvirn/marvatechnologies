@@ -14,17 +14,17 @@ function fail(message) {
 }
 
 function readExportedPage() {
-  for (const candidate of [path.join(outDirectory, "insights.html"), path.join(outDirectory, "insights", "index.html")]) {
+  for (const candidate of [path.join(outDirectory, "notes.html"), path.join(outDirectory, "notes", "index.html")]) {
     if (fs.existsSync(candidate)) return fs.readFileSync(candidate, "utf8");
   }
-  fail("The exported /insights hub HTML was not found in out/.");
+  fail("The exported /notes hub HTML was not found in out/.");
 }
 
 function assertHubImageExists() {
   const html = readExportedPage();
   const match = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i)
     || html.match(/<meta[^>]+content="([^"]+)"[^>]+property="og:image"/i);
-  if (!match) fail("The /insights hub HTML does not contain an og:image metadata URL.");
+  if (!match) fail("The /notes hub HTML does not contain an og:image metadata URL.");
   const imageUrl = new URL(match[1].replace(/&amp;/g, "&"), siteUrl);
   const imageFile = path.join(outDirectory, imageUrl.pathname.replace(/^\/+/, ""));
   if (!fs.existsSync(imageFile)) {
@@ -45,14 +45,14 @@ function runBuild(label) {
 
 function assertUnknownSlugNotExported() {
   const candidates = [
-    path.join(outDirectory, "insights", "this-lesson-does-not-exist.html"),
-    path.join(outDirectory, "insights", "this-lesson-does-not-exist", "index.html")
+    path.join(outDirectory, "notes", "this-lesson-does-not-exist.html"),
+    path.join(outDirectory, "notes", "this-lesson-does-not-exist", "index.html")
   ];
   if (candidates.some((candidate) => fs.existsSync(candidate))) fail("An unknown lesson slug was unexpectedly exported.");
 }
 
 function assertZeroPublishedOutput() {
-  const feedPath = path.join(outDirectory, "insights", "rss.xml");
+  const feedPath = path.join(outDirectory, "notes", "rss.xml");
   const sitemapPath = path.join(outDirectory, "sitemap.xml");
   if (!fs.existsSync(feedPath)) fail("RSS export is missing: " + feedPath);
   if (!fs.existsSync(sitemapPath)) fail("Sitemap export is missing: " + sitemapPath);
@@ -63,21 +63,21 @@ function assertZeroPublishedOutput() {
 }
 
 function assertOnePublishedOutput() {
-  const feed = fs.readFileSync(path.join(outDirectory, "insights", "rss.xml"), "utf8");
+  const feed = fs.readFileSync(path.join(outDirectory, "notes", "rss.xml"), "utf8");
   const sitemap = fs.readFileSync(path.join(outDirectory, "sitemap.xml"), "utf8");
   if (!feed.includes(lessonSlug)) fail("The one-published build did not include the lesson in RSS.");
   if (!sitemap.includes(lessonSlug)) fail("The one-published build did not include the lesson in the sitemap.");
   assertUnknownSlugNotExported();
 
   const pageCandidates = [
-    path.join(outDirectory, "insights", lessonSlug + ".html"),
-    path.join(outDirectory, "insights", lessonSlug, "index.html")
+    path.join(outDirectory, "notes", lessonSlug + ".html"),
+    path.join(outDirectory, "notes", lessonSlug, "index.html")
   ];
   if (!pageCandidates.some((candidate) => fs.existsSync(candidate))) {
     fail("The published lesson HTML was not exported for " + lessonSlug + ".");
   }
 
-  const imagePath = path.join(outDirectory, "insights", lessonSlug, "opengraph-image");
+  const imagePath = path.join(outDirectory, "notes", lessonSlug, "opengraph-image");
   if (!fs.existsSync(imagePath)) fail("The published lesson social image is missing: " + imagePath);
   const signature = fs.readFileSync(imagePath).subarray(0, 8).toString("hex");
   if (signature !== "89504e470d0a1a0a") fail("The published lesson social image is not a PNG.");

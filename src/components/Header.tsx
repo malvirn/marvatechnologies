@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { House, Layers, Lightbulb, Mail, UserRound, ArrowUpRight } from "lucide-react";
+import { House, Layers, Lightbulb, Mail, NotebookPen, UserRound, ArrowUpRight } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -12,7 +12,8 @@ const links = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
-  { label: "Notes", href: "/insights" },
+  { label: "Insights", href: "/insights" },
+  { label: "Notes", href: "/notes" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -20,7 +21,8 @@ const mobileLinks = [
   { label: "Home", href: "/", Icon: House },
   { label: "About", href: "/about", Icon: UserRound },
   { label: "Services", href: "/services", Icon: Layers },
-  { label: "Notes", href: "/insights", Icon: Lightbulb },
+  { label: "Insights", href: "/insights", Icon: Lightbulb },
+  { label: "Notes", href: "/notes", Icon: NotebookPen },
   { label: "Contact", href: "/contact", Icon: Mail },
 ];
 
@@ -59,11 +61,11 @@ export default function Header() {
   }, [open]);
 
   const active = links.find(link => link.href === pathname)?.href
-    ?? (pathname.startsWith("/insights/") ? "/insights" : "/");
+    ?? (pathname.startsWith("/notes/") ? "/notes" : "/");
 
   return (
     <>
-      {(pathname === "/insights" || pathname.startsWith("/insights/")) && <a className="bn-skip-link" href="#main-content">Skip to content</a>}
+      {(pathname === "/notes" || pathname.startsWith("/notes/")) && <a className="bn-skip-link" href="#main-content">Skip to content</a>}
       <header ref={headerRef} className={`site-header ${scrolled ? "scrolled" : ""}`}>
       <div className="header-inner">
         <Link href="/" className="brand-lockup" aria-label="Marva Technologies home">

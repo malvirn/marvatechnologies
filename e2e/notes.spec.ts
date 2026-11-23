@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test("hub loads and keeps combined filters in the URL after reload", async ({ page }) => {
-  await page.goto("/insights");
+  await page.goto("/notes");
   await expect(page.getByRole("heading", { name: /Build Notes/ })).toBeVisible();
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   await expect(page.getByRole("searchbox", { name: /Search practical engineering notes/ })).toBeVisible();
@@ -21,7 +21,7 @@ test("hub loads and keeps combined filters in the URL after reload", async ({ pa
 });
 
 test("slash focuses search and escape clears it", async ({ page }) => {
-  await page.goto("/insights");
+  await page.goto("/notes");
   await expect(page.locator(".bn-explorer")).toHaveAttribute("data-hydrated", "true");
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   await page.keyboard.press("/");
@@ -33,7 +33,7 @@ test("slash focuses search and escape clears it", async ({ page }) => {
 
 test("published lesson renders its table of contents and reading progress", async ({ page }) => {
   test.skip(!process.env.E2E_LESSON_SLUG, "Set E2E_LESSON_SLUG to an owner-approved published lesson.");
-  await page.goto("/insights/" + process.env.E2E_LESSON_SLUG);
+  await page.goto("/notes/" + process.env.E2E_LESSON_SLUG);
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   await expect(page.locator(".bn-reading-progress")).toHaveAttribute("aria-hidden", "true");
   await expect(page.locator(".bn-toc-desktop .bn-toc-title")).toBeVisible();
@@ -41,13 +41,13 @@ test("published lesson renders its table of contents and reading progress", asyn
 });
 
 test("unknown lesson slugs return a static 404", async ({ page }) => {
-  const response = await page.goto("/insights/this-lesson-does-not-exist");
+  const response = await page.goto("/notes/this-lesson-does-not-exist");
   expect(response?.status()).toBe(404);
 });
 
 test("hub remains usable on a narrow mobile viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/insights");
+  await page.goto("/notes");
   await expect(page.getByRole("heading", { name: /Build Notes/ })).toBeVisible();
   await expect(page.getByRole("searchbox")).toBeVisible();
   const width = await page.evaluate(() => document.documentElement.scrollWidth);
@@ -56,13 +56,13 @@ test("hub remains usable on a narrow mobile viewport", async ({ page }) => {
 
 test("search finds an owner-approved lesson when one is configured", async ({ page }) => {
   test.skip(!process.env.E2E_LESSON_TITLE, "Set E2E_LESSON_TITLE to the title of a published lesson.");
-  await page.goto("/insights");
+  await page.goto("/notes");
   await page.getByRole("searchbox").fill(process.env.E2E_LESSON_TITLE!);
   await expect(page.getByRole("link", { name: process.env.E2E_LESSON_TITLE!, exact: false }).first()).toBeVisible();
 });
 
-test("existing theme toggle works on the new Insights route", async ({ page }) => {
-  await page.goto("/insights");
+test("existing theme toggle works on the new Notes route", async ({ page }) => {
+  await page.goto("/notes");
   await expect(page.locator(".bn-explorer")).toHaveAttribute("data-hydrated", "true");
   await page.getByRole("button", { name: "Switch to light theme" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
@@ -81,7 +81,7 @@ for (const route of ["/", "/about", "/services", "/contact"]) {
 test("owner-approved teaching lesson renders comparison tabs and copyable prompt", async ({ page }) => {
   test.skip(!process.env.E2E_TEACHING_LESSON_SLUG, "Set E2E_TEACHING_LESSON_SLUG to the approved audit-before-you-modify lesson.");
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/insights/" + process.env.E2E_TEACHING_LESSON_SLUG);
+  await page.goto("/notes/" + process.env.E2E_TEACHING_LESSON_SLUG);
   const comparison = page.locator(".bn-before-after").first();
   await expect(comparison).toBeVisible();
   await comparison.getByRole("tab", { name: "After" }).click();
@@ -91,7 +91,7 @@ test("owner-approved teaching lesson renders comparison tabs and copyable prompt
 
 test("owner-approved demo lesson loads its interactive example near the viewport", async ({ page }) => {
   test.skip(!process.env.E2E_DEMO_LESSON_SLUG, "Set E2E_DEMO_LESSON_SLUG to an approved lesson containing a demo.");
-  await page.goto("/insights/" + process.env.E2E_DEMO_LESSON_SLUG);
+  await page.goto("/notes/" + process.env.E2E_DEMO_LESSON_SLUG);
   const demo = page.locator(".bn-demo").first();
   await demo.scrollIntoViewIfNeeded();
   await expect(demo.getByRole("button", { name: /Submit order|Mark complete|Reset example/ }).first()).toBeVisible();
@@ -99,7 +99,7 @@ test("owner-approved demo lesson loads its interactive example near the viewport
 
 
 test("Build Notes publishes a valid RSS feed containing no draft lessons", async ({ request }) => {
-  const response = await request.get("/insights/rss.xml");
+  const response = await request.get("/notes/rss.xml");
   expect(response.ok()).toBeTruthy();
   expect(response.headers()["content-type"]).toContain("application/rss+xml");
   const xml = await response.text();
@@ -115,7 +115,7 @@ test("sitemap and robots expose only public routes and preserve the verification
   const sitemapResponse = await request.get("/sitemap.xml");
   expect(sitemapResponse.ok()).toBeTruthy();
   const sitemap = await sitemapResponse.text();
-  expect(sitemap).toContain("/insights");
+  expect(sitemap).toContain("/notes");
   expect(sitemap).not.toContain("debounced-search-url-state");
   expect(sitemap).not.toContain("preventing-duplicate-submissions");
   const robotsResponse = await request.get("/robots.txt");
@@ -124,10 +124,10 @@ test("sitemap and robots expose only public routes and preserve the verification
 });
 
 test("Build Notes hub has a raster 1200 by 630 social image and CollectionPage JSON-LD", async ({ page, request }) => {
-  await page.goto("/insights");
+  await page.goto("/notes");
   const jsonLd = await page.locator('script[type="application/ld+json"]').textContent();
   expect(jsonLd).toContain("CollectionPage");
-  const response = await request.get("/insights/opengraph-image");
+  const response = await request.get("/notes/opengraph-image");
   expect(response.ok()).toBeTruthy();
   expect(response.headers()["content-type"]).toContain("image/png");
   const png = await response.body();
@@ -139,12 +139,12 @@ test("Build Notes hub has a raster 1200 by 630 social image and CollectionPage J
 test("Build Notes provides a working skip link and avoids horizontal overflow at target widths", async ({ page }) => {
   for (const width of [360, 768, 1280, 1920]) {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto("/insights");
+    await page.goto("/notes");
     const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(scrollWidth).toBeLessThanOrEqual(width);
   }
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/insights");
+  await page.goto("/notes");
   const skipLink = page.getByRole("link", { name: "Skip to content" });
   await expect(skipLink).toBeAttached();
   await page.keyboard.press("Tab");
@@ -156,17 +156,17 @@ test("Build Notes provides a working skip link and avoids horizontal overflow at
 test("published lesson exposes Article and BreadcrumbList JSON-LD and its own social image", async ({ page, request }) => {
   test.skip(!process.env.E2E_LESSON_SLUG, "Set E2E_LESSON_SLUG to an owner-approved published lesson.");
   const slug = process.env.E2E_LESSON_SLUG!;
-  await page.goto("/insights/" + slug);
+  await page.goto("/notes/" + slug);
   const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
   expect(scripts.join(" ")).toContain("Article");
   expect(scripts.join(" ")).toContain("BreadcrumbList");
-  const response = await request.get("/insights/" + slug + "/opengraph-image");
+  const response = await request.get("/notes/" + slug + "/opengraph-image");
   expect(response.ok()).toBeTruthy();
   expect(response.headers()["content-type"]).toContain("image/png");
 });
 
 test("typing /addnewnotes in the notes search opens the login-protected studio page", async ({ page }) => {
-  await page.goto("/insights");
+  await page.goto("/notes");
   await expect(page.getByRole("link", { name: "Add note" })).toHaveCount(0);
   await page.getByLabel("Search practical engineering notes").fill("/addnewnotes");
   await expect(page).toHaveURL(/\/add-note$/);

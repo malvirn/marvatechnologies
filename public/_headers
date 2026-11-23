@@ -1,7 +1,7 @@
-/insights/opengraph-image
+/notes/opengraph-image
   Content-Type: image/png
 
-/insights/*/opengraph-image
+/notes/*/opengraph-image
   Content-Type: image/png
 
 /*

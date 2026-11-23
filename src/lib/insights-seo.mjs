@@ -28,7 +28,7 @@ export function buildRssFeed(lessons = getPublishedLessons(), siteUrl = normaliz
   const items = lessons
     .filter((lesson) => lesson.status === "published")
     .map((lesson) => {
-      const url = base + "/insights/" + encodeURIComponent(lesson.slug);
+      const url = base + "/notes/" + encodeURIComponent(lesson.slug);
       const excerpt = plainTextFromMdx(lesson.content).slice(0, 700);
       const categories = (lesson.tags || []).map((tag) => "      <category>" + escapeXml(tag) + "</category>").join("\n");
       return [
@@ -50,10 +50,10 @@ export function buildRssFeed(lessons = getPublishedLessons(), siteUrl = normaliz
     '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
     "  <channel>",
     "    <title>Build Notes | Marva Technologies</title>",
-    "    <link>" + escapeXml(base + "/insights") + "</link>",
+    "    <link>" + escapeXml(base + "/notes") + "</link>",
     "    <description>Practical software engineering lessons from planning, building and maintaining real systems.</description>",
     "    <language>en</language>",
-    '    <atom:link href="' + escapeXml(base + "/insights/rss.xml") + '" rel="self" type="application/rss+xml" />',
+    '    <atom:link href="' + escapeXml(base + "/notes/rss.xml") + '" rel="self" type="application/rss+xml" />',
     lastBuildDate.trimEnd(),
     items.join("\n"),
     "  </channel>",
@@ -67,11 +67,12 @@ export function getSitemapEntries(lessons = getPublishedLessons(), siteUrl = nor
     { url: base + "/", changeFrequency: "monthly", priority: 1 },
     { url: base + "/about", changeFrequency: "monthly", priority: 0.7 },
     { url: base + "/services", changeFrequency: "monthly", priority: 0.7 },
-    { url: base + "/insights", changeFrequency: "weekly", priority: 0.8 },
+    { url: base + "/insights", changeFrequency: "monthly", priority: 0.6 },
+    { url: base + "/notes", changeFrequency: "weekly", priority: 0.8 },
     { url: base + "/contact", changeFrequency: "monthly", priority: 0.6 }
   ];
   const published = lessons.filter((lesson) => lesson.status === "published").map((lesson) => ({
-    url: base + "/insights/" + encodeURIComponent(lesson.slug),
+    url: base + "/notes/" + encodeURIComponent(lesson.slug),
     lastModified: new Date(lesson.updatedAt),
     changeFrequency: "monthly",
     priority: 0.7
@@ -81,7 +82,7 @@ export function getSitemapEntries(lessons = getPublishedLessons(), siteUrl = nor
 
 export function buildArticleJsonLd(lesson, siteUrl = normalizeSiteUrl()) {
   const base = normalizeSiteUrl(siteUrl);
-  const url = base + "/insights/" + encodeURIComponent(lesson.slug);
+  const url = base + "/notes/" + encodeURIComponent(lesson.slug);
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -105,9 +106,9 @@ export function buildBreadcrumbJsonLd(lesson, siteUrl = normalizeSiteUrl()) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: base },
-      { "@type": "ListItem", position: 2, name: "Insights", item: base + "/insights" },
-      { "@type": "ListItem", position: 3, name: lesson.track, item: base + "/insights?track=" + encodeURIComponent(lesson.track) },
-      { "@type": "ListItem", position: 4, name: lesson.title, item: base + "/insights/" + encodeURIComponent(lesson.slug) }
+      { "@type": "ListItem", position: 2, name: "Notes", item: base + "/notes" },
+      { "@type": "ListItem", position: 3, name: lesson.track, item: base + "/notes?track=" + encodeURIComponent(lesson.track) },
+      { "@type": "ListItem", position: 4, name: lesson.title, item: base + "/notes/" + encodeURIComponent(lesson.slug) }
     ]
   };
 }
@@ -119,7 +120,7 @@ export function buildCollectionJsonLd(siteUrl = normalizeSiteUrl()) {
     "@type": "CollectionPage",
     name: "Build Notes | Marva Technologies",
     description: "Practical software engineering lessons from planning, building and maintaining real systems.",
-    url: base + "/insights",
+    url: base + "/notes",
     isPartOf: { "@type": "WebSite", name: "Marva Technologies", url: base }
   };
 }

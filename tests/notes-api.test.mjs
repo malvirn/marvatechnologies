@@ -33,7 +33,7 @@ test("publish: writes pictures then the note, and refuses duplicates and missing
   const note = { slug: "retry-with-backoff", mdx, images: [{ name: "retry-with-backoff-1.webp", base64: "AAAA" }] };
   const done = await publishNote({ env: { GITHUB_TOKEN: "t" }, note, fetchImpl: fetchOk });
   assert.equal(done.status, 200);
-  assert.deepEqual(calls.filter((c) => c.startsWith("PUT")), ["PUT public/insights/images/retry-with-backoff/retry-with-backoff-1.webp", "PUT content/insights/retry-with-backoff.mdx"]);
+  assert.deepEqual(calls.filter((c) => c.startsWith("PUT")), ["PUT public/notes/images/retry-with-backoff/retry-with-backoff-1.webp", "PUT content/insights/retry-with-backoff.mdx"]);
   const dup = await publishNote({ env: { GITHUB_TOKEN: "t" }, note, fetchImpl: async () => ({ ok: true, status: 200, json: async () => ({ sha: "x" }) }) });
   assert.equal(dup.status, 409);
   assert.equal((await publishNote({ env: {}, note, fetchImpl: fetchOk })).body.code, "not_configured");

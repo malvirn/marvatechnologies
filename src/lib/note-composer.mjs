@@ -31,7 +31,7 @@ export function imageExtension(mime) {
   return mime === "image/webp" ? "webp" : mime === "image/png" ? "png" : "jpg";
 }
 export function imageUrlPath(slug, filename) {
-  return "/insights/images/" + slug + "/" + filename;
+  return "/notes/images/" + slug + "/" + filename;
 }
 export function imageRepoPath(slug, filename) {
   return "public" + imageUrlPath(slug, filename);

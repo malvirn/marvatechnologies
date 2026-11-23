@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const lesson = getPublishedLessonBySlug(slug);
   if (!lesson) return { title: "Note not found | Build Notes" };
-  const url = SITE_URL + "/insights/" + lesson.slug;
+  const url = SITE_URL + "/notes/" + lesson.slug;
   return {
     title: lesson.title + " | Build Notes",
     description: lesson.summary,
@@ -65,7 +65,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
       <ReadingProgress />
       <main id="main-content" tabIndex={-1} className="bn-article">
         <nav className="bn-breadcrumb" aria-label="Breadcrumb">
-          <Link href="/insights">Insights</Link><span aria-hidden="true">/</span><Link href={"/insights?track=" + encodeURIComponent(lesson.track)}>{lesson.track}</Link>
+          <Link href="/notes">Notes</Link><span aria-hidden="true">/</span><Link href={"/notes?track=" + encodeURIComponent(lesson.track)}>{lesson.track}</Link>
         </nav>
 
         <header className="bn-article-head">
@@ -91,7 +91,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
         {related.length > 0 && <section className="bn-related" aria-labelledby="bn-related-title">
           <div className="bn-related-heading"><span className="eyebrow">Keep exploring</span><h2 id="bn-related-title">Related notes</h2></div>
           <div className="bn-related-list">
-            {related.map((item) => <Link className="bn-related-item" href={"/insights/" + item.slug} key={item.slug}>
+            {related.map((item) => <Link className="bn-related-item" href={"/notes/" + item.slug} key={item.slug}>
               <span>{item.track} · {item.level}</span><strong>{item.title}</strong><small>{item.summary}</small>
             </Link>)}
           </div>
@@ -100,7 +100,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
         <LessonPager previous={pager.previous} next={pager.next} />
         <footer className="bn-article-footer">
           <p>Have a system problem worth thinking through? <Link href="/contact">Let’s talk about it.</Link></p>
-          <Link href="/insights">← Back to all notes</Link>
+          <Link href="/notes">← Back to all notes</Link>
         </footer>
       </main>
     </>

@@ -103,7 +103,7 @@ export async function publishNote({ env, note, fetchImpl = fetch }) {
     const exists = await fetchImpl(probe, { headers: { Authorization: "Bearer " + env.GITHUB_TOKEN, Accept: "application/vnd.github+json", "User-Agent": "marva-note-studio" } });
     if (exists.ok) return { status: 409, body: { ok: false, error: "A note with this title already exists. Change the title." } };
     for (const image of checked.images) {
-      await githubPut({ ...base, path: "public/insights/images/" + checked.slug + "/" + image.name, base64: image.base64, message: "Add picture for note: " + checked.slug, overwrite: true });
+      await githubPut({ ...base, path: "public/notes/images/" + checked.slug + "/" + image.name, base64: image.base64, message: "Add picture for note: " + checked.slug, overwrite: true });
     }
     await githubPut({ ...base, path: "content/insights/" + checked.slug + ".mdx", base64: utf8ToBase64(checked.mdx), message: "Add note: " + checked.slug, overwrite: false });
     return { status: 200, body: { ok: true, slug: checked.slug, noteStatus: checked.status } };

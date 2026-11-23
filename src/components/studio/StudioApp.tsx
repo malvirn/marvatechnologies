@@ -142,7 +142,7 @@ export default function StudioApp({ existingSlugs }: { existingSlugs: string[] }
       <div className="studio-brand"><strong>MARVA</strong><span>Studio</span></div>
       <nav className="studio-nav">
         <a href="#new-note" aria-current="page"><PenLine size={17} aria-hidden="true" /> New note</a>
-        <Link href="/insights"><ExternalLink size={17} aria-hidden="true" /> View Build Notes</Link>
+        <Link href="/notes"><ExternalLink size={17} aria-hidden="true" /> View Build Notes</Link>
         {phase === "in" && <button type="button" onClick={signOut}><LogOut size={17} aria-hidden="true" /> Sign out</button>}
       </nav>
     </aside>
@@ -170,7 +170,7 @@ export default function StudioApp({ existingSlugs }: { existingSlugs: string[] }
             <h1 id="studio-title">Add a new note</h1>
             {message && (
               <p className="studio-message" role="status" data-kind={message.kind}>
-                {message.text} {message.kind === "ok" && message.live && message.slug && <Link href={"/insights/" + message.slug}>Open note</Link>}
+                {message.text} {message.kind === "ok" && message.live && message.slug && <Link href={"/notes/" + message.slug}>Open note</Link>}
               </p>
             )}
             <label className="studio-field"><span>Title</span>
