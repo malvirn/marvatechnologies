@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Clock3, Search, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { buildSearchIndex, searchLessons } from "@/lib/insights-search.mjs";
+import { isStudioCommand } from "@/lib/note-composer.mjs";
 
 
 type Lesson = {
@@ -29,6 +31,7 @@ function writeFilters(filters: { query: string; track: string; level: string }) 
 }
 
 export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [query, setQuery] = useState("");
@@ -80,6 +83,11 @@ export default function BuildNotesExplorer({ lessons }: { lessons: Lesson[] }) {
   }, [updateUrl]);
 
   const handleQuery = (value: string) => {
+    if (isStudioCommand(value)) {
+      setQuery("");
+      router.push("/add-note");
+      return;
+    }
     setQuery(value);
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {

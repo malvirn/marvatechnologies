@@ -12,7 +12,7 @@ const links = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
-  { label: "Insights", href: "/insights" },
+  { label: "Notes", href: "/insights" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -20,7 +20,7 @@ const mobileLinks = [
   { label: "Home", href: "/", Icon: House },
   { label: "About", href: "/about", Icon: UserRound },
   { label: "Services", href: "/services", Icon: Layers },
-  { label: "Insights", href: "/insights", Icon: Lightbulb },
+  { label: "Notes", href: "/insights", Icon: Lightbulb },
   { label: "Contact", href: "/contact", Icon: Mail },
 ];
 

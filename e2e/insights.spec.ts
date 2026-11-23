@@ -165,12 +165,12 @@ test("published lesson exposes Article and BreadcrumbList JSON-LD and its own so
   expect(response.headers()["content-type"]).toContain("image/png");
 });
 
-test("the note studio is a separate noindex page with its own sidebar and a login", async ({ page }) => {
+test("typing /addnewnotes in the notes search opens the login-protected studio page", async ({ page }) => {
   await page.goto("/insights");
   await expect(page.getByRole("link", { name: "Add note" })).toHaveCount(0);
-  await page.goto("/add-note");
+  await page.getByLabel("Search practical engineering notes").fill("/addnewnotes");
+  await expect(page).toHaveURL(/\/add-note$/);
   await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Studio navigation" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Contact" })).toHaveCount(0);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
 });

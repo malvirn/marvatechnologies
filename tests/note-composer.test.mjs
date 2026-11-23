@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { deriveSummary, resolveNote, slugify, validateNote, buildNoteFile, findMdxRisks, imageMarkdown } from "../src/lib/note-composer.mjs";
+import { isStudioCommand, deriveSummary, resolveNote, slugify, validateNote, buildNoteFile, findMdxRisks, imageMarkdown } from "../src/lib/note-composer.mjs";
 import { parseLessonSource } from "../src/lib/insights-content.mjs";
 
 const base = {
@@ -66,4 +66,12 @@ test("deriveSummary strips markdown, code and images and stays within 160 charac
   assert.ok(!summary.includes("const a"));
   assert.ok(!summary.includes("Heading"));
   assert.ok(summary.endsWith("…"));
+});
+
+test("the studio command is matched exactly, case-insensitively", () => {
+  assert.equal(isStudioCommand("/addnewnotes"), true);
+  assert.equal(isStudioCommand("  /AddNewNotes "), true);
+  assert.equal(isStudioCommand("/addnote"), true);
+  assert.equal(isStudioCommand("/addnew"), false);
+  assert.equal(isStudioCommand("debounce"), false);
 });

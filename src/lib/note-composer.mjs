@@ -2,7 +2,13 @@
 // and so the rules below stay in lockstep with lessonSchema in insights-content.mjs.
 export const COMPOSER_TRACKS = ["Frontend Engineering", "Backend Engineering", "System Design", "AI-Assisted Development"];
 export const COMPOSER_LEVELS = ["Foundation", "Intermediate", "Advanced"];
+// Typing one of these in the Build Notes search sends the owner to the (login-protected) studio page.
+export const STUDIO_COMMANDS = ["/addnewnotes", "/addnote"];
 const KNOWN_COMPONENTS = ["Callout", "CodeBlock", "Steps", "Checklist", "BeforeAfter", "PromptBlock", "Demo"];
+
+export function isStudioCommand(value) {
+  return STUDIO_COMMANDS.includes(String(value || "").trim().toLowerCase());
+}
 
 export function slugify(title) {
   return String(title || "")
